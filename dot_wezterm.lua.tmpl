@@ -1,0 +1,6 @@
+{{- if eq .chezmoi.os "darwin" -}}
+{{-   include ".wezterm_darwin.lua" -}}
+{{- else if eq .chezmoi.os "linux" -}}
+-- WSL2では symlink_dot_wezterm_windows.lua.tmpl を使用
+-- このファイルは使用されません
+{{- end -}}

@@ -1,0 +1,18 @@
+# Node
+node_modules
+
+# Bundler
+/.bundle/
+/vendor/bundle
+/lib/bundler/man/
+
+# IDE
+.idea
+
+# macOS
+.DS_Store
+
+# Personal
+.memo.local.md
+*.local
+.local
