@@ -1,0 +1,7 @@
+packages:
+  wsl:
+    apt:
+      - 'build-essential'
+      - 'curl'
+      - 'file'
+      - 'git'
