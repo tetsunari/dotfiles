@@ -91,6 +91,7 @@ main() {
   # Brew Install
   echo ""
   echo "📦 Installing Brew packages..."
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
   brew bundle --file=Brewfile_wsl
 
   # インストール確認
