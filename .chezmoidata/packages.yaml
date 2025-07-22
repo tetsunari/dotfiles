@@ -5,3 +5,4 @@ packages:
       - 'curl'
       - 'file'
       - 'git'
+      - 'fcitx5'
