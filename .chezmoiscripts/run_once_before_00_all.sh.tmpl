@@ -1,0 +1,11 @@
+#!/bin/bash
+
+{{- if eq .chezmoi.os "linux" }}
+echo "SYSTEM: WSL2"
+{{- end }}
+
+{{- if eq .chezmoi.os "darwin" }}
+echo "SYSTEM: maxOS"
+{{- end }}
+
+exit 0

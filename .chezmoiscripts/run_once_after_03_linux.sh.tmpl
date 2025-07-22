@@ -1,0 +1,99 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+
+set -ex
+
+command_exists() {
+  command -v "$@" >/dev/null 2>&1
+}
+
+is_wsl() {
+    [ -n "${WSL_DISTRO_NAME:-}" ] || grep -qi 'microsoft\|wsl' /proc/version 2>/dev/null
+}
+
+main() {
+  echo "🚀 Installing development tools..."
+
+  # Volta
+  echo ""
+  echo "📦 Installing Volta..."
+  if ! command_exists volta; then
+    echo "Installing Volta Node.js manager..."
+    curl https://get.volta.sh | bash -s -- --skip-setup
+
+    # 現在のセッションでVoltaを有効化
+    export VOLTA_HOME="$HOME/.volta"
+    export PATH="$VOLTA_HOME/bin:$PATH"
+
+    echo "✅ Volta installed successfully"
+  else
+    echo "✅ Volta already installed, skipping"
+  fi
+
+  # Node.JS
+  echo ""
+  echo "📦 Installing Node.js tools..."
+  if command_exists volta; then
+    echo "Installing Node.js via Volta..."
+    volta install node@lts
+    volta install npm@latest
+    volta install yarn@latest
+    echo "✅ Node.js tools installed successfully"
+  else
+    echo "❌ volta command not found, skipping Node.js installation"
+  fi
+
+  # Docker
+  echo ""
+  echo "🐳 Installing Docker..."
+  if ! command_exists docker; then
+    echo "Installing Docker Engine..."
+
+    # 依存関係のインストール
+    sudo apt update
+    sudo apt install -y ca-certificates curl gnupg lsb-release
+
+    # Docker公式GPGキーの追加
+    sudo mkdir -m 0755 -p /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+    # Dockerリポジトリの追加
+    echo \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+      sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+    # Dockerのインストール
+    sudo apt update
+    sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+    # ユーザーをdockerグループに追加
+    sudo usermod -aG docker "$USER"
+
+    # WSL固有の設定
+    if is_wsl; then
+      echo "🐧 Configuring Docker for WSL..."
+      if ! grep -q "systemd=true" /etc/wsl.conf 2>/dev/null; then
+        echo -e "[boot]\nsystemd=true" | sudo tee -a /etc/wsl.conf
+        echo "⚠️  WSL systemd enabled. Please restart WSL to apply changes:"
+        echo "   wsl --shutdown"
+      fi
+    fi
+
+    echo "✅ Docker installed successfully"
+    echo "⚠️  Please log out and log back in to use Docker without sudo"
+
+  else
+    echo "✅ Docker already installed, skipping"
+  fi
+
+  # インストール確認
+  echo ""
+  echo "🎉 Installation completed!"
+  echo "Installed tools:"
+}
+
+main "$@"
+
+{{- end -}}

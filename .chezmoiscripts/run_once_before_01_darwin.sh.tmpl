@@ -1,0 +1,31 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+
+# エラー時に停止
+set -ex
+
+echo "Checking Xcode Command Line Tools..."
+
+# Xcode Command Line Toolsがインストール済みかチェック
+if xcode-select -p &> /dev/null; then
+    echo "✅ Xcode Command Line Tools are already installed at: $(xcode-select -p)"
+else
+    echo "📦 Installing Xcode Command Line Tools..."
+
+    # インストールを実行
+    xcode-select --install
+
+    # インストール完了まで待機
+    echo "⏳ Waiting for installation to complete..."
+    echo "   Please follow the installation dialog and press any key when done."
+    read -n 1 -s
+
+    # インストール確認
+    if xcode-select -p &> /dev/null; then
+        echo "✅ Xcode Command Line Tools installation completed successfully!"
+    else
+        echo "❌ Xcode Command Line Tools installation failed or incomplete."
+        exit 1
+    fi
+fi
+{{- end -}}
