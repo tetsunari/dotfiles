@@ -1,0 +1,10 @@
+{{- if eq .chezmoi.os "darwin" }}
+Brewfile_wsl
+.bashrc
+symlink_private_dot_wezterm.lua.tmpl
+{{- else if eq .chezmoi.os "linux" }}
+Brewfile_mac
+dot_wezterm.lua.tmpl
+{{- end }}
+
+README.md
