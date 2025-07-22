@@ -1,1 +1,12 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/bin/bash
 
+set -ex
+
+WINDOWS_HOME_DIR="/mnt/c/User/setup_user"
+SOURCE_FILE="{{ .chezmoi.sourceDir }}/.wezterm_linux.lua
+DEST_FILE="$WINDOWS_HOME_DIR/.wezterm.lua"
+
+cp "$SOURCE_FILE" "$DEST_FILE"
+
+{{- end -}}
