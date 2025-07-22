@@ -23,7 +23,7 @@ fi
 current_shell=$(basename "$SHELL")
 if [ "$current_shell" != "zsh" ]; then
     echo "🔄 Changing default shell to zsh..."
-    sudo chsh -s $(which zsh)
+    sudo chsh -s "$(which zsh)" "$USER"
     echo "✅ Default shell changed to zsh"
     echo "⚠️  Please log out and log back in for the change to take effect"
 else
