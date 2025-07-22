@@ -43,6 +43,16 @@ main() {
     echo "❌ volta command not found, skipping Node.js installation"
   fi
 
+  # NPM Install
+  echo ""
+  echo " Npm Install claude, gemini"
+  if command_exists npm; then
+    npm i -g @anthropic-ai/claude-code
+    npm i -g @google/genai
+  else
+    echo "❌ npm command not found, skipping npm i"
+  fi
+
   # Docker
   echo ""
   echo "🐳 Installing Docker..."
