@@ -1,0 +1,33 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+
+# エラー時に停止
+set -ex
+
+echo "Setting up Linux environment..."
+
+# パッケージの更新
+sudo apt update -y
+sudo apt upgrade -y
+
+# zshのインストール
+echo "🐚 Installing zsh..."
+if ! command -v zsh &> /dev/null; then
+    sudo apt install -y zsh
+    echo "✅ zsh installed successfully"
+else
+    echo "✅ zsh is already installed"
+fi
+
+# 現在のシェルがzshでない場合のみ変更
+current_shell=$(basename "$SHELL")
+if [ "$current_shell" != "zsh" ]; then
+    echo "🔄 Changing default shell to zsh..."
+    sudo chsh -s $(which zsh)
+    echo "✅ Default shell changed to zsh"
+    echo "⚠️  Please log out and log back in for the change to take effect"
+else
+    echo "✅ zsh is already the default shell"
+fi
+
+{{- end -}}
