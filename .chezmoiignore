@@ -2,9 +2,10 @@
 Brewfile_wsl
 .bashrc
 symlink_private_dot_wezterm.lua.tmpl
+.profile
 {{- else if eq .chezmoi.os "linux" }}
 Brewfile_mac
-dot_wezterm.lua.tmpl
+.wezterm.lua.tmpl
 {{- end }}
 
 README.md
