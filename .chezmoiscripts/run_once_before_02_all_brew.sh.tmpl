@@ -17,8 +17,6 @@ else
     echo "✅ Homebrew is already installed"
 fi
 
-brew bundle --file "$HOME/Brewfile_wsl"
-
 {{- else if eq .chezmoi.os "darwin" }}
 echo "Installing Homebrew for macOS..."
 
