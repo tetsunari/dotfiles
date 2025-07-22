@@ -6,7 +6,7 @@ set -ex
 echo "INstalling Homebrew for Linux..."
 
 sudo apt update
-{{- range .packages.wsl.apt -}}
+{{ range .packages.wsl.apt }}
 sudo apt install -y {{ . | quote }}
 {{- end }}
 if ! command -v brew &> /dev/null; then
