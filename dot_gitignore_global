@@ -8,6 +8,7 @@ node_modules
 
 # IDE
 .idea
+lazy-lock.json
 
 # macOS
 .DS_Store
