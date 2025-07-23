@@ -20,3 +20,12 @@ setopt print_eight_bit
 
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#9acd32"
 
+# fzf history
+function fzf-select-history() {
+    BUFFER=$(history -n -r 1 | fzf --query "$LBUFFER" --reverse)
+    CURSOR=$#BUFFER
+    zle reset-prompt
+}
+zle -N fzf-select-history
+bindkey '^r' fzf-select-history
+
