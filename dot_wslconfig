@@ -1,0 +1,37 @@
+[wsl2]
+# 32GBの約62%で、Dockerコンテナに十分なリソースを提供
+memory=18GB
+
+# プロセッサ設定 - 物理コア数に応じて調整
+# 通常は物理コア数の75-100%を推奨
+processors=6
+
+# スワップ設定 - メモリが潤沢なので控えめに設定
+swap=0
+#swapFile=%USERPROFILE%\\AppData\\Local\\Temp\\wsl-swap.vhdx
+
+# ネットワークモード
+networkingMode=mirrored
+
+# VPN DNS問題を解決
+dnsTunneling=true
+
+# firewall=true
+
+# Windowsプロキシ設定を自動継承
+autoProxy=true
+
+# ローカルホスト転送 - Dockerポート転送で重要
+# Setting is ignored when networkingMode=mirrored
+# localhostForwarding=true
+
+# ページレポーティング - メモリ管理最適化
+# default ture
+# pageReporting=true
+
+[experimental]
+# 自動メモリ回収 - アイドル時のメモリ最適化
+autoMemoryReclaim=gradual
+
+# ホストアドレスループバック - コンテナ間通信改善
+hostAddressLoopback=true
