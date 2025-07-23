@@ -4,9 +4,15 @@
 set -ex
 
 WINDOWS_HOME_DIR=$(wslpath $(/mnt/c/WINDOWS/system32/cmd.exe /c 'SET /P x=%USERPROFILE%<NUL' 2>/dev/null))
-SOURCE_FILE="{{ .chezmoi.sourceDir }}/.wezterm_linux.lua"
-DEST_FILE="$WINDOWS_HOME_DIR/.wezterm.lua"
 
-cp "$SOURCE_FILE" "$DEST_FILE"
+# WeZterm設定ファイルのコピー
+WEZTERM_SOURCE_FILE="{{ .chezmoi.sourceDir }}/dot_wezterm_linux.lua"
+WEZTERM_DEST_FILE="$WINDOWS_HOME_DIR/.wezterm.lua"
+cp "$WEZTERM_SOURCE_FILE" "$WEZTERM_DEST_FILE"
+
+# WSL設定ファイルのコピー
+WSLCONFIG_SOURCE_FILE="{{ .chezmoi.sourceDir }}/dot_wslconfig"
+WSLCONFIG_DEST_FILE="$WINDOWS_HOME_DIR/.wslconfig"
+cp "$WSLCONFIG_SOURCE_FILE" "$WSLCONFIG_DEST_FILE"
 
 {{- end -}}
