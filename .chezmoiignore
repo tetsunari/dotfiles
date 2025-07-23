@@ -3,12 +3,12 @@ Brewfile_wsl
 .bashrc
 symlink_private_dot_wezterm.lua.tmpl
 .profile
-dot_wezterm_linux.lua
-dot_wslconfig
+.wezterm_linux.lua
+.wslconfig
 {{- else if eq .chezmoi.os "linux" }}
 Brewfile_mac
 .wezterm.lua.tmpl
-dot_wezterm_darwin.lua
+.wezterm_darwin.lua
 {{- end }}
 
 README.md
