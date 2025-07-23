@@ -6,3 +6,6 @@ packages:
       - 'file'
       - 'git'
       - 'fcitx5'
+      - 'language-pack-ja'
+      - 'fonts-ipafont'
+      - 'fonts-ipaexfont'

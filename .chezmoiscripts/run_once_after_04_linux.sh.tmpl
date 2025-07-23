@@ -15,4 +15,7 @@ WSLCONFIG_SOURCE_FILE="{{ .chezmoi.sourceDir }}/dot_wslconfig"
 WSLCONFIG_DEST_FILE="$WINDOWS_HOME_DIR/.wslconfig"
 cp "$WSLCONFIG_SOURCE_FILE" "$WSLCONFIG_DEST_FILE"
 
+# フォントキャッシュ更新
+fc-cache -fv
+
 {{- end -}}
