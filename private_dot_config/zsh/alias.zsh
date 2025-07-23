@@ -3,7 +3,7 @@ alias lg='lazygit'
 alias vim='nvim'
 alias vi='nvim'
 alias wsl='/mnt/c/Windows/System32/wsl.exe'
-alias notion='nohup /mnt/c/Users/setup_user/AppData/Local/Programs/Notion/Notion.exe > /dev/null 2>&1'
+alias notion="nohup $(wslpath $(/mnt/c/WINDOWS/system32/cmd.exe /c 'SET /P X=%USERPROFILE%<NUL' 2>/dev/null))/AppData/Local/Programs/Notion/Notion.exe > /dev/null 2>&1"
 alias notkill='/mnt/c/Windows/System32/taskkill.exe /F /IM Notion.exe'
 
 # Modern CLI Tools (Homebrew)
