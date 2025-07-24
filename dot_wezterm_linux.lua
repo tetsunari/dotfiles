@@ -16,7 +16,7 @@ M.scrollback_lines = 10000
 -- ==================== TYPOGRAPHY & READABILITY ====================
 M.font = wezterm.font_with_fallback({
   {
-    family = "UDEV Gothic 35NFLG",
+    family = "UDEV Gothic 35NF",
     stretch = 'UltraExpanded',
     weight = "ExtraBlack",
   },
