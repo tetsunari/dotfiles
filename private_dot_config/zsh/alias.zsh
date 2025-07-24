@@ -14,6 +14,7 @@ alias tree='eza --tree'
 alias find='fd'
 alias cd='z'
 alias cdi='zi'
+alias diff='delta'
 
 # WSL clipboard integration
 alias pbcopy='clip.exe'
