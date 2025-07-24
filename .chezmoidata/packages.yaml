@@ -9,3 +9,4 @@ packages:
       - 'language-pack-ja'
       - 'fonts-ipafont'
       - 'fonts-ipaexfont'
+      - 'bind9-dnsutils'
