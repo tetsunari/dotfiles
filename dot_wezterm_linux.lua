@@ -17,8 +17,8 @@ M.scrollback_lines = 10000
 M.font = wezterm.font_with_fallback({
   {
     family = "UDEV Gothic 35NFLG",
-    stretch = 'Expanded',
-    weight = "Black",
+    stretch = 'UltraExpanded',
+    weight = "ExtraBlack",
   },
   {
     family = "Firge35Nerd Console",
@@ -33,7 +33,7 @@ M.font = wezterm.font_with_fallback({
     family = "Symbols Nerd Font",
   },
 })
-M.font_size = 8.0
+M.font_size = 8.5
 M.line_height = 1.0
 M.cell_width = 1.0
 
