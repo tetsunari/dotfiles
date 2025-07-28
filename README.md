@@ -9,4 +9,5 @@ sh -c "$(curl -fsSL get.chezmoi.io)" -- init --apply tetsunari
 ```
 
 # 🔡 Fonts
-This dotfiles uses the Zsh theme Powerlevel10k, so it requires you to install a font on your host machine with support for the Nerd Fonts glyphs. I recommend the Meslo Nerd Font.
+- UDEV Gothic 35NF: https://github.com/yuru7/udev-gothic?tab=readme-ov-file
+- Firge35Nerd Console: https://github.com/yuru7/Firge
