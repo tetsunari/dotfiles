@@ -12,7 +12,10 @@ sh -c "$(curl -fsSL get.chezmoi.io)" -- init --apply tetsunari
 - UDEV Gothic 35NF: https://github.com/yuru7/udev-gothic?tab=readme-ov-file
 - Firge35Nerd Console: https://github.com/yuru7/Firge
 
-# WSL2
+# WSL2 (Windows11)
 ## sudo
 - https://qiita.com/buntafujikawa/items/0083b8aa1bd0e97748aa
   - 上記の記事を参考に、[Homebrew on Linux](https://docs.brew.sh/Homebrew-on-Linux)経由のコマンドにsudo実行を可能にする
+## ３本指ドラッグ
+- ThreeFingerDrag: https://github.com/austinnixholm/ThreeFingerDrag?tab=readme-ov-file
+  - アプリアイコンをクリックして設定を開きSpeedを`50`に設定
