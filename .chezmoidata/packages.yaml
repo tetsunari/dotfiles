@@ -10,3 +10,5 @@ packages:
       - 'fonts-ipafont'
       - 'fonts-ipaexfont'
       - 'bind9-dnsutils'
+      - 'libpulse0'
+      - 'telnet'

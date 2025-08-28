@@ -1,5 +1,5 @@
-export VOLTA_HOME="$HOME/.volta"
-export PATH="$VOLTA_HOME/bin:$PATH"
+# export VOLTA_HOME="$HOME/.volta"
+# export PATH="$VOLTA_HOME/bin:$PATH"
 # export NVIM_HOME="/opt/nvim"
 # export PAHT="$NVIM_NOME:$PATH"
 export PATH="$PATH:/opt/nvim"
