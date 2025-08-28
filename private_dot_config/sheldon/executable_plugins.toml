@@ -45,6 +45,9 @@ inline = 'eval "$(zoxide init zsh)"'
 # [plugins.direnv]
 # inline = 'eval "$(direnv hook zsh)"'
 
+[plugins.mise]
+inline = 'eval "$(mise activate zsh)"'
+
 [plugins.dotfiles]
 local = "~/.config/zsh"
 # use = ["{alias, function, history}.zsh"]
