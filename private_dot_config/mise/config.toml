@@ -1,4 +1,8 @@
 [tools]
+aws-cli = "latest"
+gcloud = "latest"
+
+# node
 node = "latest"
 "npm:@anthropic-ai/claude-code" = "latest"
 "npm:@google/gemini-cli" = "latest"
