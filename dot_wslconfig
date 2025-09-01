@@ -29,6 +29,8 @@ autoProxy=true
 # default ture
 # pageReporting=true
 
+nestedVirtualization=true
+
 [experimental]
 # 自動メモリ回収 - アイドル時のメモリ最適化
 autoMemoryReclaim=gradual
