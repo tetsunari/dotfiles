@@ -21,9 +21,9 @@ disabled = true
 disabled = true
 
 [aws]
-format = 'on [$symbol($profile )(\($region\) )]($style)'
+format = 'on [$symbol($profile )(\($project\))(\($region\) )]($style)'
 style = '#ffa500'
-symbol = ' '
+symbol = ' '
 # force_display = true
 # disabled = false
 # [aws.region_aliases]
@@ -33,7 +33,8 @@ symbol = ' '
 # CompanyGroupFrobozzOnCallAccess = 'Frobozz'
 
 [gcloud]
-format = 'on [$symbol$account(@$domain)(\($project\))]($style) '
+# format = 'on [$symbol$account(@$domain)(\($project\))]($style) '
+format = 'on [$symbol($profile )(\($project\))(\($region\) )]($style) '
 style = 'blue'
 symbol = ' '
 # [gcloud.project_aliases]
