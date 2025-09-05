@@ -16,5 +16,7 @@ export PATH=$PATH:"$(wslpath $(/mnt/c/WINDOWS/system32/cmd.exe /c 'SET /P X=%USE
 export PATH=$PATH:"$(wslpath $(/mnt/c/WINDOWS/system32/cmd.exe /c 'SET /P X=%USERPROFILE%<NUL' 2>/dev/null))/AppData/Local/Programs/cursor/resources/app/bin"
 # kiro コマンド
 export PATH=$PATH:"$(wslpath $(/mnt/c/WINDOWS/system32/cmd.exe /c 'SET /P X=%USERPROFILE%<NUL' 2>/dev/null))/AppData/Local/Programs/kiro/bin"
-# curl path
-export HOMEBREW_CURL_PATH="/usr/bin/curl"
+# Linux Brew
+export HOMEBREW_DEVELOP=1
+## curl path
+export HOMEBREW_CURL_PATH="/home/linuxbrew/.linuxbrew/bin/curl"
