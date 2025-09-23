@@ -396,7 +396,7 @@ end
 local function test_wsl_network()
   -- HTTP接続テスト
   local success, stdout, _ = wezterm.run_child_process({
-    "wsl", "timeout", "3", "curl", "-s", "--connect-timeout", "2", "-I", "https://www.google.com"
+    "wsl", "timeout", "3", "/home/linuxbrew/.linuxbrew/bin/curl", "-s", "--connect-timeout", "2", "-I", "https://www.google.com"
   })
 
   if success and stdout and (stdout:find("200 OK") or stdout:find("HTTP/")) then
