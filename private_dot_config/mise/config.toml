@@ -20,6 +20,9 @@ chezmoi = "latest"
 # golang
 go = "latest"
 
+# java
+java = "latest"
+
 [tasks.brew-bundle]
 description = "brewのインストール一覧を`Brewfile_wsl`に書き出す(vscodeの設定は無視)"
 run = "cd && brew bundle dump --force --no-vscode --file Brewfile_wsl"
