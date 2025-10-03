@@ -636,3 +636,7 @@ wezterm.on("window-config-reloaded", function(window, pane)
 end)
 
 return M
+
+config.keys = {
+  {key="Enter", mods="SHIFT", action=wezterm.action{SendString="\x1b\r"}},
+}
