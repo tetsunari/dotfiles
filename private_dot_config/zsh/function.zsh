@@ -20,3 +20,11 @@ export PATH=$PATH:"$(wslpath $(/mnt/c/WINDOWS/system32/cmd.exe /c 'SET /P X=%USE
 export HOMEBREW_DEVELOP=1
 ## curl path
 export HOMEBREW_CURL_PATH="/home/linuxbrew/.linuxbrew/bin/curl"
+
+# Wayland環境変数
+#export XDG_RUNTIME_DIR=/var/run/user/1000 foot
+#export WAYLAND_DISPLAY=wayland-0
+#export QT_QPA_PLATFORM=wayland
+#export GDK_BACKEND=wayland
+#export MOZ_ENABLE_WAYLAND=1
+
