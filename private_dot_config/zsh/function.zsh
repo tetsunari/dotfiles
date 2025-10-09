@@ -10,6 +10,9 @@ export PATH="$CHEZMOI_HOME:/chezmoi:$PATH"
 autoload bashcompinit && bashcompinit
 autoload -Uz compinit && compinit
 
+# gcloud
+export CLOUDSDK_PYTHON=python3
+
 # code コマンド
 export PATH=$PATH:"$(wslpath $(/mnt/c/WINDOWS/system32/cmd.exe /c 'SET /P X=%USERPROFILE%<NUL' 2>/dev/null))/AppData/Local/Programs/Microsoft VS Code/bin"
 # cursor コマンド
@@ -27,4 +30,16 @@ export FZF_DEFSULT_OPST="
   --style=full:rounded
   --height 45%
   --margin 0.5%
+"
+
+# zoxideの設定
+export _ZO_FZF_OPTS="
+  --reverse
+  --style=full:rounded
+  --height 75%
+  --margin 0,5%
+  --preview 'eza -l --icons --sort modified -r --color=always {2..}'
+  --preview-window=down,50%,wrap
+  --no-sort
+  --exact
 "
