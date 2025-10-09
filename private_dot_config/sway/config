@@ -7,7 +7,8 @@
 ### Variables
 #
 # Logo key. Use Mod1 for Alt.
-set $mod Mod4
+# Changed to Alt (Mod1) for Macbook-like experience
+set $mod Mod1
 # Home row direction keys, like vim
 set $left h
 set $down j
@@ -18,7 +19,7 @@ set $term foot
 # Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
-set $menu dmenu_path | wmenu | xargs swaymsg exec --
+set $menu wofi --show drun
 
 include /etc/sway/config-vars.d/*
 
@@ -67,13 +68,16 @@ output * resolution 1920x1200
 #
 # Basics:
 #
-    # Start a terminal
+    # Start a terminal (Macbook-like: Alt+T)
+    bindsym $mod+t exec $term
     bindsym $mod+Return exec $term
 
-    # Kill focused window
+    # Kill focused window (Macbook-like: Alt+Q)
+    bindsym $mod+q kill
     bindsym $mod+Shift+q kill
 
-    # Start your launcher
+    # Start your launcher (Macbook-like: Alt+Space)
+    bindsym $mod+Space exec $menu
     bindsym $mod+d exec $menu
 
     # Drag floating windows by holding down $mod and left mouse button.
@@ -150,7 +154,7 @@ output * resolution 1920x1200
 
     # Switch the current container between different layout styles
     bindsym $mod+s layout stacking
-    bindsym $mod+w layout tabbed
+    bindsym $mod+Shift+w layout tabbed
     bindsym $mod+e layout toggle split
 
     # Make the current focus fullscreen
@@ -159,8 +163,8 @@ output * resolution 1920x1200
     # Toggle the current focus between tiling and floating mode
     bindsym $mod+Shift+space floating toggle
 
-    # Swap focus between the tiling area and the floating area
-    bindsym $mod+space focus mode_toggle
+    # Swap focus between the tiling area and the floating area (changed to Alt+Tab)
+    bindsym $mod+Tab focus mode_toggle
 
     # Move focus to the parent container
     bindsym $mod+a focus parent
@@ -232,3 +236,16 @@ input type:keyboard {
 
 # VNCサーバー(wayvnc)を自動起動する
 exec wayvnc 0.0.0.0 5900
+
+### Macbook-like Additional Keybindings
+#
+# Additional shortcuts for Macbook users
+#
+# Alt+W: Close window (like Cmd+W on Mac)
+bindsym $mod+w kill
+
+# Alt+N: New terminal window (like Cmd+N on Mac)
+bindsym $mod+n exec $term
+
+# Alt+Shift+R: Reload config (like Cmd+R for refresh)
+bindsym $mod+Shift+r reload
