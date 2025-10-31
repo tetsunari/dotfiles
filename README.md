@@ -22,5 +22,9 @@ sh -c "$(curl -fsSL get.chezmoi.io)" -- init --apply tetsunari
 - ThreeFingerDrag: https://github.com/austinnixholm/ThreeFingerDrag?tab=readme-ov-file
   - アプリアイコンをクリックして設定を開きSpeedを`50`に設定
 ## キーマップ変更
-### Auto Hot Key: https://www.autohotkey.com/
-- wsl2 + weztermの設定を色々と頑張ってる
+### Auto Hot Key: 
+- https://www.autohotkey.com/
+  - wsl2 + weztermの設定を色々と頑張ってる
+### HHKB キーマップ変更ツール
+- https://happyhackingkb.com/jp/download/
+  - notionにまとめてる
