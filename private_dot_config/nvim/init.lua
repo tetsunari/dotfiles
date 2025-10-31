@@ -3,10 +3,6 @@ require 'keybinds'
 require 'plugin'
 require 'options'
 
-vim.opt.clipboard:append('unnamedplus,unnamed')
-
-vim.opt.whichwrap = 'b,s,h,l,<,>,[,],~'
-
 vim.api.nvim_create_user_command(
   'InitLua',
   function()

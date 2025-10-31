@@ -5,6 +5,9 @@ return {
     event = { "VeryLazy" },
     config = function()
       require("hlslens").setup({
+        build_position_cb = function(plist, _, _, _)
+          require("scrollbar.handlers.search").handler.show(plist.start_pos)
+        end,
         override_lens = function(render, posList, nearest, idx)
           local text, chunks
           ---@diagnostic disable-next-line: deprecated
@@ -47,7 +50,7 @@ return {
       vim.api.nvim_set_keymap("n", "g*", [[g*<Cmd>lua require('hlslens').start()<CR>]], kopts)
       vim.api.nvim_set_keymap("n", "g#", [[g#<Cmd>lua require('hlslens').start()<CR>]], kopts)
 
-      vim.api.nvim_set_keymap("n", "<leader><ECS>", "<Cmd>noh<CR>", kopts)
+      vim.api.nvim_set_keymap("n", "<Esc><Esc>", "<Cmd>noh<CR>", kopts)
 
       vim.cmd([[
         highlight HlSearchLensNear guifg=white guibg=olive
