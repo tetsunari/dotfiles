@@ -23,3 +23,6 @@ alias diff='delta'
 # WSL clipboard integration
 alias pbcopy='clip.exe'
 alias pbpaste='powershell.exe -command "Get-Clipboard"'
+
+# grep
+alias grep='grep --colour=always'
