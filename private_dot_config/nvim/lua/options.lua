@@ -1,26 +1,41 @@
 vim.cmd('colorscheme tokyonight-storm')
 
-vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
-  pattern = '*',
+-- グローバルオプション(autocmdの外で一度だけ設定)
+vim.opt.termguicolors = true
+vim.opt.scrolloff = 5
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+vim.opt.inccommand = 'split'
+vim.opt.clipboard = 'unnamedplus'
+vim.opt.virtualedit = 'onemore'
+vim.opt.swapfile = false
 
-  group = vim.api.nvim_create_augroup('buffer_set_options', {}),
+-- ウィンドウローカルオプション
+vim.opt.number = true
+vim.opt.cursorline = true
+-- vim.opt.signcolumn = 'yes:1' -- 画面がちらついたらコメントアウト外す
+vim.opt.wrap = false
 
-  callback = function()
-    vim.api.nvim_set_option('termguicolors', true)
-    vim.api.nvim_set_option('scrolloff', 5)
-    vim.api.nvim_set_option('ignorecase', true)
-    vim.api.nvim_set_option('smartcase', true)
-    vim.api.nvim_set_option('smartcase', true)
-    vim.api.nvim_set_option('inccommand', 'split')
-    vim.api.nvim_set_option('clipboard', 'unnamedplus')
-    vim.api.nvim_set_option('virtualedit', 'onemore')
-    vim.api.nvim_win_set_option(0, 'number', true)
-    vim.api.nvim_win_set_option(0, 'cursorline', true)
-    -- vim.api.nvim_win_set_option(0, 'signcolumn', 'yes:1') -- 画面がちらついたらコメントアウト外す:w
-    vim.api.nvim_win_set_option(0, 'wrap', false)
-    vim.api.nvim_buf_set_option(0, 'tabstop', 2)
-    vim.api.nvim_buf_set_option(0, 'shiftwidth', 0)
-    vim.api.nvim_buf_set_option(0, 'expandtab', true)
-  end,
-})
+-- バッファローカルオプション
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 0
+vim.opt.expandtab = true
+
+vim.opt.helplang = { "ja", "en" }
+
+vim.opt.clipboard:append('unnamedplus,unnamed')
+
+-- 行末から次の行へ移動できる
+vim.opt.whichwrap = 'b,s,h,l,<,>,[,],~'
+-- 空白文字の可視化
+vim.opt.list = true
+
+vim.opt.listchars = {
+  -- tab = "| ", -- Tab
+  -- trail = "-", -- 行末スペース
+  -- eol = "↲", -- 改行
+  extends = "»", -- ウィンドウ幅狭い時の後方省略
+  precedes = "«", -- ウィンドウ幅狭い時の前方省略
+  nbsp = "%", -- 不可視のスペース
+}
 

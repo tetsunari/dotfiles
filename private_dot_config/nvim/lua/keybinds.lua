@@ -15,12 +15,158 @@ vim.api.nvim_set_var('mapleader', ' ')
 vim.keymap.set('n', 'p', 'p]', { desc = 'Paste and move to the end' })
 vim.keymap.set('n', 'P', 'P]', { desc = 'Paste and move to the end' })
 
-vim.keymap.set('x', 'p', 'P', { desc = 'Paste without change register' })
-vim.keymap.set('x', 'P', 'p', { desc = 'Paste with change register' })
+-- vim.keymap.set('x', 'p', 'P', { desc = 'Paste without change register' })
+-- vim.keymap.set('x', 'P', 'p', { desc = 'Paste with change register' })
 
 -- { 'n', 'x' }とすると複数のモードに対応
-vim.keymap.set('n', 'X', '"_D', { desc = 'Delete using blackhole register' })
-vim.keymap.set('o', 'x', 'd', { desc = 'Delete using x' })
+-- vim.keymap.set('n', 'X', '"_D', { desc = 'Delete using blackhole register' })
+-- vim.keymap.set('o', 'x', 'd', { desc = 'Delete using x' })
 
 vim.keymap.set('n', '<c-s>', '<cmd>write<cr>', { desc = 'Write' })
 vim.keymap.set({ 'n', 'x' }, 'so', ':source<cr>', { silent = true, desc = "Source crrent script" })
+
+-- VSCode
+if vim.g.vscode then
+  local vscode = require("vscode")
+
+  vim.keymap.set("n", "<c-j>", function()
+    vscode.action("workbench.action.terminal.toggleTerminal")
+  end)
+
+  vim.keymap.set("n", "gru", function()
+    vscode.action("workbench.action.findInFiles")
+  end)
+
+  vim.keymap.set({ "n", "i" }, "<S-C-r>", function()
+    vscode.action("editor.action.rename")
+  end)
+
+  vim.keymap.set("n", "]c", function()
+    vscode.action("workbench.action.editor.nextChange")
+  end)
+  vim.keymap.set("n", "[c", function()
+    vscode.action("workbench.action.editor.previousChange")
+  end)
+
+  vim.keymap.set("n", "<space>g", function()
+    vscode.action("lazygit-vscode.toggle")
+  end)
+
+  vim.keymap.set("n", "<space>y", function()
+    vscode.action("yazi-vscode.toggle")
+  end)
+
+  vim.keymap.set("n", "<space>u", function()
+    vscode.action("git.revertSelectedRanges")
+  end)
+  vim.keymap.set("n", "<space>+", function()
+    vscode.action("git.stageSelectedRanges")
+  end)
+
+  vim.keymap.set("n", "<space>j", function()
+    vscode.action("workbench.action.navigateDown")
+  end)
+
+  vim.keymap.set("n", "<space>k", function()
+    vscode.action("workbench.action.navigateUp")
+  end)
+
+  vim.keymap.set("n", "<space>h", function()
+    vscode.action("workbench.action.navigateLeft")
+  end)
+
+  vim.keymap.set("n", "<space>l", function()
+    vscode.action("workbench.action.navigateRight")
+  end)
+
+  vim.keymap.set("n", "<space>z", function()
+    vscode.action("workbench.action.toggleZenMode")
+  end)
+
+  vim.keymap.set("n", "<C-w>", function()
+    vscode.action("workbench.actin.closeActiveEditor")
+  end)
+  --
+  -- vim.keymap.set("n", "<Space>l", function()
+  --   vscode.action("workbench.action.nextEditorInGroup")
+  -- end)
+
+  -- vim.keymap.set("n", "<Space>h", function()
+  --   vscode.action("workbench.action.previousEditorInGroup")
+  -- end)
+
+  vim.keymap.set("n", "<space>w", function()
+    vscode.action("workbench.action.closeActiveEditor")
+  end)
+
+  vim.keymap.set("n", "<space>q", function()
+    vscode.action("workbench.action.closeOtherEditors")
+  end)
+
+  -- vim.keymap.set("n", "<space>t", function()
+  --   vscode.action("workbench.action.reopenClosedEditor")
+  -- end)
+
+  vim.keymap.set("n", "<space>r", function()
+    vscode.action("workbench.action.navigateLast")
+  end)
+
+  vim.keymap.set("n", "<space>e", function()
+    vscode.action("workbench.action.showAllEditors")
+  end)
+
+  -- split系はVSCodeで動かないため別途設定が必要
+  vim.keymap.set("n", "<space>\\", function()
+    vscode.call("workbench.action.splitEditorRight")
+    vscode.action("editor.action.revealDefinition")
+  end)
+
+  vim.keymap.set("n", "<space>-", function()
+    vscode.call("workbench.action.splitEditorDown")
+    vscode.action("editor.action.revealDefinition")
+  end)
+
+  -- folding
+  vim.keymap.set("n", "zc", function()
+    vscode.action("editor.fold")
+  end)
+
+  vim.keymap.set("n", "zo", function()
+    vscode.action("editor.unfold")
+  end)
+
+  -- Oil.code
+  vim.keymap.set("n", "<space>o", function()
+    vscode.action("oil-code.open")
+  end)
+
+  vim.api.nvim_create_autocmd("FileType", {
+    pattern = "oil",
+    callback = function(event)
+      local opts = { buffer = event.buf, noremap = true, silent = true }
+      vim.keymap.set("n", "<CR>", function()
+        vscode.action("oil-code.select")
+      end, opts)
+      vim.keymap.set("n", "<C-CR>", function()
+        vscode.action("oil-code.selectVertical")
+      end, opts)
+      -- 水平方向に展開するコマンドはないので複数コマンドを同期で連続させる
+      vim.keymap.set("n", "<C-s>", function()
+        vscode.call("workbench.action.splitEditorDown")
+        vscode.call("oil-code.selectTab")
+        vscode.call("workbench.action.previousEditorInGroup")
+        vscode.call("workbench.action.closeActiveEditor")
+      end, opts)
+
+      vim.keymap.set("n", "-", function()
+        vscode.action("oil-code.openParent")
+      end, opts)
+      vim.keymap.set("n", "_", function()
+        vscode.action("oil-code.openCwd")
+      end, opts)
+      vim.keymap.set("n", "<C-l>", function()
+        vscode.action("oil-code.refresh")
+      end, opts)
+    end,
+  })
+end

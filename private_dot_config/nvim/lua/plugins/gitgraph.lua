@@ -50,7 +50,7 @@ return {
   },
   keys = {
     {
-      "<space>G",
+      "<leader>G",
       function()
         require("gitgraph").draw({}, { all = true, max_count = 500 })
       end,
