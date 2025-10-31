@@ -26,6 +26,7 @@ sh -c "$(curl -fsSL get.chezmoi.io)" -- init --apply tetsunari
 ### Auto Hot Key: 
 - https://www.autohotkey.com/
   - wsl2 + weztermの設定など
+  - https://github.com/tetsunari/dotfiles/tree/main/setup-ahk
 ### HHKB キーマップ変更ツール
 - https://happyhackingkb.com/jp/download/
   - notionにまとめてる
