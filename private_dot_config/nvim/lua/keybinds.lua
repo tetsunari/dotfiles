@@ -41,11 +41,20 @@ if vim.g.vscode then
     vscode.action("editor.action.rename")
   end)
 
+  -- goto change
   vim.keymap.set("n", "]c", function()
     vscode.action("workbench.action.editor.nextChange")
   end)
   vim.keymap.set("n", "[c", function()
     vscode.action("workbench.action.editor.previousChange")
+  end)
+
+  -- goto error
+  vim.keymap.set("n", "]e", function()
+    vscode.action("editor.action.marker.nextInFiles")
+  end)
+  vim.keymap.set("n", "[e", function()
+    vscode.action("editor.action.marker.prevInFiles")
   end)
 
   vim.keymap.set("n", "<space>g", function()
