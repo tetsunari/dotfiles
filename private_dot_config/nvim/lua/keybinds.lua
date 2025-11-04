@@ -25,6 +25,8 @@ vim.keymap.set('n', 'P', 'P]', { desc = 'Paste and move to the end' })
 vim.keymap.set('n', '<c-s>', '<cmd>write<cr>', { desc = 'Write' })
 vim.keymap.set({ 'n', 'x' }, 'so', ':source<cr>', { silent = true, desc = "Source crrent script" })
 
+vim.keymap.set('i', '<c-a>', '<ESC>^i')
+
 -- VSCode
 if vim.g.vscode then
   local vscode = require("vscode")
@@ -35,10 +37,6 @@ if vim.g.vscode then
 
   vim.keymap.set("n", "gru", function()
     vscode.action("workbench.action.findInFiles")
-  end)
-
-  vim.keymap.set({ "n", "i" }, "<S-C-r>", function()
-    vscode.action("editor.action.rename")
   end)
 
   -- goto change

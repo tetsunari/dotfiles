@@ -44,22 +44,14 @@ global lctrlPressed := false
 #HotIf !GetKeyState("RCtrl", "P")
 
 ; 主要なキーをパススルー
-~a::
-~b::
+; 注：a, b, d, e, f, h, n, p, k は Emacsキーバインド用に除外
 ~c::
-~d::
-~e::
-~f::
 ~g::
-~h::
 ~i::
 ~j::
-~k::
 ~l::
 ~m::
-~n::
 ~o::
-~p::
 ~q::
 ~r::
 ~s::
@@ -207,16 +199,33 @@ global lctrlPressed := false
 ; （このシステムでは修飾子が逆に動作するため）
 ; =============================================================================
 
-RCtrl & a::Send "{Home}"
-RCtrl & e::Send "{End}"
-RCtrl & b::Send "{Left}"
-RCtrl & f::Send "{Right}"
-RCtrl & n::Send "{Down}"
-RCtrl & p::Send "{Up}"
-RCtrl & h::Send "{Backspace}"
+; =====================================================================
+; VSCode Vim 専用キーバインド
+; =====================================================================
+#HotIf WinActive("ahk_exe Code.exe")
 
-RCtrl & d::Send "{Delete}"
-RCtrl & k::Send "+{End}{Delete}"
+>^a::Send "^a"
+>^x::Send "^x"
+
+#HotIf
+
+; =====================================================================
+; その他のアプリケーション用 Emacsキーバインド
+; =====================================================================
+>^e::Send "{End}"
+>^b::Send "{Left}"
+>^f::Send "{Right}"
+>^n::Send "{Down}"
+>^p::Send "{Up}"
+>^h::Send "{Backspace}"
+
+>^d::Send "{Delete}"
+>^k::Send "+{End}{Delete}"
+
+; VSCode以外で >^a を Emacs Home として定義
+#HotIf !WinActive("ahk_exe Code.exe")
+>^a::Send "{Home}"
+#HotIf
 
 ; =============================================================================
 ; Ctrl + Shift ベースのショートカット
@@ -433,7 +442,7 @@ MoveWindowToHalf(side)
 ; RCtrl + k を行末削除として実装（End+Delete）
 ; WezTermで CTRL+k は ScrollByLine(-1) に設定されているため、
 ; キー入力そのものを送信することで Kill-line 動作を実現
-RCtrl & k::Send "{End}{Delete}"
+>^k::Send "{End}{Delete}"
 
 ; LCtrl+V を Ctrl+Q に変換して送る（"Send"でアプリに渡す）
 >^v::Send "^{q}"
