@@ -1,6 +1,8 @@
 [tools]
 aws-cli = "latest"
 gcloud = "latest"
+pnpm = "latest"
+aws-sam = "latest"
 
 # node
 node = "latest"
