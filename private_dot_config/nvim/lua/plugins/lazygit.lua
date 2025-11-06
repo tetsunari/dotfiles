@@ -16,6 +16,6 @@ return {
   -- order to load the plugin when the command is run for the first time
   keys = {
     { "<leader>g", ":LazyGit<CR>", silent = true, desc = "LazyGit" },
-    { "<leader>f", ":LazyGitFilterCurrentFile<CR>", silent = true },
+    { "<leader>gf", ":LazyGitFilterCurrentFile<CR>", silent = true },
   },
 }
