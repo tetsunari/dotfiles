@@ -19,5 +19,5 @@
     ]
   },
   "model": "haiku",
-  "alwaysThinkingEnabled": true
+  "alwaysThinkingEnabled": false
 }
