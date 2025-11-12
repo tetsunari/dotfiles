@@ -1,5 +1,6 @@
 return {
   "MagicDuck/grug-far.nvim",
+  cmd = "GrugFar",
   keys = {
     { "gru", ":GrugFar<CR>", mode = { "n", "v" }, silent = true },
   },

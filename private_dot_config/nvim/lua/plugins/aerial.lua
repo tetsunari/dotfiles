@@ -1,5 +1,6 @@
 return {
   "stevearc/aerial.nvim",
+  cmd = { "AerialOpen", "AerialClose", "AerialToggle" },
   opts = {
     layout = {
       default_direction = "float",

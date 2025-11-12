@@ -1,7 +1,7 @@
 return {
   "nvim-lualine/lualine.nvim",
   dependencies = { "nvim-web-devicons", opt = true },
-  event = { "BufNewFile", "BufRead" },
+  event = "VeryLazy",
   opts = function()
     local theme_base = {
       a = { fg = "#1b1d2b", bg = "#82aaff", gui = "bold" },
