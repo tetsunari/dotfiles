@@ -58,15 +58,20 @@ return {
 		{
 			"nvim-telescope/telescope-fzf-native.nvim",
 			build = "make",
+			lazy = true,
 		}, -- FZF ネイティブ拡張
-		"nvim-telescope/telescope-github.nvim",
+		{
+			"nvim-telescope/telescope-github.nvim",
+			lazy = true,
+		},
 		{
 			"prochri/telescope-all-recent.nvim",
+			lazy = true,
 			config = function()
 				require("telescope-all-recent").setup({})
 			end,
 			after = "telescope.nvim",
-			dependencies = "kkharji/sqlite.lua",
+			dependencies = { "kkharji/sqlite.lua", lazy = true },
 		},
 	},
 	config = function()
