@@ -1,3 +1,17 @@
+-- zenhan IME自動切り替え設定
+if vim.fn.executable('zenhan') == 1 then
+  vim.api.nvim_create_autocmd('InsertLeave', {
+    callback = function()
+      vim.fn.system('zenhan 0 2>/dev/null')
+    end,
+  })
+  vim.api.nvim_create_autocmd('CmdlineLeave', {
+    callback = function()
+      vim.fn.system('zenhan 0 2>/dev/null')
+    end,
+  })
+end
+
 vim.keymap.set('n', 'ZZ', '<NOP>')
 vim.keymap.set('n', 'ZQ', '<NOP>')
 
