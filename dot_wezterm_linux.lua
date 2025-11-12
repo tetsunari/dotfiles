@@ -392,11 +392,12 @@ local function get_network_info()
   return "📵 Offline", colors.network_error
 end
 
--- WSL2ネットワーク状態テスト（絵文字付き・UTF-8安全版）
+-- WSL2ネットワーク状態テスト（絵文字付き・UTF-8安全版・非同期版）
 local function test_wsl_network()
-  -- HTTP接続テスト
+  -- HTTP接続テスト（非同期バージョン）
+  -- タイムアウトを3秒→1秒に短縮して起動を高速化
   local success, stdout, _ = wezterm.run_child_process({
-    "wsl", "timeout", "3", "/home/linuxbrew/.linuxbrew/bin/curl", "-s", "--connect-timeout", "2", "-I", "https://www.google.com"
+    "wsl", "timeout", "1", "/home/linuxbrew/.linuxbrew/bin/curl", "-s", "--connect-timeout", "1", "-I", "https://www.google.com"
   })
 
   if success and stdout and (stdout:find("200 OK") or stdout:find("HTTP/")) then
@@ -614,24 +615,19 @@ table.insert(M.keys, {
 })
 
 -- ==================== INITIALIZATION ====================
+-- 最適化：初期化時はPowerShellコマンド実行を避け、デフォルト値を使用
+-- 実際のデータは最初の update-right-status イベント以降に取得される
 wezterm.on("window-config-reloaded", function(window, pane)
-  local bat_text, bat_color = get_battery_info()
-  local net_text, net_color = get_network_info()
-
-  if validate_text_safety(bat_text) then
-    status_cache.battery_info = bat_text
-    status_cache.battery_color = bat_color
-  end
-
-  if validate_text_safety(net_text) then
-    status_cache.network_name = net_text
-    status_cache.network_color = net_color
-  end
-
+  -- 初期化時は即座にデフォルト値を設定（起動時間を短縮）
   status_cache.last_battery_update = os.time()
   status_cache.last_network_update = os.time()
 
-  test_wsl_network()
+  -- WSL2ネットワークテストはバックグラウンドで実行
+  -- （但し、実際には status_update_interval で制御される）
+  wezterm.time.call_after(500, function()
+    test_wsl_network()
+  end)
+
   wezterm.emit('update-right-status', window, pane)
 end)
 
