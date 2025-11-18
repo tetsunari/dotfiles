@@ -1,10 +1,19 @@
 -- zenhan IME自動切り替え設定
 if vim.fn.executable('zenhan') == 1 then
+  -- InsertモードからNormalモードに切り替わった時にIMEをオフにする
+  vim.api.nvim_create_autocmd('ModeChanged', {
+    pattern = 'i:*',
+    callback = function()
+      vim.fn.system('zenhan 0 2>/dev/null')
+    end,
+  })
+  -- Insertモードを抜けた時にIMEをオフにする（念のため）
   vim.api.nvim_create_autocmd('InsertLeave', {
     callback = function()
       vim.fn.system('zenhan 0 2>/dev/null')
     end,
   })
+  -- コマンドラインを抜けた時にIMEをオフにする
   vim.api.nvim_create_autocmd('CmdlineLeave', {
     callback = function()
       vim.fn.system('zenhan 0 2>/dev/null')
