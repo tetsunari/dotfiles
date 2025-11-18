@@ -1,0 +1,147 @@
+{
+  "effectiveTypeScript": [
+    {
+      "id": "et-001",
+      "title": "型空間と値空間を区別する",
+      "category": "type-system",
+      "description": "type と interface の使い分け、値として使えない型を作らない",
+      "example": "type Point = { x: number; y: number };  // 型空間のみ\nconst point: Point = { x: 1, y: 2 };  // 値として使える",
+      "antiPattern": "type Point = { x: number; y: number }; const p = new Point();  // エラー",
+      "reference": "Effective TypeScript Item 8"
+    },
+    {
+      "id": "et-002",
+      "title": "型で無効な状態を表現しない",
+      "category": "type-design",
+      "description": "null/undefined が必要でない場合は含めない。Union 型で有効な状態のみ表現",
+      "example": "type State = 'idle' | 'loading' | 'loaded' | 'error';\nif (state === 'loaded') {\n  // data は必ず存在\n}",
+      "antiPattern": "type State = { status: string; data?: unknown; error?: Error; };",
+      "reference": "Effective TypeScript Item 23"
+    },
+    {
+      "id": "et-003",
+      "title": "null と undefined を型周辺に集約",
+      "category": "null-handling",
+      "description": "関数の戻り値で null/undefined を明示。非 null アサーション（!）を最小化",
+      "example": "function parse(input: string): number | null {\n  // ...\n  return null;  // 明示的\n}",
+      "antiPattern": "function parse(input: string): number {\n  // ...\n  return null as any;  // 隠蔽\n}",
+      "reference": "Effective TypeScript Item 31"
+    },
+    {
+      "id": "et-004",
+      "title": "any 型を避ける",
+      "category": "type-safety",
+      "description": "unknown や具体的な型を使う。any を使う場合は最小スコープに限定",
+      "example": "function process(value: unknown) {\n  if (typeof value === 'string') {\n    console.log(value.toUpperCase());\n  }\n}",
+      "antiPattern": "function process(value: any) {\n  // 型チェックが無視される\n}",
+      "reference": "Effective TypeScript Item 38"
+    },
+    {
+      "id": "et-005",
+      "title": "型推論を活用しつつ、明示的な注釈が必要な場合は追加",
+      "category": "type-inference",
+      "description": "パブリック API には型注釈を付ける。内部実装では推論に頼る",
+      "example": "// パブリック API - 型注釈必須\nexport function add(a: number, b: number): number {\n  return a + b;  // 戻り値の型は推論可\n}",
+      "antiPattern": "// 戻り値の型を省略\nexport function add(a: number, b: number) {\n  return a + b;  // 外部使用者が型を推測必要\n}",
+      "reference": "Effective TypeScript Item 19"
+    }
+  ],
+  "typescriptBestPractices": [
+    {
+      "id": "ts-001",
+      "title": "const type parameters（TypeScript 5.0+）",
+      "category": "advanced-types",
+      "description": "Generic の型パラメータを const にして、より正確な型推論を実現",
+      "example": "function createLabel<const T>(label: T): { label: T } {\n  return { label };\n}\nconst result = createLabel('hello');  // label: 'hello' （string ではなく）",
+      "reference": "TypeScript 5.0 Release Notes"
+    },
+    {
+      "id": "ts-002",
+      "title": "satisfies 演算子",
+      "category": "type-checking",
+      "description": "型チェックを行いつつ、より広い型を推論させる",
+      "example": "const config = {\n  db: { host: 'localhost', port: 5432 }\n} satisfies { db: { host: string; port: number } };\n// config.db の型は推論される",
+      "reference": "TypeScript 4.9 Release Notes"
+    },
+    {
+      "id": "ts-003",
+      "title": "export const パターン",
+      "category": "module-design",
+      "description": "export const で型を自動推論させる（type エクスポート不要）",
+      "example": "export const ROUTES = {\n  home: '/',\n  about: '/about'\n} as const;  // 型が { readonly home: '/'; readonly about: '/about'; }",
+      "reference": "TypeScript Best Practices"
+    },
+    {
+      "id": "ts-004",
+      "title": "typeof を値に使わない",
+      "category": "common-mistakes",
+      "description": "typeof は型定義では使えない。別の値として扱う",
+      "example": "const x = { a: 1 };\ntype T = typeof x;  // { a: number } （型ガード用ではなく）",
+      "antiPattern": "const result = typeof x;  // 文字列 'object'（混乱しやすい）",
+      "reference": "TypeScript Handbook"
+    }
+  ],
+  "asyncAwaitBestPractices": [
+    {
+      "id": "async-001",
+      "title": "async 関数は必ず Promise を返す",
+      "category": "async-basics",
+      "description": "async 関数の戻り値は自動的に Promise でラップされる。明示的に Promise<T> を指定",
+      "example": "async function fetchUser(id: number): Promise<User> {\n  const response = await fetch(`/users/${id}`);\n  return response.json();\n}",
+      "antiPattern": "async function fetchUser(id: number): User {\n  // コンパイラが Promise<User> に修正するが、意図が不明確\n}",
+      "reference": "TypeScript Handbook: Async Await"
+    },
+    {
+      "id": "async-002",
+      "title": "エラーハンドリングは try/catch で一元化",
+      "category": "error-handling",
+      "description": "await の複数呼び出しを try/catch で囲む。.catch() チェーンより読みやすい",
+      "example": "async function process() {\n  try {\n    const data = await fetchData();\n    const result = await processData(data);\n    return result;\n  } catch (error) {\n    console.error('Process failed:', error);\n    throw error;  // 呼び元で処理\n  }\n}",
+      "antiPattern": "async function process() {\n  const data = await fetchData().catch(e => null);\n  const result = await processData(data).catch(e => null);\n  // 各行で個別に .catch() - 読みにくい\n}",
+      "reference": "Effective TypeScript Item 31"
+    },
+    {
+      "id": "async-003",
+      "title": "Promise.all() で並列実行、逐次実行は避ける",
+      "category": "performance",
+      "description": "順序が不要な操作は Promise.all() で並列化。逐次実行は確実に必要な場合のみ",
+      "example": "// 並列実行（高速）\nconst [user, posts, comments] = await Promise.all([\n  fetchUser(id),\n  fetchPosts(id),\n  fetchComments(id)\n]);",
+      "antiPattern": "// 逐次実行（遅い）\nconst user = await fetchUser(id);\nconst posts = await fetchPosts(id);\nconst comments = await fetchComments(id);",
+      "reference": "TypeScript Handbook: Promise.all"
+    },
+    {
+      "id": "async-004",
+      "title": "リトライパターンは指数バックオフで実装",
+      "category": "resilience",
+      "description": "一時的な失敗に対するリトライは指数バックオフ（待機時間を段階的に増加）を使用",
+      "example": "async function retryWithBackoff<T>(\n  fn: () => Promise<T>,\n  maxRetries = 3\n): Promise<T> {\n  for (let i = 0; i < maxRetries; i++) {\n    try {\n      return await fn();\n    } catch (error) {\n      if (i === maxRetries - 1) throw error;\n      await new Promise(resolve => \n        setTimeout(resolve, Math.pow(2, i) * 1000)  // 1s, 2s, 4s...\n      );\n    }\n  }\n}",
+      "reference": "AWS SDK Best Practices"
+    }
+  ],
+  "awsCDKBestPractices": [
+    {
+      "id": "cdk-001",
+      "title": "Construct 中心の設計",
+      "category": "architecture",
+      "description": "再利用可能な Construct を作成。責任を明確に分離",
+      "example": "export class DatabaseConstruct extends Construct {\n  public readonly table: dynamodb.Table;\n\n  constructor(scope: Construct, id: string) {\n    super(scope, id);\n    this.table = new dynamodb.Table(this, 'Table', { ... });\n  }\n}",
+      "reference": "AWS CDK Best Practices"
+    },
+    {
+      "id": "cdk-002",
+      "title": "Props インターフェースで型安全に設定",
+      "category": "type-safety",
+      "description": "Props インターフェースを定義。デフォルト値を活用",
+      "example": "interface DatabaseProps extends ConstructProps {\n  readonly tableName?: string;\n  readonly billingMode?: dynamodb.BillingMode;\n}\n\nexport class DatabaseConstruct extends Construct {\n  constructor(scope: Construct, id: string, props: DatabaseProps = {}) {\n    super(scope, id);\n    // props を型安全に使用\n  }\n}",
+      "reference": "AWS CDK Best Practices"
+    },
+    {
+      "id": "cdk-003",
+      "title": "Stack を関心事ごとに分割",
+      "category": "architecture",
+      "description": "大きな Stack ではなく、複数の小さな Stack を作成。クロススタック参照で連携",
+      "example": "// DatabaseStack\nexport class DatabaseStack extends Stack {\n  public readonly table: dynamodb.Table;\n}\n\n// LambdaStack\nexport class LambdaStack extends Stack {\n  constructor(scope: App, id: string, dbStack: DatabaseStack) {\n    super(scope, id);\n    // dbStack.table を参照\n  }\n}",
+      "reference": "AWS CDK Best Practices"
+    }
+  ]
+}
