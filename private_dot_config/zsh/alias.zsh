@@ -1,7 +1,9 @@
 alias lg='lazygit'
 alias vim='nvim'
 alias vi='nvim'
+# windows system command
 alias wsl='/mnt/c/Windows/System32/wsl.exe'
+alias winget='/mnt/c/Users/setup_user/AppData/Local/Microsoft/WindowsApps/winget.exe'
 # Notion
 alias notion="nohup $(wslpath $(/mnt/c/WINDOWS/system32/cmd.exe /c 'SET /P X=%USERPROFILE%<NUL' 2>/dev/null))/AppData/Local/Programs/Notion/Notion.exe > /dev/null 2>&1 &"
 alias notkill='/mnt/c/Windows/System32/taskkill.exe /F /IM Notion.exe'
