@@ -12,6 +12,7 @@ vim.opt.swapfile = false
 
 -- ウィンドウローカルオプション
 vim.opt.number = true
+-- vim.opt.relativenumber = true
 vim.opt.cursorline = true
 -- vim.opt.signcolumn = 'yes:1' -- 画面がちらついたらコメントアウト外す
 vim.opt.wrap = false
