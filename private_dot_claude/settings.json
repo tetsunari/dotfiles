@@ -18,6 +18,5 @@
       "Bash(curl:*)"
     ]
   },
-  "model": "haiku",
-  "alwaysThinkingEnabled": false
+  "alwaysThinkingEnabled": true
 }
