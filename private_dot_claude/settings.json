@@ -9,6 +9,7 @@
     "DISABLE_TELEMETRY": "true",
     "DISABLE_AUTOUPDATER": "true",
     "DISABLE_MICROCOMPACT": "true",
+    "DISABLE_NON_ESSENTIAL_MODEL_CALLS": "1",
     "DISABLE_INTERLEAVED_THINKING": "true"
   },
   "permissions": {
@@ -16,6 +17,9 @@
       "Read(~/.ssh/*)",
       "Read(.env.*)",
       "Bash(curl:*)"
+    ],
+    "allow": [
+      "Skill(*)"
     ]
   },
   "alwaysThinkingEnabled": true
