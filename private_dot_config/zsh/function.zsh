@@ -43,3 +43,18 @@ export _ZO_FZF_OPTS="
   --no-sort
   --exact
 "
+
+# manコマンドの設定
+export MANPAGER=less
+export LESS=-R
+
+export LESS_TERMCAP_mb=$'\e[1;31m'   # 強調 赤
+export LESS_TERMCAP_md=$'\e[1;34m'   # 太字 青
+export LESS_TERMCAP_me=$'\e[0m'      # reset
+
+export LESS_TERMCAP_so=$'\e[7m'      # 反転
+export LESS_TERMCAP_se=$'\e[0m'
+
+export LESS_TERMCAP_us=$'\e[4;32m'   # 下線 緑
+export LESS_TERMCAP_ue=$'\e[0m'
+
