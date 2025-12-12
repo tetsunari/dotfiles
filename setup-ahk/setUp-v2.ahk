@@ -62,16 +62,6 @@ global lctrlPressed := false
 ~x::
 ~y::
 ~z::
-~1::
-~2::
-~3::
-~4::
-~5::
-~6::
-~7::
-~8::
-~9::
-~0::
 ~F1::
 ~F2::
 ~F3::
@@ -199,10 +189,11 @@ global lctrlPressed := false
 ; GetKeyState() の判定よりも先に >^ ホットキーが評価される
 ; =============================================================================
 
-; VSCode 専用：>^a と >^x は元の Ctrl+a/x を保持
-#HotIf WinActive("ahk_exe Code.exe")
+; VSCode & Cursor 専用：>^a と >^x は元の Ctrl+a/x を保持
+#HotIf WinActive("ahk_exe Code.exe") || WinActive("ahk_exe Cursor.exe")
 >^a::Send "^a"
 >^x::Send "^x"
+>^d::Send "^d"
 #HotIf
 
 ; その他のアプリケーション用 Emacsキーバインド（グローバル）
@@ -239,6 +230,9 @@ global lctrlPressed := false
 
 ; Ctrl + Shift + L → Win + Shift + Right (ウィンドウ右画面移動)
 ^+l::Send "#+{Right}"
+
+; Ctrl + Shift + V → Win + V (クリップボード履歴)
+^+v::Send "#{v}"
 
 ; =============================================================================
 ; Ctrl + PgUp/PgDn ベースのショートカット
@@ -445,3 +439,11 @@ MoveWindowToHalf(side)
 >^c::send "^+{c}"
 
 #HotIf
+
+; =============================================================================
+; Win + 数字 → 仮想デスクトップ切り替え
+; =============================================================================
+
+#1::Send "^#{Left}"   ; Win+1 → 左のデスクトップへ
+#2::Send "^#{Right}"  ; Win+2 → 右のデスクトップへ
+

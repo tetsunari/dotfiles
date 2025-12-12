@@ -82,6 +82,7 @@ local colors = {
   battery_low = "#f7768e",
 }
 
+-- M.color_scheme = "Kanagawa (Gogh)"
 M.color_scheme = "Tokyo Night Storm (Gogh)"
 M.colors = {
   cursor_bg = colors.accent_purple,
@@ -174,8 +175,12 @@ M.leader = { key = "g", mods = "CTRL", timeout_milliseconds = 2000, }
 -- ==================== OPTIMIZED KEY BINDINGS ====================
 M.keys = {
   -- === BASIC OPERATIONS ===
-  { key = "c", mods = "CTRL|SHIFT", action = act.CopyTo 'Clipboard' },
-  { key = "v", mods = "CTRL|SHIFT", action = act.PasteFrom 'Clipboard' },
+  -- Left Control + C/V: コピー&ペースト（Macスタイル）
+  { key = "c", mods = "CTRL", action = act.CopyTo 'Clipboard' },
+  { key = "v", mods = "CTRL", action = act.PasteFrom 'Clipboard' },
+
+  -- Right Control + C: プロセスの終了（Ctrl+Cシグナル送信）
+  { key = "c", mods = "CTRL|SHIFT", action = act.SendKey { key = "c", mods = "CTRL" } },
 
   -- === NAVIGATION (Vim-like) ===
   { key = "h", mods = "CTRL|ALT", action = act.SendKey({ key = "LeftArrow" }) },
@@ -186,6 +191,7 @@ M.keys = {
   -- === SCROLLING ===
   { key = "j", mods = "CTRL", action = act.ScrollByLine(1) },
   { key = "k", mods = "CTRL", action = act.ScrollByLine(-1) },
+  -- { key = "k", mods = "CTRL", action = act.SendString("\x05\x0b") },
   { key = "j", mods = "CTRL|SHIFT", action = act.ScrollByPage(0.5) },
   { key = "k", mods = "CTRL|SHIFT", action = act.ScrollByPage(-0.5) },
   { key = "G", mods = "CTRL|SHIFT", action = act.ScrollToBottom },
@@ -226,6 +232,9 @@ M.keys = {
   { key = "=", mods = "CTRL", action = act.IncreaseFontSize },
   { key = "-", mods = "CTRL", action = act.DecreaseFontSize },
   { key = "0", mods = "CTRL", action = act.ResetFontSize },
+
+  -- === Shift + Enterで改行 ===
+  { key = "Enter", mods = "SHIFT", action = wezterm.action.SendString('\n') }
 }
 
 -- ==================== UTF-8 SAFETY FUNCTIONS ====================
@@ -632,7 +641,3 @@ wezterm.on("window-config-reloaded", function(window, pane)
 end)
 
 return M
-
-config.keys = {
-  {key="Enter", mods="SHIFT", action=wezterm.action{SendString="\x1b\r"}},
-}
