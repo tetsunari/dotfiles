@@ -203,9 +203,13 @@ global lctrlPressed := false
 >^f::Send "{Right}"
 >^n::Send "{Down}"
 >^p::Send "{Up}"
->^h::Send "{Backspace}"
 >^d::Send "{Delete}"
 >^k::Send "+{End}{Delete}"
+
+; Emacsキーバインド（両Ctrl同時押しと競合しないように条件付き）
+#HotIf !GetKeyState("LCtrl", "P")
+>^h::Send "{Backspace}"
+#HotIf
 
 ; VSCode以外で >^a を Emacs Home として定義
 #HotIf !WinActive("ahk_exe Code.exe")
@@ -225,13 +229,11 @@ global lctrlPressed := false
 ; Ctrl + Shift + ] → Ctrl + PgDn (ページダウン)
 ^+]::Send "^{PgDn}"
 
-; Ctrl + Shift + H → Win + Shift + Left (ウィンドウ左画面移動)
-; ^+h::Send "#+{Left}"
-^>^h::Send "#+{Left}"
+; LCtrl + RCtrl + H → Win + Shift + Left (ウィンドウ左画面移動)
+<^>^h::Send "#+{Left}"
 
-; Ctrl + Shift + L → Win + Shift + Right (ウィンドウ右画面移動)
-; ^+l::Send "#+{Right}"
-^>^l::Send "#+{Right}"
+; LCtrl + RCtrl + L → Win + Shift + Right (ウィンドウ右画面移動)
+<^>^l::Send "#+{Right}"
 
 ; Ctrl + Shift + V → Win + V (クリップボード履歴)
 ^+v::Send "#{v}"
@@ -455,3 +457,4 @@ $^!m::
 
 ^Left::SendInput "^#{Left}"   ; Ctrl+← → 左のデスクトップへ
 ^Right::SendInput "^#{Right}"  ; Ctrl+→ → 右のデスクトップへ
+
