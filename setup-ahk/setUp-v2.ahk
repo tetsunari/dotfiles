@@ -226,10 +226,12 @@ global lctrlPressed := false
 ^+]::Send "^{PgDn}"
 
 ; Ctrl + Shift + H → Win + Shift + Left (ウィンドウ左画面移動)
-^+h::Send "#+{Left}"
+; ^+h::Send "#+{Left}"
+^>^h::Send "#+{Left}"
 
 ; Ctrl + Shift + L → Win + Shift + Right (ウィンドウ右画面移動)
-^+l::Send "#+{Right}"
+; ^+l::Send "#+{Right}"
+^>^l::Send "#+{Right}"
 
 ; Ctrl + Shift + V → Win + V (クリップボード履歴)
 ^+v::Send "#{v}"
@@ -400,19 +402,19 @@ MoveWindowToHalf(side)
 ; =============================================================================
 
 ; Ctrl + Alt + H → ウィンドウ左半分配置
-^!h::MoveWindowToHalf("Left")
+$^!h::MoveWindowToHalf("Left")
 
 ; Ctrl + Alt + J → ウィンドウ下半分配置
-^!j::MoveWindowToHalf("Bottom")
+$^!j::MoveWindowToHalf("Bottom")
 
 ; Ctrl + Alt + K → ウィンドウ上半分配置
-^!k::MoveWindowToHalf("Top")
+$^!k::MoveWindowToHalf("Top")
 
 ; Ctrl + Alt + L → ウィンドウ右半分配置
-^!l::MoveWindowToHalf("Right")
+$^!l::MoveWindowToHalf("Right")
 
 ; Ctrl + Alt + M → ウィンドウ最大化
-^!m::
+$^!m::
 {
     try
     {
@@ -444,6 +446,13 @@ MoveWindowToHalf(side)
 ; Win + 数字 → 仮想デスクトップ切り替え
 ; =============================================================================
 
-#1::Send "^#{Left}"   ; Win+1 → 左のデスクトップへ
-#2::Send "^#{Right}"  ; Win+2 → 右のデスクトップへ
+; #1::Send "^#{Left}"   ; Win+1 → 左のデスクトップへ
+; #2::Send "^#{Right}"  ; Win+2 → 右のデスクトップへ
+
+; =============================================================================
+; Ctrl + 矢印 → 仮想デスクトップ切り替え
+; =============================================================================
+
+^Left::SendInput "^#{Left}"   ; Ctrl+← → 左のデスクトップへ
+^Right::SendInput "^#{Right}"  ; Ctrl+→ → 右のデスクトップへ
 
