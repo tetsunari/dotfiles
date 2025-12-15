@@ -455,4 +455,3 @@ $^!m::
 
 ^Left::SendInput "^#{Left}"   ; Ctrl+← → 左のデスクトップへ
 ^Right::SendInput "^#{Right}"  ; Ctrl+→ → 右のデスクトップへ
-
