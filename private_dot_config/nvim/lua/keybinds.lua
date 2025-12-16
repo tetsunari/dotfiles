@@ -126,7 +126,7 @@ if vim.g.vscode then
   --   vscode.action("workbench.action.previousEditorInGroup")
   -- end)
 
-  vim.keymap.set("n", "<space>w", function()
+  vim.keymap.set("n", "<space>x", function()
     vscode.action("workbench.action.closeActiveEditor")
   end)
 
