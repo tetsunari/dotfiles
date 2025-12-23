@@ -7,6 +7,9 @@ M.default_domain = 'WSL:Ubuntu'
 M.check_for_updates = true
 M.check_for_updates_interval_seconds = 86400
 
+-- 通知設定（OSC 777/9 エスケープシーケンス対応）
+M.notification_handling = "SuppressFromFocusedWindow"
+
 -- ==================== INPUT & ACCESSIBILITY ====================
 M.use_ime = true
 M.ime_preedit_rendering = 'System'
