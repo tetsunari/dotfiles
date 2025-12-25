@@ -14,14 +14,40 @@
     "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1"
   },
   "permissions": {
-    "deny": [
-      "Read(~/.ssh/*)",
-      "Read(.env.*)",
-      "Bash(curl:*)"
-    ],
-    "allow": [
-      "Skill(*)"
-    ]
+    "deny": ["Read(~/.ssh/*)", "Read(.env.*)", "Bash(curl:*)"],
+    "allow": ["Skill(*)"]
   },
-  "alwaysThinkingEnabled": true
+  "alwaysThinkingEnabled": true,
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/scripts/notify.sh 'Claude Code' '💬 プロンプトを処理中'"
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/scripts/notify.sh 'Claude Code' '❗ ユーザーの指示が必要です'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/scripts/notify.sh 'Claude Code' '✅ タスクが完了しました'"
+          }
+        ]
+      }
+    ]
+  }
 }
