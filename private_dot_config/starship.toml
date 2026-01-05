@@ -15,7 +15,7 @@ home_symbol = '~'
 read_only = '󰌾 '
 format = """
 [$path]($style)\
-[$read_only]($read_only_style) \
+[$read_only]($read_only_style)\
 """
 style = 'bold fg:#80EBDF'
 read_only_style = 'bold red'
