@@ -11,11 +11,11 @@ truncation_length = 10
 truncation_symbol = ' '
 # git repositoryでもフルパスを表示
 # truncate_to_repo = false
-home_symbol = '~ '
+home_symbol = '~'
 read_only = '󰌾 '
 format = """
 [$path]($style)\
-[$read_only]($read_only_style)\
+[$read_only]($read_only_style) \
 """
 style = 'bold fg:#80EBDF'
 read_only_style = 'bold red'
@@ -39,8 +39,9 @@ disabled = true
 disabled = true
 
 [aws]
-format = '[ $symbol ($profile )(\($project\))(\($region\))]($style)'
-style = '#ffa500'
+format = '[](bg:#24283b fg:#8f5736)[$symbol($profile)(\($project\))(\($region\))]($style)[](bg:#24283b fg:#8f5736)'
+# style = '#ffa500'
+style = 'fg:white bg:#8f5736'
 symbol = ''
 # force_display = true
 # disabled = false
@@ -52,8 +53,8 @@ symbol = ''
 
 [gcloud]
 # format = 'on [$symbol$account(@$domain)(\($project\))]($style) '
-format = '[ $symbol ($profile )(\($project\))(\($region\))]($style)'
-style = 'blue'
+format = '[](bg:#24283b fg:#3a6494)[$symbol($profile)(\($project\))(\($region\))]($style)[](bg:#24283b fg:#3a6494)'
+style = 'fg:white bg:#3a6494'
 symbol = ''
 # [gcloud.project_aliases]
 # very-long-project-name = 'vlpn'
