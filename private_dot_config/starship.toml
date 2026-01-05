@@ -39,9 +39,9 @@ disabled = true
 disabled = true
 
 [aws]
-format = '[$symbol($profile )(\($project\))(\($region\) )]($style)'
+format = '[ $symbol ($profile )(\($project\))(\($region\))]($style)'
 style = '#ffa500'
-symbol = ' '
+symbol = ''
 # force_display = true
 # disabled = false
 # [aws.region_aliases]
@@ -52,9 +52,9 @@ symbol = ' '
 
 [gcloud]
 # format = 'on [$symbol$account(@$domain)(\($project\))]($style) '
-format = '[$symbol($profile )(\($project\))(\($region\) )]($style)'
+format = '[ $symbol ($profile )(\($project\))(\($region\))]($style)'
 style = 'blue'
-symbol = ' '
+symbol = ''
 # [gcloud.project_aliases]
 # very-long-project-name = 'vlpn'
 
@@ -87,5 +87,6 @@ format = """
 """
 
 [cmd_duration]
-min_time = 1
+# min_time = 2
 # show_milliseconds = true
+format = ' took [$duration]($style)'
