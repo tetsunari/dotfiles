@@ -1,10 +1,23 @@
+# プロンプト前の改行を無効化
 add_newline = false
+
+# ディレクトリを2行目に移動
+# format = """
+# $all\
+# $fill\
+# $cmd_duration\
+# \n$character
+# """
+format = '$all$fill$line_break$character'
 
 command_timeout = 5000
 scan_timeout = 2000
 
+[line_break]
+disabled = false
+
 [character]
-vimcmd_symbol = '[V](bold green) '
+vimcmd_symbol = '[V](bold green)'
 
 [directory]
 truncation_length = 10
@@ -21,11 +34,8 @@ style = 'bold fg:#80EBDF'
 read_only_style = 'bold red'
 
 [fill]
-symbol = '-'
-style = 'bold white'
-
-[line_break]
-disabled = false
+symbol = '─'
+style = '#4d4d4d'
 
 [docker_context]
 disabled = true
@@ -39,9 +49,9 @@ disabled = true
 disabled = true
 
 [aws]
-format = '[](bg:#24283b fg:#8f5736)[$symbol($profile)(\($project\))(\($region\))]($style)[](bg:#24283b fg:#8f5736)'
+format = '[](bg:#24283b fg:#583622)[$symbol($profile)(\($project\))(\($region\))]($style)[](bg:#24283b fg:#583622)'
 # style = '#ffa500'
-style = 'fg:white bg:#8f5736'
+style = 'fg:white bg:#583622'
 symbol = ''
 # force_display = true
 # disabled = false
@@ -53,8 +63,8 @@ symbol = ''
 
 [gcloud]
 # format = 'on [$symbol$account(@$domain)(\($project\))]($style) '
-format = '[](bg:#24283b fg:#3a6494)[$symbol($profile)(\($project\))(\($region\))]($style)[](bg:#24283b fg:#3a6494)'
-style = 'fg:white bg:#3a6494'
+format = '[](bg:#24283b fg:#28405c)[$symbol($profile)(\($project\))(\($region\))]($style)[](bg:#24283b fg:#28405c)'
+style = 'fg:white bg:#28405c'
 symbol = ''
 # [gcloud.project_aliases]
 # very-long-project-name = 'vlpn'
@@ -91,3 +101,4 @@ format = """
 # min_time = 2
 # show_milliseconds = true
 format = ' took [$duration]($style)'
+
