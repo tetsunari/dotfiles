@@ -7,6 +7,135 @@ description: AWS Lambda (TypeScript) のベストプラクティスガイド。A
 
 Lambda関数を実装・レビューする際のガイドラインです。
 
+## Lambda設計原則
+
+### 単一責任の原則
+
+ハンドラーは「イベントの受信とレスポンスの返却」のみに責任を持つ。ビジネスロジックは別の関数・クラスに分離：
+
+```typescript
+// ❌ Bad: ハンドラーにビジネスロジックが混在
+export const handler = async (event: APIGatewayProxyEvent) => {
+  const body = JSON.parse(event.body!)
+  const user = await dynamodb.get({ TableName: 'Users', Key: { id: body.userId } })
+  if (!user || user.status !== 'active') {
+    return { statusCode: 403, body: 'Forbidden' }
+  }
+  // さらに複雑な処理が続く...
+}
+
+// ✅ Good: ハンドラーはシンプルに、ビジネスロジックは分離
+export const handler = async (event: APIGatewayProxyEvent) => {
+  const body = parseJSON(event.body)
+  const result = await createOrderUseCase.execute(body)
+  return createResponse(200, result)
+}
+```
+
+### レイヤードアーキテクチャ
+
+責務を3層に分離することで、テスト容易性と保守性が向上：
+
+- **Handler層**: イベント受信、パース、バリデーション、レスポンス生成
+- **UseCase層**: ビジネスロジック（ドメイン知識を含む処理）
+- **Repository層**: データ永続化（DynamoDB、RDS等）
+
+```typescript
+// Handler層（handler.ts）
+export const handler = async (event: APIGatewayProxyEvent) => {
+  const body = parseJSON(event.body)
+  const result = await createOrderUseCase.execute(body)
+  return createResponse(200, result)
+}
+
+// UseCase層（createOrderUseCase.ts）
+class CreateOrderUseCase {
+  constructor(private orderRepository: OrderRepository) {}
+
+  async execute(input: CreateOrderInput): Promise<Order> {
+    // ビジネスルールの検証
+    if (input.amount <= 0) {
+      throw new DomainError('Amount must be positive')
+    }
+
+    // データ永続化
+    return await this.orderRepository.save(input)
+  }
+}
+
+// Repository層（orderRepository.ts）
+class OrderRepository {
+  async save(order: CreateOrderInput): Promise<Order> {
+    // DynamoDB操作
+    await dynamodb.send(new PutCommand({ TableName: 'Orders', Item: order }))
+    return order
+  }
+}
+```
+
+### エラーハンドリング戦略
+
+エラーを2種類に分類し、適切なHTTPステータスコードを返す：
+
+- **ドメインエラー**: ビジネスルール違反（400 Bad Request、403 Forbidden等）
+- **システムエラー**: インフラ障害、予期しないエラー（500 Internal Server Error）
+
+```typescript
+// カスタムエラークラス
+class DomainError extends Error {
+  constructor(message: string, public statusCode: number = 400) {
+    super(message)
+    this.name = 'DomainError'
+  }
+}
+
+// エラーハンドリング
+function handleError(error: unknown): APIGatewayProxyResult {
+  if (error instanceof DomainError) {
+    // ドメインエラー: ユーザーに理由を返す
+    return createResponse(error.statusCode, { message: error.message })
+  }
+
+  // システムエラー: 詳細を隠す
+  console.error('System error:', error)
+  return createResponse(500, { message: 'Internal server error' })
+}
+```
+
+### 依存性注入パターン
+
+テスト容易性のため、依存オブジェクトは外部から注入可能にする：
+
+```typescript
+// ❌ Bad: handler内で直接インスタンス化（テストが困難）
+export const handler = async (event: APIGatewayProxyEvent) => {
+  const repository = new OrderRepository() // ハードコーディング
+  const useCase = new CreateOrderUseCase(repository)
+  return await useCase.execute(event.body)
+}
+
+// ✅ Good: handler外で初期化（テスト時にモックを注入可能）
+const repository = new OrderRepository()
+const useCase = new CreateOrderUseCase(repository)
+
+export const handler = async (event: APIGatewayProxyEvent) => {
+  const body = parseJSON(event.body)
+  const result = await useCase.execute(body)
+  return createResponse(200, result)
+}
+```
+
+**テスト例**:
+```typescript
+// テスト時はモックを注入
+const mockRepository = {
+  save: jest.fn().mockResolvedValue({ id: '123', status: 'pending' })
+}
+const useCase = new CreateOrderUseCase(mockRepository)
+```
+
+---
+
 ## 呼び出し元に応じた戻り値
 
 | 呼び出し元 | 戻り値 |
@@ -40,46 +169,124 @@ export const handler = async (event) => {
 
 ## API Gateway 経由の Lambda
 
-### ミドルウェア（middy）の活用
+### 汎用実装パターン（生のTypeScript）
 
-リクエストパース、バリデーション、エラーハンドリングなど共通処理はミドルウェアで分離：
+リクエストパース、バリデーション、エラーハンドリングなどを明示的に実装：
 
 ```typescript
-import middy from '@middy/core'
-import httpJsonBodyParser from '@middy/http-json-body-parser'
-import httpErrorHandler from '@middy/http-error-handler'
-import httpSecurityHeaders from '@middy/http-security-headers'
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 
-const baseHandler = async (event: ParsedEvent): Promise<APIGatewayProxyResult> => {
-  // ビジネスロジックのみに集中
-  const result = await useCase.execute(event.body)
-  return { statusCode: 200, body: JSON.stringify(result) }
+export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+  try {
+    // 1. JSONパース（エラーハンドリング付き）
+    const body = parseJSON(event.body)
+
+    // 2. バリデーション
+    const validationResult = validateRequest(body)
+    if (!validationResult.valid) {
+      return createResponse(400, { errors: validationResult.errors })
+    }
+
+    // 3. ビジネスロジック実行
+    const result = await executeBusinessLogic(validationResult.data)
+
+    // 4. レスポンス生成（セキュリティヘッダー付き）
+    return createResponse(200, result)
+  } catch (error) {
+    return handleError(error)
+  }
 }
 
-export const handler = middy<APIGatewayProxyEvent, APIGatewayProxyResult>()
-  .use(httpJsonBodyParser())        // JSON パース
-  .use(httpSecurityHeaders())       // セキュリティヘッダー
-  .use(httpErrorHandler())          // エラーハンドリング
-  .handler(baseHandler)
+// ヘルパー関数: JSONパース
+function parseJSON(body: string | null): unknown {
+  if (!body) {
+    throw new Error('Request body is empty')
+  }
+  try {
+    return JSON.parse(body)
+  } catch (error) {
+    throw new Error('Invalid JSON format')
+  }
+}
+
+// ヘルパー関数: レスポンス生成
+function createResponse(statusCode: number, body: unknown): APIGatewayProxyResult {
+  return {
+    statusCode,
+    headers: {
+      'Content-Type': 'application/json',
+      'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
+      'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'DENY',
+      'X-XSS-Protection': '1; mode=block',
+    },
+    body: JSON.stringify(body),
+  }
+}
+
+// ヘルパー関数: エラーハンドリング
+function handleError(error: unknown): APIGatewayProxyResult {
+  console.error('Error:', error)
+  const message = error instanceof Error ? error.message : 'Internal server error'
+  return createResponse(500, { message })
+}
 ```
 
 ### リクエストバリデーション
 
-Zod などのスキーマバリデーションを使用：
+TypeScript型ガードとカスタムバリデーション関数による実装：
 
 ```typescript
-import { z } from 'zod'
+// リクエストボディの型定義
+interface RequestBody {
+  imageId: string
+  cpu?: number
+}
 
-const requestSchema = z.object({
-  imageId: z.string().min(1),
-  cpu: z.number().positive().optional(),
-})
+// 型ガード（型安全な検証）
+function isValidRequestBody(body: any): body is RequestBody {
+  return (
+    typeof body === 'object' &&
+    body !== null &&
+    typeof body.imageId === 'string' &&
+    body.imageId.length > 0 &&
+    (body.cpu === undefined || (typeof body.cpu === 'number' && body.cpu > 0))
+  )
+}
 
-// middy の .before フックで検証
-.before(async (request) => {
-  requestSchema.parse(request.event.body)
-})
+// 詳細なバリデーション（エラーメッセージ付き）
+function validateRequest(
+  body: any
+): { valid: true; data: RequestBody } | { valid: false; errors: string[] } {
+  const errors: string[] = []
+
+  if (typeof body !== 'object' || body === null) {
+    errors.push('Request body must be an object')
+    return { valid: false, errors }
+  }
+
+  if (typeof body.imageId !== 'string' || body.imageId.length === 0) {
+    errors.push('imageId must be a non-empty string')
+  }
+
+  if (body.cpu !== undefined && (typeof body.cpu !== 'number' || body.cpu <= 0)) {
+    errors.push('cpu must be a positive number')
+  }
+
+  if (errors.length > 0) {
+    return { valid: false, errors }
+  }
+
+  return { valid: true, data: body as RequestBody }
+}
 ```
+
+### 選択肢: ライブラリを使用する場合
+
+上記は標準TypeScriptでの実装例ですが、以下のライブラリを使用することで開発効率を向上できます：
+
+- **middy**: ミドルウェアフレームワーク（詳細は「オプション: サードパーティライブラリ」セクション参照）
+- **zod / Joi / yup**: スキーマバリデーションライブラリ（詳細は同上）
 
 ### パスパラメータの取得
 
@@ -707,9 +914,114 @@ export class MyStack extends cdk.Stack {
 
 ---
 
+## オプション: サードパーティライブラリ
+
+このガイドでは汎用的な実装パターン（生のTypeScript/Node.js + AWS SDK直接使用）を中心に紹介していますが、以下のライブラリを使用することで開発効率を向上できます。
+
+**これらは選択肢の一つであり、必須ではありません。**プロジェクトの要件・チームの方針に応じて選択してください。
+
+### middy - ミドルウェアフレームワーク
+
+Lambda関数に対して、Express.jsライクなミドルウェアパターンを適用できるフレームワーク。
+
+#### 基本的な使用方法
+
+```typescript
+import middy from '@middy/core'
+import httpJsonBodyParser from '@middy/http-json-body-parser'
+import httpErrorHandler from '@middy/http-error-handler'
+import httpSecurityHeaders from '@middy/http-security-headers'
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
+
+const baseHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+  // ビジネスロジックのみに集中（パース・バリデーション・エラーハンドリングはミドルウェアが担当）
+  const result = await useCase.execute(event.body)
+  return { statusCode: 200, body: JSON.stringify(result) }
+}
+
+export const handler = middy()
+  .use(httpJsonBodyParser())        // JSON パース
+  .use(httpSecurityHeaders())       // セキュリティヘッダー
+  .use(httpErrorHandler())          // エラーハンドリング
+  .handler(baseHandler)
+```
+
+#### メリット
+- ✅ 共通処理（パース、バリデーション、ログ等）を再利用可能
+- ✅ ハンドラーのコードがシンプルになる
+- ✅ カスタムミドルウェアの作成が容易
+
+#### デメリット
+- ❌ ライブラリへの依存が増える
+- ❌ ミドルウェアの実行順序を理解する必要がある
+
+**公式サイト**: [middy.js.org](https://middy.js.org/)
+
+---
+
+### zod - スキーマバリデーション
+
+TypeScript-firstのスキーマバリデーションライブラリ。型安全なバリデーションが可能。
+
+#### 基本的な使用方法
+
+```typescript
+import { z } from 'zod'
+
+// スキーマ定義
+const requestSchema = z.object({
+  imageId: z.string().min(1, 'imageId must not be empty'),
+  cpu: z.number().positive('cpu must be positive').optional(),
+  tags: z.array(z.string()).optional(),
+})
+
+// バリデーション実行
+try {
+  const validatedData = requestSchema.parse(event.body)
+  // validatedDataは型安全（RequestBody型として推論される）
+} catch (error) {
+  if (error instanceof z.ZodError) {
+    // エラーメッセージを整形
+    const errors = error.errors.map((e) => `${e.path.join('.')}: ${e.message}`)
+    return createResponse(400, { errors })
+  }
+}
+
+// 型抽出も可能
+type RequestBody = z.infer<typeof requestSchema>
+```
+
+#### メリット
+- ✅ TypeScriptの型を自動生成できる
+- ✅ 詳細なエラーメッセージ
+- ✅ 複雑なバリデーションルールを簡潔に記述
+
+#### デメリット
+- ❌ ライブラリへの依存が増える
+- ❌ シンプルな検証では冗長になる場合がある
+
+**公式サイト**: [zod.dev](https://zod.dev/)
+
+---
+
+### その他の選択肢
+
+#### バリデーションライブラリ
+- **Joi**: Node.js向けの老舗バリデーションライブラリ（zodの代替）
+- **yup**: React Hook Formなどとの統合が容易
+- **ajv**: JSON Schema準拠の高速バリデーション
+- **class-validator**: クラスベースのバリデーション（NestJS等で使用）
+
+#### ユーティリティ
+- **@aws-lambda-powertools/parameters**: SSM Parameter Store / Secrets Managerからのパラメータ取得（キャッシング機能付き）
+- **lambda-api**: API Gatewayのルーティングを簡素化
+
+---
+
 ## 参考リンク
 
 - [AWS Lambda Developer Guide](https://docs.aws.amazon.com/lambda/latest/dg/)
 - [AWS Lambda Powertools for TypeScript](https://docs.powertools.aws.dev/lambda/typescript/)
 - [AWS SDK for JavaScript v3](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/)
 - [middy - The Node.js middleware framework for AWS Lambda](https://middy.js.org/)
+- [zod - TypeScript-first schema validation](https://zod.dev/)
