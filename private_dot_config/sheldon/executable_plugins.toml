@@ -25,7 +25,16 @@ fzf-source = "{% for file in files %}source \"{{ file }}\"\n{% endfor %}"
 defer = "{% for file in files %}zsh-defer source \"{{ file }}\"\n{% endfor %}"
 
 [plugins.compinit]
-inline = 'autoload -Uz compinit && compinit -C'
+# inline = 'autoload -Uz compinit && compinit -C'
+inline = """
+autoload -Uz compinit
+
+_zcompdump="${XDG_CACHE_HOME:-${HOME}/.cache}/zsh/.zcompdump-${HOST}-${ZSH_VERSION}"
+mkdir -p "${_zcompdump:h}"
+
+# 安全・確実な初期化（自動再生成あり）
+compinit -d "${_zcompdump}"
+"""
 
 [plugins.zsh-completons]
 github = 'zsh-users/zsh-completions'
