@@ -14,10 +14,15 @@
     "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1"
   },
   "permissions": {
-    "deny": ["Read(~/.ssh/*)", "Read(.env.*)", "Bash(curl:*)"],
-    "allow": ["Skill(*)"]
+    "allow": [
+      "Skill(*)"
+    ],
+    "deny": [
+      "Read(~/.ssh/*)",
+      "Read(.env.*)",
+      "Bash(curl:*)"
+    ]
   },
-  "alwaysThinkingEnabled": true,
   "hooks": {
     "UserPromptSubmit": [
       {
@@ -49,5 +54,7 @@
         ]
       }
     ]
-  }
+  },
+  "alwaysThinkingEnabled": true,
+  "model": "opus"
 }
