@@ -6,6 +6,7 @@ local act = wezterm.action
 M.default_domain = 'WSL:Ubuntu'
 M.check_for_updates = true
 M.check_for_updates_interval_seconds = 86400
+-- M.disable_default_key_bindings = true 
 
 -- 通知設定（OSC 777/9 エスケープシーケンス対応）
 M.notification_handling = "SuppressFromFocusedWindow"
@@ -38,7 +39,7 @@ M.font = wezterm.font_with_fallback({
 })
 M.font_size = 8.5
 M.line_height = 1.0
-M.cell_width = 1.0
+-- M.cell_width = 1.0
 
 -- ==================== VISUAL DESIGN SYSTEM ====================
 -- Unified color palette (Tokyo Night inspired but optimized for readability)
@@ -132,8 +133,8 @@ M.colors = {
 
 -- ==================== WINDOW & LAYOUT ====================
 M.window_decorations = 'RESIZE'
-M.window_background_opacity = 0.95
-M.text_background_opacity = 1.0
+M.window_background_opacity = 0.75
+M.text_background_opacity = 0.85
 M.adjust_window_size_when_changing_font_size = false
 
 M.window_padding = {
@@ -215,6 +216,7 @@ M.keys = {
   { key = "L", mods = "LEADER|SHIFT", action = act.AdjustPaneSize({ "Right", 5 }) },
   { key = "K", mods = "LEADER|SHIFT", action = act.AdjustPaneSize({ "Up", 3 }) },
   { key = "J", mods = "LEADER|SHIFT", action = act.AdjustPaneSize({ "Down", 3 }) },
+  -- { key = "r",lmodes = "LEADER", action = act.ActivateKeyTable { name = "resize_pane", one_shot = false }, },
 
   -- === TAB MANAGEMENT ===
   { key = "c", mods = "LEADER", action = act.SpawnTab("CurrentPaneDomain") },
@@ -239,6 +241,16 @@ M.keys = {
   -- === Shift + Enterで改行 ===
   { key = "Enter", mods = "SHIFT", action = wezterm.action.SendString('\n') }
 }
+
+-- M.key_tables = {
+--   resize_pane = {
+--     { key = "h", action = act.AdjustPaneSize{ "Left", 1 } },
+--     { key = "l", action = act.AdjustPaneSize{ "Right", 1 } },
+--     { key = "k", action = act.AdjustPaneSize{ "Up", 1 } },
+--     { key = "j", action = act.AdjustPaneSize{ "Down", 1 } },
+--     { key = "Enter", action = "PopKeyTable" },
+--   },
+-- }
 
 -- ==================== UTF-8 SAFETY FUNCTIONS ====================
 -- 動的に取得される文字列（ネットワーク名など）のみを安全化
