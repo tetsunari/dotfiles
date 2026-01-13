@@ -19,6 +19,9 @@ description: |
   LLMの思考・推論・計画能力が不可欠なタスクです。
 tools: Read, Write, Bash, Grep
 model: sonnet
+context: fork
+skills:
+  - quiz-output-formatter
 ---
 
 # TypeScript 問題ジェネレータ（汎用・最新ベストプラクティス対応）
