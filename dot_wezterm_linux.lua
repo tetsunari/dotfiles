@@ -20,22 +20,25 @@ M.scrollback_lines = 10000
 -- ==================== TYPOGRAPHY & READABILITY ====================
 M.font = wezterm.font_with_fallback({
   {
+    family = "Firge35Nerd Console",
+    stretch = "UltraCondensed",
+    weight = "DemiBold",
+  },
+  {
     family = "UDEV Gothic 35NF",
     stretch = 'UltraExpanded',
     weight = "ExtraBlack",
   },
   {
-    family = "Firge35Nerd Console",
-    stretch = 'Expanded',
-    weight = "Black",
+    family = "Myna Nerd Font",
   },
   {
-    family = "JetBrains Mono",
-    weight = "Medium",
+    family = "IBM Plex Sans JP"
   },
-  {
-    family = "Symbols Nerd Font",
-  },
+  -- {
+  --   family = "JetBrains Mono",
+  --   weight = "Medium",
+  -- },
 })
 M.font_size = 8.5
 M.line_height = 1.0
@@ -133,7 +136,7 @@ M.colors = {
 
 -- ==================== WINDOW & LAYOUT ====================
 M.window_decorations = 'RESIZE'
-M.window_background_opacity = 0.75
+M.window_background_opacity = 0.93
 M.text_background_opacity = 0.85
 M.adjust_window_size_when_changing_font_size = false
 
