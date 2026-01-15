@@ -30,15 +30,12 @@ M.font = wezterm.font_with_fallback({
     weight = "ExtraBlack",
   },
   {
-    family = "Myna Nerd Font",
+    family = "JetBrainsMonoNL Nerd Font",
+    weight = "DemiBold",
   },
   {
     family = "IBM Plex Sans JP"
   },
-  -- {
-  --   family = "JetBrains Mono",
-  --   weight = "Medium",
-  -- },
 })
 M.font_size = 8.5
 M.line_height = 1.0
@@ -136,8 +133,8 @@ M.colors = {
 
 -- ==================== WINDOW & LAYOUT ====================
 M.window_decorations = 'RESIZE'
-M.window_background_opacity = 0.93
-M.text_background_opacity = 0.85
+M.window_background_opacity = 0.80
+M.text_background_opacity = 0.80
 M.adjust_window_size_when_changing_font_size = false
 
 M.window_padding = {
