@@ -1,6 +1,4 @@
-SKILL.md
-behavior-contract.md
-context-boundaries.md---
+---
 name: tidying
 description: Guide structural code improvements using Kent Beck's Tidy First methodology. Use when seeing messy code, before making behavioral changes, after completing features, or discussing when to clean up code.
 ---
