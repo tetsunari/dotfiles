@@ -1016,12 +1016,3 @@ type RequestBody = z.infer<typeof requestSchema>
 - **@aws-lambda-powertools/parameters**: SSM Parameter Store / Secrets Managerからのパラメータ取得（キャッシング機能付き）
 - **lambda-api**: API Gatewayのルーティングを簡素化
 
----
-
-## 参考リンク
-
-- [AWS Lambda Developer Guide](https://docs.aws.amazon.com/lambda/latest/dg/)
-- [AWS Lambda Powertools for TypeScript](https://docs.powertools.aws.dev/lambda/typescript/)
-- [AWS SDK for JavaScript v3](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/)
-- [middy - The Node.js middleware framework for AWS Lambda](https://middy.js.org/)
-- [zod - TypeScript-first schema validation](https://zod.dev/)
