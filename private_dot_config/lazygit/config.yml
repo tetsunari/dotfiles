@@ -5,6 +5,7 @@ gui:
 os:
   open: "code"
   editPreset: "vscode"
+  editCommand: "nvim"
 git:
   pagers:
     - colorArg: always
