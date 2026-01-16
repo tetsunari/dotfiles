@@ -1,4 +1,6 @@
+-- vim.cmd('colorscheme catppuccin-macchiato')
 vim.cmd('colorscheme tokyonight-storm')
+-- vim.cmd('colorscheme kanagawa-wave')
 
 -- グローバルオプション(autocmdの外で一度だけ設定)
 vim.opt.termguicolors = true
