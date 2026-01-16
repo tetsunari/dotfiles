@@ -58,3 +58,9 @@ export LESS_TERMCAP_se=$'\e[0m'
 export LESS_TERMCAP_us=$'\e[4;32m'   # 下線 緑
 export LESS_TERMCAP_ue=$'\e[0m'
 
+# ターミナルタイトルを現在のコマンドに設定 + 作業ディレクトリを通知
+precmd() {
+  print -Pn "\e]0;%~\a"
+  print -Pn "\e]7;file://${HOST}${PWD}\a"
+}
+preexec() { print -Pn "\e]0;$1\a" }
