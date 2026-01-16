@@ -8,7 +8,6 @@ add_newline = false
 # $cmd_duration\
 # \n$character
 # """
-# format = '$all$fill$line_break$character'
 format = '$directory$git_branch$git_status$aws$gcloud$line_break$character'
 
 command_timeout = 5000
@@ -60,7 +59,6 @@ symbol = ''
 # CompanyGroupFrobozzOnCallAccess = 'Frobozz'
 
 [gcloud]
-# format = 'on [$symbol$account(@$domain)(\($project\))]($style) '
 format = '[](fg:#28405c)[$symbol($profile)(\($project\))(\($region\))]($style)[](fg:#28405c)'
 style = 'fg:white bg:#28405c'
 symbol = ''
