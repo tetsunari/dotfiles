@@ -8,7 +8,8 @@ add_newline = false
 # $cmd_duration\
 # \n$character
 # """
-format = '$all$fill$line_break$character'
+# format = '$all$fill$line_break$character'
+format = '$directory$git_branch$git_status$aws$gcloud$line_break$character'
 
 command_timeout = 5000
 scan_timeout = 2000
@@ -45,11 +46,8 @@ disabled = true
 disabled = true
 #format = '[$symbol \[$name\]]($style) '
 
-[nodejs]
-disabled = true
-
 [aws]
-format = '[](bg:#24283b fg:#583622)[$symbol($profile)(\($project\))(\($region\))]($style)[](bg:#24283b fg:#583622)'
+format = '[](fg:#583622)[$symbol($profile)(\($project\))(\($region\))]($style)[](fg:#583622)'
 # style = '#ffa500'
 style = 'fg:white bg:#583622'
 symbol = ''
@@ -63,7 +61,7 @@ symbol = ''
 
 [gcloud]
 # format = 'on [$symbol$account(@$domain)(\($project\))]($style) '
-format = '[](bg:#24283b fg:#28405c)[$symbol($profile)(\($project\))(\($region\))]($style)[](bg:#24283b fg:#28405c)'
+format = '[](fg:#28405c)[$symbol($profile)(\($project\))(\($region\))]($style)[](fg:#28405c)'
 style = 'fg:white bg:#28405c'
 symbol = ''
 # [gcloud.project_aliases]
@@ -72,9 +70,9 @@ symbol = ''
 [git_branch]
 symbol = ""
 # ignore_branches = ['master', 'main']
-style = "fg:purple bg:#121211"
+style = "fg:#cccc56 bg:#2b2b29"
 format = """
-[](fg:#121211)\
+[](fg:#2b2b29)\
 [$symbol $branch]($style)\
 """
 
@@ -91,10 +89,10 @@ diverged = '⇕⇡${ahead_count}⇣${behind_count}'
 behind = '⬇︎${count}'
 untracked = ''
 
-style = "fg:purple bg:#121211"
+style = "fg:#cccc56 bg:#2b2b29"
 format = """
 [$all_status$ahead_behind]($style)\
-[](fg:#121211)\
+[](fg:#2b2b29)\
 """
 
 [cmd_duration]
