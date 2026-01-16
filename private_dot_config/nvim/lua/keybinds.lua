@@ -35,8 +35,8 @@ vim.keymap.set('n', 's', '"_s')
 vim.api.nvim_set_var('mapleader', ' ')
 
 -- https://zenn.dev/kawarimidoll/books/6064bf6f193b51/viewer/6c77c3
-vim.keymap.set('n', 'p', 'p]', { desc = 'Paste and move to the end' })
-vim.keymap.set('n', 'P', 'P]', { desc = 'Paste and move to the end' })
+vim.keymap.set('n', 'p', 'p`]', { desc = 'Paste and move to the end' })
+vim.keymap.set('n', 'P', 'P`]', { desc = 'Paste and move to the end' })
 
 -- vim.keymap.set('x', 'p', 'P', { desc = 'Paste without change register' })
 -- vim.keymap.set('x', 'P', 'p', { desc = 'Paste with change register' })

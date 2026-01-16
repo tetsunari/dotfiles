@@ -5,6 +5,7 @@ return {
   opts = {
     label = {
       distance = false,
+      uppercase = false,
     },
     modes = {
       search = {
