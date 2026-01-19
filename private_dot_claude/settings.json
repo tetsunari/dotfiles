@@ -24,16 +24,6 @@
     ]
   },
   "hooks": {
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/scripts/notify.sh 'Claude Code' '💬 プロンプトを処理中'"
-          }
-        ]
-      }
-    ],
     "PermissionRequest": [
       {
         "hooks": [
