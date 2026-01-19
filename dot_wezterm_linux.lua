@@ -19,7 +19,8 @@ config.check_for_updates = true
 config.check_for_updates_interval_seconds = 86400
 
 -- 通知設定（OSC 777/9 エスケープシーケンス対応）
-config.notification_handling = "SuppressFromFocusedWindow"
+-- "AlwaysShow": フォーカス中でも通知を表示（Claude Code hooks用）
+config.notification_handling = "AlwaysShow"
 
 -- タブを閉じた時に前回アクティブだったタブに戻る
 config.switch_to_last_active_tab_when_closing_tab = true
