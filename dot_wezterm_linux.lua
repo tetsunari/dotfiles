@@ -14,13 +14,10 @@ local config = wezterm.config_builder()
 -- =============================================================================
 -- BASIC CONFIGURATION
 -- =============================================================================
-config.default_domain = "WSL:Ubuntu"
+-- WSL Domainの代わりにdefault_progで直接起動（エスケープシーケンスが正しく伝わる）
+config.default_prog = { "wsl.exe", "-d", "Ubuntu", "--cd", "~" }
 config.check_for_updates = true
 config.check_for_updates_interval_seconds = 86400
-
--- 通知設定（OSC 777/9 エスケープシーケンス対応）
--- "AlwaysShow": フォーカス中でも通知を表示（Claude Code hooks用）
-config.notification_handling = "AlwaysShow"
 
 -- タブを閉じた時に前回アクティブだったタブに戻る
 config.switch_to_last_active_tab_when_closing_tab = true
@@ -39,6 +36,7 @@ require("workspace").apply_to_config(config)
 
 -- オプショナルモジュール（keymapsの後に読み込む）
 require("modules.wsl").apply_to_config(config)
+require("modules.notification").apply_to_config(config)
 
 -- =============================================================================
 -- INITIALIZATION
