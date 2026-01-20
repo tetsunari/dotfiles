@@ -8,6 +8,38 @@
 # =============================================================================
 set -euo pipefail
 
+# =============================================================================
+# フォーカス判定: weztermがアクティブなら通知不要
+# =============================================================================
+is_wezterm_focused() {
+    local ps_path="/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe"
+    [[ -x "$ps_path" ]] || return 1
+
+    local active_window
+    active_window=$("$ps_path" -NoProfile -NonInteractive -Command '
+        Add-Type @"
+            using System;
+            using System.Runtime.InteropServices;
+            using System.Text;
+            public class Win32 {
+                [DllImport("user32.dll")]
+                public static extern IntPtr GetForegroundWindow();
+                [DllImport("user32.dll")]
+                public static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
+            }
+"@
+        $hwnd = [Win32]::GetForegroundWindow()
+        $sb = New-Object System.Text.StringBuilder 256
+        [void][Win32]::GetWindowText($hwnd, $sb, 256)
+        $sb.ToString()
+    ' 2>/dev/null) || return 1
+
+    echo "$active_window" | grep -qi "wezterm"
+}
+
+# weztermがフォアグラウンドなら通知せずに終了
+is_wezterm_focused && exit 0
+
 TITLE="${1:-Claude Code}"
 MESSAGE="${2:-通知}"
 
