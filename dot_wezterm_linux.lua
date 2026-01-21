@@ -14,8 +14,8 @@ local config = wezterm.config_builder()
 -- =============================================================================
 -- BASIC CONFIGURATION
 -- =============================================================================
--- WSL Domainの代わりにdefault_progで直接起動（エスケープシーケンスが正しく伝わる）
-config.default_prog = { "wsl.exe", "-d", "Ubuntu", "--cd", "~" }
+-- WSL Ubuntuをデフォルトドメインとして使用
+config.default_domain = "WSL:Ubuntu"
 config.check_for_updates = true
 config.check_for_updates_interval_seconds = 86400
 
