@@ -125,25 +125,41 @@ function M.apply_to_config(config)
     { key = "r", mods = "LEADER", action = act.ActivateKeyTable({ name = "resize_pane", one_shot = false }) },
 
     -- === POPUP ALTERNATIVES (tmux popup 代替) ===
-    -- lazygit を新タブで起動（Homebrew PATH を設定してから実行）
+    -- lazygit を新タブで起動（現在のディレクトリで）
     {
       key = "g",
       mods = "LEADER",
-      action = act.SpawnCommandInNewTab {
-        label = "lazygit",
-        domain = "CurrentPaneDomain",
-        args = { "zsh", "-c", 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && lazygit' },
-      },
+      action = wezterm.action_callback(function(window, pane)
+        local cwd = pane:get_current_working_dir()
+        local cwd_path = cwd and cwd.file_path or nil
+        window:perform_action(
+          act.SpawnCommandInNewTab {
+            label = "lazygit",
+            domain = "CurrentPaneDomain",
+            cwd = cwd_path,
+            args = { "/home/linuxbrew/.linuxbrew/bin/lazygit" },
+          },
+          pane
+        )
+      end),
     },
-    -- yazi を新タブで起動（Homebrew PATH を設定してから実行）
+    -- yazi を新タブで起動（現在のディレクトリで）
     {
       key = "y",
       mods = "LEADER",
-      action = act.SpawnCommandInNewTab {
-        label = "yazi",
-        domain = "CurrentPaneDomain",
-        args = { "zsh", "-c", 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && yazi' },
-      },
+      action = wezterm.action_callback(function(window, pane)
+        local cwd = pane:get_current_working_dir()
+        local cwd_path = cwd and cwd.file_path or nil
+        window:perform_action(
+          act.SpawnCommandInNewTab {
+            label = "yazi",
+            domain = "CurrentPaneDomain",
+            cwd = cwd_path,
+            args = { "/home/linuxbrew/.linuxbrew/bin/yazi" },
+          },
+          pane
+        )
+      end),
     },
   }
 
