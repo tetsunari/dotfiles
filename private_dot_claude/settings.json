@@ -18,9 +18,14 @@
       "Skill(*)"
     ],
     "deny": [
-      "Read(~/.ssh/*)",
+      "Read(~/.ssh/**)",
       "Read(.env.*)",
-      "Bash(curl:*)"
+      "Read(**/.env*)",
+      "Read(~/.aws/**)",
+      "Bash(curl:*)",
+      "Bash(sudo:*)",
+      "Bash(cat **/google-services.json)",
+      "Bash(env)"
     ]
   },
   "hooks": {
@@ -45,6 +50,5 @@
       }
     ]
   },
-  "alwaysThinkingEnabled": true,
-  "model": "opus"
+  "alwaysThinkingEnabled": true
 }
