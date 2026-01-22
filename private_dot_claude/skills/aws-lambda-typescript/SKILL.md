@@ -1,6 +1,7 @@
 ---
 name: aws-lambda-typescript
 description: AWS Lambda (TypeScript) のベストプラクティスガイド。API Gateway、EventBridge、SQS等の実装パターン、DynamoDB操作、エラーハンドリング、Powertools活用、パフォーマンス最適化を含む包括的なガイド。
+context: fork
 ---
 
 # AWS Lambda (TypeScript) ベストプラクティス
