@@ -1,6 +1,7 @@
 ---
 name: ddd
 description: Domain-Driven Design (DDD) architecture guidance for TypeScript projects. Use when designing layered architecture, implementing entities/value objects/aggregates, structuring domain-driven applications, or applying modern DDD patterns (2024-2025).
+context: fork
 ---
 
 # Domain-Driven Design (DDD) Skill
