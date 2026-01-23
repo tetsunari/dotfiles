@@ -65,12 +65,6 @@ function M.apply_to_config(config)
     -- Right Control + C: プロセスの終了（Ctrl+Cシグナル送信）
     { key = "c", mods = "CTRL|SHIFT", action = act.SendKey { key = "c", mods = "CTRL" } },
 
-    -- === NAVIGATION (Vim-like) ===
-    { key = "h", mods = "CTRL|ALT", action = act.SendKey({ key = "LeftArrow" }) },
-    { key = "j", mods = "CTRL|ALT", action = act.SendKey({ key = "DownArrow" }) },
-    { key = "k", mods = "CTRL|ALT", action = act.SendKey({ key = "UpArrow" }) },
-    { key = "l", mods = "CTRL|ALT", action = act.SendKey({ key = "RightArrow" }) },
-
     -- === SCROLLING ===
     { key = "j", mods = "CTRL", action = act.ScrollByLine(1) },
     { key = "k", mods = "CTRL", action = act.ScrollByLine(-1) },
@@ -92,8 +86,8 @@ function M.apply_to_config(config)
     -- === PANE RESIZING ===
     { key = "H", mods = "LEADER|SHIFT", action = act.AdjustPaneSize({ "Left", 5 }) },
     { key = "L", mods = "LEADER|SHIFT", action = act.AdjustPaneSize({ "Right", 5 }) },
-    { key = "K", mods = "LEADER|SHIFT", action = act.AdjustPaneSize({ "Up", 3 }) },
-    { key = "J", mods = "LEADER|SHIFT", action = act.AdjustPaneSize({ "Down", 3 }) },
+    { key = "K", mods = "LEADER|SHIFT", action = act.AdjustPaneSize({ "Up", 5 }) },
+    { key = "J", mods = "LEADER|SHIFT", action = act.AdjustPaneSize({ "Down", 5 }) },
 
     -- === TAB MANAGEMENT ===
     { key = "c", mods = "LEADER", action = act.SpawnTab("CurrentPaneDomain") },
