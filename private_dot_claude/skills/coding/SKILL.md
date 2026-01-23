@@ -1,6 +1,7 @@
 ---
 name: coding-standards
 description: Universal coding standards, best practices, and patterns for TypeScript, JavaScript, React, and Node.js development.
+contest: fork
 ---
 
 # Coding Standards & Best Practices
