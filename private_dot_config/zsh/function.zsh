@@ -5,6 +5,7 @@
 export PATH="$PATH:/opt/nvim"
 export CHEZMOI_HOME="$HOME/bin"
 export PATH="$CHEZMOI_HOME:/chezmoi:$PATH"
+export RIPGREP_CONFIG_PATH="$HOME/.config/.ripgreprc"
 
 # aws cli 補完
 autoload bashcompinit && bashcompinit
