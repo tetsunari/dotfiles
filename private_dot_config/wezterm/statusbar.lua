@@ -1,5 +1,5 @@
 -- =============================================================================
--- ステータスバー（右側：CPU・RAM・ネットワーク・バッテリー・時刻）
+-- ステータスバー（右側：ネットワーク・バッテリー・時刻）
 -- tabline.wez のコンポーネントを参考に実装
 -- =============================================================================
 local wezterm = require("wezterm")
@@ -16,15 +16,20 @@ local ICONS = {
   wifi = wezterm.nerdfonts.md_wifi,
   ethernet = wezterm.nerdfonts.md_ethernet,
   offline = wezterm.nerdfonts.md_wifi_off,
-  -- Battery
+  -- VPN
+  vpn = wezterm.nerdfonts.md_shield_lock,
+  -- Battery (通常)
   battery_full = wezterm.nerdfonts.fa_battery_full,
   battery_three_quarters = wezterm.nerdfonts.fa_battery_three_quarters,
   battery_half = wezterm.nerdfonts.fa_battery_half,
   battery_quarter = wezterm.nerdfonts.fa_battery_quarter,
   battery_empty = wezterm.nerdfonts.fa_battery_empty,
-  -- System
-  cpu = wezterm.nerdfonts.oct_cpu,
-  ram = wezterm.nerdfonts.cod_server,
+  -- Battery (充電中)
+  battery_charging_100 = wezterm.nerdfonts.md_battery_charging_100,
+  battery_charging_80 = wezterm.nerdfonts.md_battery_charging_80,
+  battery_charging_60 = wezterm.nerdfonts.md_battery_charging_60,
+  battery_charging_40 = wezterm.nerdfonts.md_battery_charging_40,
+  battery_charging_20 = wezterm.nerdfonts.md_battery_charging_20,
   -- Calendar
   calendar = wezterm.nerdfonts.fa_calendar,
 }
@@ -65,18 +70,13 @@ local status_cache = {
   network_text = ICONS.wifi .. " Network",
   network_color = colors.accent_cyan,
   last_network_update = 0,
+  -- VPN
+  vpn_name = nil,  -- nil = 未接続
+  last_vpn_update = 0,
   -- Battery (wezterm.battery_info() を使用)
   battery_text = ICONS.battery_full .. " --",
   battery_color = colors.fg_muted,
   last_battery_update = 0,
-  -- CPU
-  cpu_text = ICONS.cpu .. " --%",
-  cpu_color = colors.accent_blue,
-  last_cpu_update = 0,
-  -- RAM
-  ram_text = ICONS.ram .. " --GB",
-  ram_color = colors.accent_purple,
-  last_ram_update = 0,
 }
 
 -- =============================================================================
@@ -90,52 +90,85 @@ local function get_battery_info()
 
   local b = batteries[1]
   local charge = b.state_of_charge * 100
+  local state = b.state  -- "Charging", "Discharging", "Full", "Empty", "Unknown"
   local icon, color
 
-  if charge <= 10 then
-    icon = ICONS.battery_empty
-    color = colors.battery_low
-  elseif charge <= 25 then
-    icon = ICONS.battery_quarter
-    color = colors.battery_medium
-  elseif charge <= 50 then
-    icon = ICONS.battery_half
-    color = colors.battery_high
-  elseif charge <= 75 then
-    icon = ICONS.battery_three_quarters
-    color = colors.battery_high
+  -- 充電中の場合
+  if state == "Charging" then
+    color = colors.battery_charging
+    if charge <= 20 then
+      icon = ICONS.battery_charging_20
+    elseif charge <= 40 then
+      icon = ICONS.battery_charging_40
+    elseif charge <= 60 then
+      icon = ICONS.battery_charging_60
+    elseif charge <= 80 then
+      icon = ICONS.battery_charging_80
+    else
+      icon = ICONS.battery_charging_100
+    end
+  -- 通常（放電中/満充電）の場合
   else
-    icon = ICONS.battery_full
-    color = colors.battery_full
+    if charge <= 10 then
+      icon = ICONS.battery_empty
+      color = colors.battery_low
+    elseif charge <= 25 then
+      icon = ICONS.battery_quarter
+      color = colors.battery_medium
+    elseif charge <= 50 then
+      icon = ICONS.battery_half
+      color = colors.battery_high
+    elseif charge <= 75 then
+      icon = ICONS.battery_three_quarters
+      color = colors.battery_high
+    else
+      icon = ICONS.battery_full
+      color = colors.battery_full
+    end
   end
 
   return string.format("%s %.0f%%", icon, charge), color
 end
 
 -- =============================================================================
--- ネットワーク情報取得（Windows PowerShell経由）
+-- ネットワーク情報取得（Windows PowerShell経由 - デフォルトルートで検出）
 -- =============================================================================
 local function get_network_info()
   local success, stdout, _ = wezterm.run_child_process({
     "powershell.exe",
     "-NoProfile",
+    "-ExecutionPolicy", "Bypass",
     "-Command",
     [[
-      $adapter = Get-NetAdapter | Where-Object Status -eq 'Up' | Select-Object -First 1
-      if ($adapter) {
-        if ($adapter.Name -match 'Wi-Fi|WiFi') { 'WiFi' }
-        elseif ($adapter.Name -match 'Ethernet') { 'Ethernet' }
-        else { 'Connected' }
+      $routes = Get-NetRoute -DestinationPrefix '0.0.0.0/0' -ErrorAction SilentlyContinue
+      if ($routes) {
+        $best = $routes | ForEach-Object {
+          $adapter = Get-NetAdapter -InterfaceIndex $_.InterfaceIndex -ErrorAction SilentlyContinue
+          if ($adapter -and $adapter.Status -eq 'Up') {
+            [PSCustomObject]@{
+              Route = $_
+              Adapter = $adapter
+              TotalMetric = $_.RouteMetric + $_.InterfaceMetric
+            }
+          }
+        } | Where-Object { $_ -ne $null } | Sort-Object TotalMetric | Select-Object -First 1
+
+        if ($best) {
+          $a = $best.Adapter
+          if ($a.PhysicalMediaType -match 'Wireless|Native 802.11' -or $a.InterfaceDescription -match 'Wireless|Wi-Fi|802.11') { 'WiFi' }
+          elseif ($a.PhysicalMediaType -eq '802.3' -or $a.Name -match 'Ethernet') { 'Ethernet' }
+          else { 'Connected' }
+        } else { 'Offline' }
       } else { 'Offline' }
     ]],
   })
 
   if success and stdout then
     local result = stdout:gsub("%s+", "")
-    if result == "WiFi" then
-      return ICONS.wifi .. " WiFi", colors.network_wifi
-    elseif result == "Ethernet" then
+    if result == "Ethernet" then
       return ICONS.ethernet .. " Ethernet", colors.network_ethernet
+    elseif result == "WiFi" then
+      return ICONS.wifi .. " WiFi", colors.network_wifi
     elseif result == "Connected" then
       return ICONS.wifi .. " Connected", colors.info
     end
@@ -145,59 +178,28 @@ local function get_network_info()
 end
 
 -- =============================================================================
--- CPU情報取得（tabline.wez cpu.lua より - Windows/WSL対応）
+-- VPN接続状態取得（Windows組み込みVPN - Get-VpnConnection使用）
 -- =============================================================================
-local function get_cpu_info()
-  local success, stdout, _
+local function get_vpn_info()
+  local success, stdout, _ = wezterm.run_child_process({
+    "powershell.exe",
+    "-NoProfile",
+    "-ExecutionPolicy", "Bypass",
+    "-Command",
+    [[
+      $vpn = Get-VpnConnection -ErrorAction SilentlyContinue | Where-Object { $_.ConnectionStatus -eq 'Connected' } | Select-Object -First 1
+      if ($vpn) { $vpn.Name } else { '' }
+    ]],
+  })
 
-  -- Windows環境（WezTermはWindowsで動作）
-  if string.match(wezterm.target_triple, "windows") then
-    success, stdout, _ = wezterm.run_child_process({
-      "cmd.exe",
-      "/C",
-      "wmic cpu get loadpercentage",
-    })
-
-    if success and stdout then
-      local cpu = stdout:match("%d+")
-      if cpu then
-        return string.format("%s %s%%", ICONS.cpu, cpu), colors.accent_blue
-      end
+  if success and stdout then
+    local name = stdout:gsub("%s+", "")
+    if name ~= "" then
+      return name
     end
   end
 
-  return ICONS.cpu .. " --%", colors.accent_blue
-end
-
--- =============================================================================
--- RAM情報取得（tabline.wez ram.lua より - Windows対応）
--- =============================================================================
-local function get_ram_info()
-  local success, stdout, _
-
-  -- Windows環境
-  if string.match(wezterm.target_triple, "windows") then
-    -- 使用中のメモリを計算（Total - Free）
-    success, stdout, _ = wezterm.run_child_process({
-      "powershell.exe",
-      "-NoProfile",
-      "-Command",
-      [[
-        $os = Get-CimInstance Win32_OperatingSystem
-        $used = ($os.TotalVisibleMemorySize - $os.FreePhysicalMemory) / 1MB
-        [math]::Round($used, 1)
-      ]],
-    })
-
-    if success and stdout then
-      local ram = stdout:match("[%d%.]+")
-      if ram then
-        return string.format("%s %sGB", ICONS.ram, ram), colors.accent_purple
-      end
-    end
-  end
-
-  return ICONS.ram .. " --GB", colors.accent_purple
+  return nil
 end
 
 -- =============================================================================
@@ -235,22 +237,16 @@ function M.apply_to_config(config)
       status_cache.network_text, status_cache.network_color = get_network_info()
     end
 
+    -- VPN情報の更新（15秒間隔）
+    if current_time - status_cache.last_vpn_update >= 15 then
+      status_cache.last_vpn_update = current_time
+      status_cache.vpn_name = get_vpn_info()
+    end
+
     -- バッテリー情報の更新（10秒間隔）
     if current_time - status_cache.last_battery_update >= 10 then
       status_cache.last_battery_update = current_time
       status_cache.battery_text, status_cache.battery_color = get_battery_info()
-    end
-
-    -- CPU情報の更新（30秒間隔 - 負荷軽減）
-    if current_time - status_cache.last_cpu_update >= 30 then
-      status_cache.last_cpu_update = current_time
-      status_cache.cpu_text, status_cache.cpu_color = get_cpu_info()
-    end
-
-    -- RAM情報の更新（30秒間隔 - 負荷軽減）
-    if current_time - status_cache.last_ram_update >= 30 then
-      status_cache.last_ram_update = current_time
-      status_cache.ram_text, status_cache.ram_color = get_ram_info()
     end
 
     -- 時刻情報（毎回更新）
@@ -258,16 +254,6 @@ function M.apply_to_config(config)
 
     -- ステータスバー表示
     local status_elements = {
-      -- CPU
-      { Background = { Color = status_cache.cpu_color } },
-      { Foreground = { Color = colors.bg_primary } },
-      { Text = " " .. status_cache.cpu_text .. " " },
-
-      -- RAM
-      { Background = { Color = status_cache.ram_color } },
-      { Foreground = { Color = colors.bg_primary } },
-      { Text = " " .. status_cache.ram_text .. " " },
-
       -- Windows Network
       { Background = { Color = status_cache.network_color } },
       { Foreground = { Color = colors.bg_primary } },
@@ -277,22 +263,29 @@ function M.apply_to_config(config)
       { Background = { Color = wsl.status_cache.status_color } },
       { Foreground = { Color = colors.bg_primary } },
       { Text = " " .. wsl.status_cache.status .. " " },
-
-      -- Date
-      { Background = { Color = colors.bg_tertiary } },
-      { Foreground = { Color = colors.fg_primary } },
-      { Text = " " .. datetime.date .. " " },
-
-      -- Time
-      { Background = { Color = colors.clock_time } },
-      { Foreground = { Color = colors.bg_primary } },
-      { Text = " " .. datetime.time .. " " },
-
-      -- Battery
-      { Background = { Color = status_cache.battery_color } },
-      { Foreground = { Color = colors.bg_primary } },
-      { Text = " " .. status_cache.battery_text .. " " },
     }
+
+    -- VPN（接続時のみ表示）
+    if status_cache.vpn_name then
+      table.insert(status_elements, { Background = { Color = colors.vpn_connected } })
+      table.insert(status_elements, { Foreground = { Color = colors.bg_primary } })
+      table.insert(status_elements, { Text = " " .. ICONS.vpn .. " " .. status_cache.vpn_name .. " " })
+    end
+
+    -- Date
+    table.insert(status_elements, { Background = { Color = colors.bg_tertiary } })
+    table.insert(status_elements, { Foreground = { Color = colors.fg_primary } })
+    table.insert(status_elements, { Text = " " .. datetime.date .. " " })
+
+    -- Time
+    table.insert(status_elements, { Background = { Color = colors.clock_time } })
+    table.insert(status_elements, { Foreground = { Color = colors.bg_primary } })
+    table.insert(status_elements, { Text = " " .. datetime.time .. " " })
+
+    -- Battery
+    table.insert(status_elements, { Background = { Color = status_cache.battery_color } })
+    table.insert(status_elements, { Foreground = { Color = colors.bg_primary } })
+    table.insert(status_elements, { Text = " " .. status_cache.battery_text .. " " })
 
     local success, formatted = pcall(wezterm.format, status_elements)
     if success then
