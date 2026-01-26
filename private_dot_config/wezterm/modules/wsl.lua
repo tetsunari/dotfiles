@@ -7,9 +7,17 @@ local act = wezterm.action
 
 local M = {}
 
+-- NerdFont アイコン定義
+local ICONS = {
+  wsl_checking = wezterm.nerdfonts.md_magnify,
+  wsl_connected = wezterm.nerdfonts.md_earth,
+  wsl_error = wezterm.nerdfonts.md_close_circle,
+  refresh = wezterm.nerdfonts.md_refresh,
+}
+
 -- WSL2ステータスキャッシュ
 M.status_cache = {
-  status = "🔍 WSL",
+  status = ICONS.wsl_checking .. " WSL",
   status_color = colors.fg_muted,
   last_update = 0,
   detailed_info = "Checking...",
@@ -24,11 +32,11 @@ function M.test_wsl_network()
   })
 
   if success and stdout and (stdout:find("200 OK") or stdout:find("HTTP/")) then
-    M.status_cache.status = "🌐 WSL"
+    M.status_cache.status = ICONS.wsl_connected .. " WSL"
     M.status_cache.status_color = colors.wsl_success
     M.status_cache.detailed_info = "WSL2 Network: Connected"
   else
-    M.status_cache.status = "❌ WSL"
+    M.status_cache.status = ICONS.wsl_error .. " WSL"
     M.status_cache.status_color = colors.wsl_error
     M.status_cache.detailed_info = "WSL2 Network: No access"
   end
@@ -49,7 +57,7 @@ function M.apply_to_config(config)
         M.status_cache.detailed_info,
         os.date("%H:%M:%S", M.status_cache.last_update)
       )
-      window:toast_notification("🌐 WSL2 Info", info, nil, 2000)
+      window:toast_notification(ICONS.wsl_connected .. " WSL2 Info", info, nil, 2000)
     end)
   })
 
@@ -60,7 +68,7 @@ function M.apply_to_config(config)
     action = wezterm.action_callback(function(window, pane)
       M.status_cache.last_update = 0
       M.test_wsl_network()
-      window:toast_notification("🔄 WSL2", "Status updated: " .. M.status_cache.status, nil, 2000)
+      window:toast_notification(ICONS.refresh .. " WSL2", "Status updated: " .. M.status_cache.status, nil, 2000)
     end)
   })
 
@@ -70,7 +78,7 @@ function M.apply_to_config(config)
     mods = "LEADER|SHIFT",
     action = wezterm.action_callback(function(window, pane)
       wezterm.run_child_process({"wsl", "--shutdown"})
-      window:toast_notification("🔄 WSL2", "Restarting...", nil, 2000)
+      window:toast_notification(ICONS.refresh .. " WSL2", "Restarting...", nil, 2000)
 
       wezterm.time.call_after(3, function()
         M.status_cache.last_update = 0
