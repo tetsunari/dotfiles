@@ -5,10 +5,26 @@ set -ex
 
 WINDOWS_HOME_DIR=$(wslpath $(/mnt/c/WINDOWS/system32/cmd.exe /c 'SET /P x=%USERPROFILE%<NUL' 2>/dev/null))
 
-# WeZterm設定ファイルのコピー
+# WeZterm設定ファイルのコピー（分割管理対応）
+echo "📦 Copying WezTerm configuration..."
+
+# メインファイル
 WEZTERM_SOURCE_FILE="{{ .chezmoi.sourceDir }}/dot_wezterm_linux.lua"
 WEZTERM_DEST_FILE="$WINDOWS_HOME_DIR/.wezterm.lua"
 cp "$WEZTERM_SOURCE_FILE" "$WEZTERM_DEST_FILE"
+echo "✅ Copied main WezTerm config: .wezterm.lua"
+
+# 分割ファイル一式（.config/wezterm/）
+WEZTERM_SOURCE_DIR="{{ .chezmoi.sourceDir }}/private_dot_config/wezterm"
+WEZTERM_DEST_DIR="$WINDOWS_HOME_DIR/.config/wezterm"
+
+if [ -d "$WEZTERM_SOURCE_DIR" ]; then
+  mkdir -p "$WEZTERM_DEST_DIR"
+  cp -r "$WEZTERM_SOURCE_DIR/"* "$WEZTERM_DEST_DIR/"
+  echo "✅ Copied WezTerm modules: .config/wezterm/"
+else
+  echo "⚠️  WezTerm modules directory not found, skipping"
+fi
 
 # WSL設定ファイルのコピー
 WSLCONFIG_SOURCE_FILE="{{ .chezmoi.sourceDir }}/dot_wslconfig"

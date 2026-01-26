@@ -14,33 +14,16 @@ is_wsl() {
 main() {
   echo "🚀 Installing development tools..."
 
-  # Volta
+  # Node.js via mise
   echo ""
-  echo "📦 Installing Volta..."
-  if ! command_exists volta; then
-    echo "Installing Volta Node.js manager..."
-    curl https://get.volta.sh | bash -s -- --skip-setup
-
-    # 現在のセッションでVoltaを有効化
-    export VOLTA_HOME="$HOME/.volta"
-    export PATH="$VOLTA_HOME/bin:$PATH"
-
-    echo "✅ Volta installed successfully"
+  echo "📦 Setting up Node.js via mise..."
+  if command_exists mise; then
+    echo "Installing Node.js LTS via mise..."
+    mise use -g node@lts
+    echo "✅ Node.js configured via mise"
   else
-    echo "✅ Volta already installed, skipping"
-  fi
-
-  # Node.JS
-  echo ""
-  echo "📦 Installing Node.js tools..."
-  if command_exists volta; then
-    echo "Installing Node.js via Volta..."
-    volta install node@lts
-    volta install npm@latest
-    volta install yarn@latest
-    echo "✅ Node.js tools installed successfully"
-  else
-    echo "❌ volta command not found, skipping Node.js installation"
+    echo "❌ mise not found, skipping Node.js setup"
+    echo "   mise should be installed via Homebrew (Brewfile_wsl)"
   fi
 
   # NPM Install
