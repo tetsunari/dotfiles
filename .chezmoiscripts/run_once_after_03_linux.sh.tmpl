@@ -77,6 +77,18 @@ main() {
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
   brew bundle --file=Brewfile_wsl
 
+  # mise tools installation
+  echo ""
+  echo "📦 Installing development tools via mise..."
+  if command_exists mise; then
+    echo "Installing tools from ~/.config/mise/config.toml..."
+    mise install
+    echo "✅ mise tools installed successfully"
+  else
+    echo "❌ mise not found, skipping tools setup"
+    echo "   mise should be installed via Homebrew (Brewfile_wsl)"
+  fi
+
   # インストール確認
   echo ""
   echo "🎉 Installation completed!"
