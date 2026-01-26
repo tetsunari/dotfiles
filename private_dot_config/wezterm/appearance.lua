@@ -12,6 +12,11 @@ function M.apply_to_config(config)
   -- =============================================================================
   config.font = wezterm.font_with_fallback({
     {
+      family = "Maple Mono NL NF CN SemiBold",
+      weight = "ExtraBold",
+      -- style = "Oblique",
+    },
+    {
       family = "UDEV Gothic 35NF",
       stretch = "UltraExpanded",
       weight = "ExtraBlack",
@@ -21,13 +26,10 @@ function M.apply_to_config(config)
       stretch = "UltraCondensed",
       weight = "DemiBold",
     },
-    {
-      family = "JetBrainsMonoNL Nerd Font",
-      weight = "DemiBold",
-    },
-    {
-      family = "IBM Plex Sans JP"
-    },
+    -- {
+    --   family = "JetBrainsMonoNL Nerd Font",
+    --   weight = "DemiBold",
+    -- },
   })
   config.font_size = 8.5
   config.line_height = 1.0
@@ -78,7 +80,7 @@ function M.apply_to_config(config)
   config.window_padding = {
     left = 5,
     right = 2,
-    top = 3,
+    top = 0,
     bottom = 0,
   }
 
