@@ -14,26 +14,16 @@ is_wsl() {
 main() {
   echo "🚀 Installing development tools..."
 
-  # Node.js via mise
+  # mise tools installation
   echo ""
-  echo "📦 Setting up Node.js via mise..."
+  echo "📦 Installing development tools via mise..."
   if command_exists mise; then
-    echo "Installing Node.js LTS via mise..."
-    mise use -g node@lts
-    echo "✅ Node.js configured via mise"
+    echo "Installing tools from ~/.config/mise/config.toml..."
+    mise install
+    echo "✅ mise tools installed successfully"
   else
-    echo "❌ mise not found, skipping Node.js setup"
+    echo "❌ mise not found, skipping tools setup"
     echo "   mise should be installed via Homebrew (Brewfile_wsl)"
-  fi
-
-  # NPM Install
-  echo ""
-  echo " Npm Install claude, gemini"
-  if command_exists npm; then
-    npm i -g @anthropic-ai/claude-code
-    npm i -g @google/gemini-cli
-  else
-    echo "❌ npm command not found, skipping npm i"
   fi
 
   # Docker
