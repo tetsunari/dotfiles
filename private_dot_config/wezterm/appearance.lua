@@ -78,7 +78,7 @@ function M.apply_to_config(config)
   config.adjust_window_size_when_changing_font_size = false
 
   config.window_padding = {
-    left = 5,
+    left = 2,
     right = 2,
     top = 0,
     bottom = 0,
