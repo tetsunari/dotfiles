@@ -43,16 +43,16 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- カスタムハイライトグループを定義
-vim.api.nvim_set_hl(0, "YankHighlight", { bg = "#9bd1c3", fg = "#000000" })
-
--- Yankした範囲をハイライトさせる
-vim.api.nvim_create_autocmd("TextYankPost", {
-  pattern = "*",
-  callback = function()
-    vim.highlight.on_yank({ higroup = "YankHighlight", timeout = 200 })
-  end,
-})
+-- -- カスタムハイライトグループを定義
+-- vim.api.nvim_set_hl(0, "YankHighlight", { bg = "#9bd1c3", fg = "#000000" })
+--
+-- -- Yankした範囲をハイライトさせる
+-- vim.api.nvim_create_autocmd("TextYankPost", {
+--   pattern = "*",
+--   callback = function()
+--     vim.highlight.on_yank({ higroup = "YankHighlight", timeout = 200 })
+--   end,
+-- })
 
 -- 改行コードをLF統一
 vim.opt.fileformat = "unix"
