@@ -1,0 +1,5 @@
+[mgr]
+prepend_keymap = [
+  { on = "<Enter>", run = "plugin smart-enter" },
+  { on = "<C-p>", run = "plugin toggle-pane max-preview" },
+]
