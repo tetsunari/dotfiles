@@ -50,6 +50,10 @@
       }
     ]
   },
+  "statusLine": {
+    "type": "command",
+    "command": "cat | bash ~/.claude/statusline.sh"
+  },
   "cleanupPeriodDays": 20,
   "alwaysThinkingEnabled": true
 }
