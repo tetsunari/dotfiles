@@ -1,4 +1,31 @@
-return {}
+return {
+  "folke/snacks.nvim",
+  priority = 1000,
+  lazy = false,
+  ---@type snacks.Config
+  opts = {
+    bigfile = { enabled = true },
+    dashboard = { enabled = true },
+    explorer = { enabled = false },
+    indent = { enabled = true },
+    input = { enabled = true },
+    notifier = {
+      enabled = true,
+      timeout = 3000,
+    },
+    picker = { enabled = false },
+    quickfile = { enabled = false },
+    scope = { enabled = false },
+    scroll = { enabled = false },
+    statuscolumn = { enabled = true },
+    words = { enabled = true },
+    styles = {
+      notification = {
+        -- wo = { wrap = true } -- Wrap notifications
+      }
+    }
+  }
+}
 -- -- dashboard で picker を開いて移動する際に発生するチラツキを防止する
 -- local preventFlicker = function(handler)
 --   vim.schedule(function()
