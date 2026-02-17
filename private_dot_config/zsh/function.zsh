@@ -65,3 +65,6 @@ precmd() {
   print -Pn "\e]7;file://${HOST}${PWD}\a"
 }
 preexec() { print -Pn "\e]0;$1\a" }
+
+# Claude
+export CLAUDE_CODE_SUBAGENT_MODEL="claude-opus-4-6"
