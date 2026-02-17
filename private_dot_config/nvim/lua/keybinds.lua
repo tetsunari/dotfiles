@@ -55,6 +55,8 @@ vim.keymap.set('i', '<c-d>', '<ESC>s')
 if vim.g.vscode then
   local vscode = require("vscode")
 
+  vim.keymap.set("n", "gd", vim.lsp.buf.definition)
+
   vim.keymap.set("n", "<c-j>", function()
     vscode.action("workbench.action.terminal.toggleTerminal")
   end)
