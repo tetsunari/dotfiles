@@ -12,6 +12,7 @@ input=$(cat)
 
 # Extract data
 model=$(echo "$input" | jq -r '.model.display_name // "Unknown"')
+effort=$(echo "$input" | jq -r '.effort // ""')
 total_input=$(echo "$input" | jq -r '.context_window.total_input_tokens // 0')
 total_output=$(echo "$input" | jq -r '.context_window.total_output_tokens // 0')
 context_size=$(echo "$input" | jq -r '.context_window.context_window_size // 200000')
@@ -156,11 +157,16 @@ else
   perf="🟢 Good"
 fi
 
+# Build effort string
+effort_str=""
+[ -n "$effort" ] && effort_str=" │ 💪 ${effort}"
+
 # Output (2 lines)
 # Line 1: Session context status
 # Line 2: Burn rate + Usage history
-printf "🤖 %s │ 📊 %s/%s %s %d%% %s │ ⬇%s ⬆%s │ 💡残%s │ ⏳~%s │ 🔄%d回\n🔥 %s │ 🕐 Daily:%s  🗓 Weekly:%s  📊 Monthly:%s" \
+printf "🤖 %s%s │ 📊 %s/%s %s %d%% %s │ ⬇%s ⬆%s │ 💡残%s │ ⏳~%s │ 🔄%d回\n🔥 %s │ 🕐 Daily:%s  🗓 Weekly:%s  📊 Monthly:%s" \
   "$model" \
+  "$effort_str" \
   "$(fmt $current_used)" \
   "$(fmt $context_size)" \
   "$bar" \
