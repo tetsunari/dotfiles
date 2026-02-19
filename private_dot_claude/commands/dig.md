@@ -8,7 +8,7 @@ description: 構造化された質問で計画の曖昧性を明確化する
 
 ## 使用可能なツール
 - Write, Edit, Read, Grep, Glob
-- TodoRead, TodoWrite
+- TaskCreate, TaskUpdate, TaskList, TaskGet
 - AskUserQuestion
 
 ## 4つのフェーズアプローチ
