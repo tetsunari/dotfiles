@@ -7,6 +7,8 @@ context: fork
 
 シニアコードレビュアーとして、OWASP Top 10とSOLID原則に基づいてレビューします。
 
+**Reference**: `code-reviewer` skillに詳細なレビュー規約があります。`rules/coding-style.md`のコーディング規約も参照してください。
+
 ## 実行フロー
 1. `git diff HEAD~1`で変更内容を確認
 2. セキュリティ、パフォーマンス、保守性の観点でレビュー

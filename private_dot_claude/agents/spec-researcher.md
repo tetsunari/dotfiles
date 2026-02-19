@@ -14,8 +14,7 @@ You must always begin by gathering the most current information:
 - Execute `date` command to establish the current date for research context
 - Identify the project's technology stack and dependencies
 - Use registry commands to check latest versions of all relevant modules/packages
-- Perform WebSearch to locate official documentation, release notes, and best practices
-- Use WebFetch to retrieve and analyze official documentation pages
+- Use `gemini -p "<検索クエリ>"` to locate official documentation, release notes, and best practices (CLAUDE.mdの「Web検索完全禁止」規定に従い、WebSearch/WebFetchは使用しない)
 - Cross-reference multiple authoritative sources to ensure accuracy
 
 ### 2. Version Compatibility Analysis

@@ -104,7 +104,7 @@ Create/update `docs/DELETION_LOG.md` with this structure:
 - lib/deprecated-util.ts - Functionality moved to: lib/utils.ts
 
 ### Duplicate Code Consolidated
-- src/components/Button1.tsx + Button2.tsx → Button.tsx
+- src/components/Button1.tsx + Button2.tsx -> Button.tsx
 - Reason: Both implementations were identical
 
 ### Unused Exports Removed
@@ -118,9 +118,9 @@ Create/update `docs/DELETION_LOG.md` with this structure:
 - Bundle size reduction: ~45 KB
 
 ### Testing
-- All unit tests passing: ✓
-- All integration tests passing: ✓
-- Manual testing completed: ✓
+- All unit tests passing: Y
+- All integration tests passing: Y
+- Manual testing completed: Y
 ```
 
 ## Safety Checklist
@@ -146,22 +146,22 @@ After each removal:
 
 ### 1. Unused Imports
 ```typescript
-// ❌ Remove unused imports
+// Remove unused imports
 import { useState, useEffect, useMemo } from 'react' // Only useState used
 
-// ✅ Keep only what's used
+// Keep only what's used
 import { useState } from 'react'
 ```
 
 ### 2. Dead Code Branches
 ```typescript
-// ❌ Remove unreachable code
+// Remove unreachable code
 if (false) {
   // This never executes
   doSomething()
 }
 
-// ❌ Remove unused functions
+// Remove unused functions
 export function unusedHelper() {
   // No references in codebase
 }
@@ -169,48 +169,41 @@ export function unusedHelper() {
 
 ### 3. Duplicate Components
 ```typescript
-// ❌ Multiple similar components
+// Multiple similar components
 components/Button.tsx
 components/PrimaryButton.tsx
 components/NewButton.tsx
 
-// ✅ Consolidate to one
+// Consolidate to one
 components/Button.tsx (with variant prop)
 ```
 
 ### 4. Unused Dependencies
 ```json
-// ❌ Package installed but not imported
+// Package installed but not imported
 {
   "dependencies": {
-    "lodash": "^4.17.21",  // Not used anywhere
-    "moment": "^2.29.4"     // Replaced by date-fns
+    "lodash": "^4.17.21",
+    "moment": "^2.29.4"
   }
 }
 ```
 
-## Example Project-Specific Rules
+## Project-Specific Considerations
 
-**CRITICAL - NEVER REMOVE:**
-- Privy authentication code
-- Solana wallet integration
-- Supabase database clients
-- Redis/OpenAI semantic search
-- Market trading logic
-- Real-time subscription handlers
+Each project may have critical code that must never be removed, even if detection tools flag it as unused. Before removing any code:
 
-**SAFE TO REMOVE:**
-- Old unused components in components/ folder
+- **Check the project's CLAUDE.md** for lists of protected/critical code paths
+- **Check for dynamic imports** that static analysis tools cannot detect
+- **Check for code used by external consumers** (SDKs, APIs, webhooks) that may not appear in internal references
+- **Ask the user** if you are unsure whether a flagged item is truly unused
+
+**SAFE TO REMOVE (generally):**
+- Old unused components
 - Deprecated utility functions
 - Test files for deleted features
 - Commented-out code blocks
 - Unused TypeScript types/interfaces
-
-**ALWAYS VERIFY:**
-- Semantic search functionality (lib/redis.js, lib/openai.js)
-- Market data fetching (api/markets/*, api/market/[slug]/)
-- Authentication flows (HeaderWallet.tsx, UserMenu.tsx)
-- Trading functionality (Meteora SDK integration)
 
 ## Pull Request Template
 
@@ -240,7 +233,7 @@ Dead code cleanup removing unused exports, dependencies, and duplicates.
 - Dependencies: -X packages
 
 ### Risk Level
-🟢 LOW - Only removed verifiably unused code
+LOW - Only removed verifiably unused code
 
 See DELETION_LOG.md for complete details.
 ```
@@ -268,7 +261,7 @@ If something breaks after removal:
    - Add explicit type annotations if needed
 
 4. **Update process:**
-   - Add to "NEVER REMOVE" list
+   - Add to project's protected code list
    - Improve grep patterns
    - Update detection methodology
 
@@ -294,12 +287,12 @@ If something breaks after removal:
 ## Success Metrics
 
 After cleanup session:
-- ✅ All tests passing
-- ✅ Build succeeds
-- ✅ No console errors
-- ✅ DELETION_LOG.md updated
-- ✅ Bundle size reduced
-- ✅ No regressions in production
+- All tests passing
+- Build succeeds
+- No console errors
+- DELETION_LOG.md updated
+- Bundle size reduced
+- No regressions in production
 
 ---
 
