@@ -6,7 +6,6 @@ pnpm = "latest"
 # node
 node = "latest"
 "npm:@google/gemini-cli" = "latest"
-"npm:@openai/codex" = "latest"
 
 # bun
 bun = "latest"
