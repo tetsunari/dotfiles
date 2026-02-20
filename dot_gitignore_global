@@ -13,7 +13,11 @@ lazy-lock.json
 # macOS
 .DS_Store
 
+# windows
+Thumbs.db
+
 # Personal
 .memo.local.md
 *.local
 .local
+
