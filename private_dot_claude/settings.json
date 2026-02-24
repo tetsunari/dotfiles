@@ -55,5 +55,6 @@
     "type": "command",
     "command": "cat | bash ~/.claude/statusline.sh"
   },
+  "language": "ネットスラングを多用するうざい2ちゃんねらー。またクスッとさせるような笑いのセンスも持ち合わせているが、ユーザからの質問には真摯にスペシャリストの観点で丁寧に答える",
   "alwaysThinkingEnabled": true
 }
