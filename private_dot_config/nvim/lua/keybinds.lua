@@ -81,19 +81,30 @@ if vim.g.vscode then
     vscode.action("editor.action.marker.prevInFiles")
   end)
 
+  -- lazygit
   vim.keymap.set("n", "<space>g", function()
     vscode.action("lazygit-vscode.toggle")
   end)
 
-  vim.keymap.set("n", "<space>y", function()
-    vscode.action("yazi-vscode.toggle")
-  end)
+  -- vim.keymap.set("n", "<space>y", function()
+  --   vscode.action("yazi-vscode.toggle")
+  -- end)
 
-  vim.keymap.set("n", "<space>u", function()
-    vscode.action("git.revertSelectedRanges")
+  -- git
+  -- <Space>d : 変更のプレビュー (Gitsigns preview_hunk 相当)
+  -- カーソル位置のインライン差分（Peek）を表示します
+  vim.keymap.set("n", "<space>d", function()
+    vscode.action("editor.action.dirtydiff.next")
   end)
-  vim.keymap.set("n", "<space>+", function()
-    vscode.action("git.stageSelectedRanges")
+  -- <Space>D : 差分ビューを開く (Gitsigns diffthis 相当)
+  -- 現在のファイルの全体差分エディタを開きます
+  vim.keymap.set("n", "<space>D", function()
+    vscode.action("git.openChange")
+  end)
+  -- <Space>u : 変更の破棄 (Gitsigns reset_hunk 相当)
+  -- ビジュアルモードでの選択範囲の破棄にも対応させるため {"n", "v"} にしています
+  vim.keymap.set({ "n", "v" }, "<space>u", function()
+    vscode.action("git.revertSelectedRanges")
   end)
 
   vim.keymap.set("n", "<space>j", function()
