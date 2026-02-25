@@ -55,7 +55,9 @@ vim.keymap.set('i', '<c-d>', '<ESC>s')
 if vim.g.vscode then
   local vscode = require("vscode")
 
-  vim.keymap.set("n", "gd", vim.lsp.buf.definition)
+  vim.keymap.set("n", "gd", function()
+    vscode.action("editor.action.revealDefinition")
+  end)
 
   vim.keymap.set("n", "<c-j>", function()
     vscode.action("workbench.action.terminal.toggleTerminal")
@@ -128,7 +130,7 @@ if vim.g.vscode then
   end)
 
   vim.keymap.set("n", "<C-w>", function()
-    vscode.action("workbench.actin.closeActiveEditor")
+    vscode.action("workbench.action.closeActiveEditor")
   end)
   --
   -- vim.keymap.set("n", "<Space>l", function()
