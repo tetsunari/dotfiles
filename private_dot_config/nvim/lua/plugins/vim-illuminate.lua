@@ -1,6 +1,5 @@
 return {
   "RRethy/vim-illuminate",
-  cond = true,
   event = "VeryLazy", -- BufReadが最適だがバランス的にVeryLazyの方がいい
   config = function()
     require("illuminate").configure({
