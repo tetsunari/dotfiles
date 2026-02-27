@@ -186,6 +186,32 @@ if vim.g.vscode then
     vscode.action("oil-code.open")
   end)
 
+  -- LSP系
+  vim.keymap.set("n", "K", function()
+    vscode.action("editor.action.showHover")
+  end)
+
+  vim.keymap.set("n", "gr", function()
+    vscode.action("references-view.findReferences")
+  end)
+
+  vim.keymap.set("n", "<space>rn", function()
+    vscode.action("editor.action.rename")
+  end)
+
+  vim.keymap.set("n", "<space>ca", function()
+    vscode.action("editor.action.quickFix")
+  end)
+
+  vim.keymap.set("n", "gi", function()
+    vscode.action("editor.action.goToImplementation")
+  end)
+
+  -- ファイル検索
+  vim.keymap.set("n", "<space>f", function()
+    vscode.action("workbench.action.quickOpen")
+  end)
+
   vim.api.nvim_create_autocmd("FileType", {
     pattern = "oil",
     callback = function(event)
