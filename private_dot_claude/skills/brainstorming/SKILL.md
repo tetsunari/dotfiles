@@ -1,6 +1,6 @@
 ---
 name: brainstorming
-description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation."
+description: Collaborative design exploration before creative work. Explores user intent, requirements, and design before implementation through structured dialogue.
 context: fork
 ---
 
@@ -42,8 +42,8 @@ Start by understanding the current project context, then ask questions one at a 
 
 **Implementation (if continuing):**
 - Ask: "Ready to set up for implementation?"
-- Use superpowers:using-git-worktrees to create isolated workspace
-- Use superpowers:writing-plans to create detailed implementation plan
+- Create isolated workspace (git worktree or branch)
+- Create detailed implementation plan
 
 ## Key Principles
 
