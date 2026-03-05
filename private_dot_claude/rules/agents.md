@@ -12,7 +12,6 @@ Located in `~/.claude/agents/`:
 | security-reviewer | Security vulnerability detection | User input handling, auth, API endpoints |
 | spec-researcher | Latest specs and best practices research | Project setup, adding dependencies, config |
 | web-researcher | Web search via Gemini | Latest tech info, best practices |
-| review-quiz-generator | 復習問題生成 | Claude Code履歴から学習問題を生成 |
 
 ## Immediate Agent Usage
 
