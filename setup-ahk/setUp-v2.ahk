@@ -393,6 +393,14 @@ MoveWindowToHalf(side)
             newH := (workAreaHeight - halfHeight) + cropTop + cropBottom
             WinMove newX, newY, newW, newH, activeWin
         }
+        else if (side = "Full")
+        {
+            newX := mLeft - cropLeft
+            newY := mTop - cropTop
+            newW := workAreaWidth + cropLeft + cropRight
+            newH := workAreaHeight + cropTop + cropBottom
+            WinMove newX, newY, newW, newH, activeWin
+        }
     }
     catch as err
     {
@@ -418,18 +426,7 @@ $^!k::MoveWindowToHalf("Top")
 $^!l::MoveWindowToHalf("Right")
 
 ; Ctrl + Alt + M → ウィンドウ最大化
-$^!m::
-{
-    try
-    {
-        if WinExist("A")
-            WinMaximize "A"
-    }
-    catch as err
-    {
-        return
-    }
-}
+$^!m::MoveWindowToHalf("Full")
 
 #HotIf WinActive("ahk_exe wezterm-gui.exe")
 
@@ -459,4 +456,5 @@ $^!m::
 
 ^Left::SendInput "^#{Left}"   ; Ctrl+← → 左のデスクトップへ
 ^Right::SendInput "^#{Right}"  ; Ctrl+→ → 右のデスクトップへ
+
 
