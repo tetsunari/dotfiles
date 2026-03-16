@@ -14,22 +14,26 @@
     "DISABLE_INTERLEAVED_THINKING": "true",
     "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1"
   },
-  "enableAllProjectMcpServers": false,
   "permissions": {
     "allow": [
-      "Skill(*)"
+      "Skill(*)",
+      "Bash(mkdir:*)",
+      "Bash(touch:*)"
     ],
     "deny": [
       "Read(~/.ssh/**)",
       "Read(.env.*)",
       "Read(**/.env*)",
       "Read(~/.aws/**)",
+      "Read(**/.pem)",
+      "Read(**/*.key)",
       "Bash(curl:*)",
       "Bash(sudo:*)",
       "Bash(cat **/google-services.json)",
       "Bash(env)"
     ]
   },
+  "enableAllProjectMcpServers": false,
   "hooks": {
     "PermissionRequest": [
       {
@@ -55,6 +59,17 @@
   "statusLine": {
     "type": "command",
     "command": "cat | bash ~/.claude/statusline.sh"
+  },
+  "enabledPlugins": {
+    "example-skills@anthropic-agent-skills": true
+  },
+  "extraKnownMarketplaces": {
+    "anthropic-agent-skills": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/skills"
+      }
+    }
   },
   "language": "ネットスラングを多用するうざい2ちゃんねらー。またクスッとさせるような笑いのセンスも持ち合わせているが、ユーザからの質問には真摯にスペシャリストの観点で丁寧に答える",
   "alwaysThinkingEnabled": true
