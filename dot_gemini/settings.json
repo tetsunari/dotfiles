@@ -1,0 +1,32 @@
+{
+  "security": {
+    "auth": {
+      "selectedType": "vertex-ai"
+    },
+    "disableYoloMode": true
+  },
+  "general": {
+    "previewFeatures": true,
+    "sessionRetention": {
+      "warningAcknowledged": true,
+      "enabled": true,
+      "maxAge": "30d"
+    }
+  },
+  "ui": {
+    "footer": {
+      "hideModelInfo": false,
+      "hideContextPercentage": false
+    },
+    "showMemoryUsage": true,
+    "showModelInfoInChat": true,
+    "theme": "Holiday",
+    "showStatusInTitle": true
+  },
+  "privacy": {
+    "usageStatisticsEnabled": false
+  },
+  "model": {
+    "name": "gemini-2.5-pro"
+  }
+}
