@@ -71,6 +71,9 @@ function M.apply_to_config(config)
     { key = "j", mods = "CTRL|SHIFT", action = act.ScrollByPage(0.5) },
     { key = "k", mods = "CTRL|SHIFT", action = act.ScrollByPage(-0.5) },
     { key = "G", mods = "CTRL|SHIFT", action = act.ScrollToBottom },
+    -- RCtrl+j/k プロキシ → アプリへ Ctrl+j/k を転送
+    { key = "j", mods = "CTRL|ALT", action = act.SendKey { key = "j", mods = "CTRL" } },
+    { key = "k", mods = "CTRL|ALT", action = act.SendKey { key = "k", mods = "CTRL" } },
 
     -- === PANE MANAGEMENT ===
     { key = "\\", mods = "LEADER", action = act.SplitHorizontal { domain = "CurrentPaneDomain" } },

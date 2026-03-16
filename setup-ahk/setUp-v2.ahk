@@ -193,6 +193,9 @@ global lctrlPressed := false
 >^a::Send "^a"
 >^x::Send "^x"
 >^d::Send "^d"
+; RCtrl+j/k → Ctrl+Alt+j/k に変換（VSCode/Cursor 経由でlazygitへ転送するプロキシ）
+>^j::Send "^!j"
+>^k::Send "^!k"
 #HotIf
 
 ; その他のアプリケーション用 Emacsキーバインド（グローバル）
@@ -430,10 +433,9 @@ $^!m::MoveWindowToHalf("Full")
 
 #HotIf WinActive("ahk_exe wezterm-gui.exe")
 
-; RCtrl + k を行末削除として実装（End+Delete）
-; WezTermで CTRL+k は ScrollByLine(-1) に設定されているため、
-; キー入力そのものを送信することで Kill-line 動作を実現
->^k::Send "{End}{Delete}"
+; RCtrl+j/k → Ctrl+Alt+j/k に変換（WezTerm 経由でアプリへ Ctrl+j/k を転送するプロキシ）
+>^j::Send "^!j"
+>^k::Send "^!k"
 
 ; LCtrl+V を Ctrl+Q に変換して送る（"Send"でアプリに渡す）
 >^v::Send "^{q}"
@@ -442,6 +444,7 @@ $^!m::MoveWindowToHalf("Full")
 >^c::send "^+{c}"
 
 #HotIf
+
 
 ; =============================================================================
 ; Win + 数字 → 仮想デスクトップ切り替え
