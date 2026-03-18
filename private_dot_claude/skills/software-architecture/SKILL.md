@@ -1,6 +1,6 @@
 ---
 name: software-architecture
-description: Guide for quality focused software architecture. This skill should be used when users want to write code, design architecture, analyze code, in any case that relates to software development. 
+description: システムアーキテクチャの設計・評価・レビュー時には必ずこのスキルを使う。新しいシステム設計、アーキテクチャ決定、コード構造のレビュー、設計パターン適用時に即座に起動。Clean Architecture・DDD原則に基づく品質重視のガイドを提供。
 context: fork
 ---
 
@@ -74,4 +74,3 @@ This skill provides guidance for quality focused software development and archit
 - Avoid deep nesting (max 3 levels)
 - Keep functions focused and under 50 lines when possible
 - Keep files focused and under 200 lines of code when possible
-```
