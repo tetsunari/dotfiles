@@ -1,3 +1,9 @@
+---
+name: evidence-based
+description: 実装前の前提検証、要件・仕様の分析、バグ調査時に必ず使う。「〇〇だと思う」という推測で実装を進めようとしている時に即座に起動。Ensure implementations are based on verified facts from multiple sources (specs, code, prototypes) before writing any code.
+context: fork
+---
+
 ## 要件・仕様分析のベストプラクティス
 
 ### 複数情報源による事実確認
