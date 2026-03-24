@@ -1,6 +1,6 @@
 ---
-name: clickhouse-io
-description: ClickHouse database patterns, query optimization, analytics, and data engineering best practices for high-performance analytical workloads.
+name: clickhouse
+description: ClickHouseを使う・クエリを書く・最適化する時には必ずこのスキルを使う。テーブル設計、クエリ最適化、データパイプライン構築、分析ワークロード設計時に即座に起動。ClickHouse database patterns, query optimization, analytics, and data engineering best practices.
 context: fork
 ---
 
@@ -163,29 +163,33 @@ const clickhouse = new ClickHouse({
   }
 })
 
-// ✅ Batch insert (efficient)
+// ✅ Batch insert using stream API (efficient & safe)
 async function bulkInsertTrades(trades: Trade[]) {
-  const values = trades.map(trade => `(
-    '${trade.id}',
-    '${trade.market_id}',
-    '${trade.user_id}',
-    ${trade.amount},
-    '${trade.timestamp.toISOString()}'
-  )`).join(',')
-
-  await clickhouse.query(`
-    INSERT INTO trades (id, market_id, user_id, amount, timestamp)
-    VALUES ${values}
-  `).toPromise()
+  // Use stream insert - never interpolate user data into raw SQL strings
+  const ws = clickhouse.insert('trades').stream()
+  for (const trade of trades) {
+    ws.writeRow({
+      id: trade.id,
+      market_id: trade.market_id,
+      user_id: trade.user_id,
+      amount: trade.amount,
+      timestamp: trade.timestamp.toISOString()
+    })
+  }
+  await ws.exec()
 }
 
 // ❌ Individual inserts (slow)
 async function insertTrade(trade: Trade) {
   // Don't do this in a loop!
   await clickhouse.query(`
-    INSERT INTO trades VALUES ('${trade.id}', ...)
+    INSERT INTO trades VALUES (...)
   `).toPromise()
 }
+
+// ❌ NEVER use string interpolation for SQL (SQL injection risk)
+// const values = trades.map(t => `('${t.id}', '${t.user_id}', ...)`).join(',')
+// await clickhouse.query(`INSERT INTO trades VALUES ${values}`)
 ```
 
 ### Streaming Insert

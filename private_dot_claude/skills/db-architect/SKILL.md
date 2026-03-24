@@ -1,6 +1,6 @@
 ---
 name: db-architect
-description: DB設計・マイグレーション管理を一貫サポート。スキーマ変更提案、マイグレーションファイル生成、ER図更新、Prisma/Drizzle/TypeORM対応。
+description: DBスキーマの変更・設計・マイグレーション作業には必ずこのスキルを使う。新規テーブル追加、カラム変更、インデックス最適化、ORM設定変更、ER図更新を行う時に即座に起動。Prisma/Drizzle/TypeORM/Knex対応。
 context: fork
 ---
 

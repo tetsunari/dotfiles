@@ -1,6 +1,6 @@
 ---
 name: ddd
-description: Domain-Driven Design (DDD) architecture guidance for TypeScript projects. Use when designing layered architecture, implementing entities/value objects/aggregates, structuring domain-driven applications, or applying modern DDD patterns (2024-2025).
+description: DDDアーキテクチャを設計・実装する時には必ずこのスキルを使う。新規アプリ設計、エンティティ/バリューオブジェクト/集約の実装、レイヤードアーキテクチャ構造化、CQRS・イベントソーシング適用時に即座に起動。Domain-Driven Design guidance for TypeScript projects (2024-2025).
 context: fork
 ---
 
@@ -150,11 +150,7 @@ export class CreateTaskUseCase {
 ## Reference Files
 
 For detailed information, see:
-- `architecture/` - Architectural pattern details
-- `naming-conventions/` - File and directory naming rules
-- `examples/` - Complete working examples
-- `templates/` - Code boilerplate templates
-- `best-practices/` - Modern DDD techniques
+- `references/ddd-patterns.md` - DDD patterns, naming conventions, examples, templates, and best practices
 
 ## Common Pitfalls to Avoid
 

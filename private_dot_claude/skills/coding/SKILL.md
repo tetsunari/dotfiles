@@ -1,12 +1,14 @@
 ---
-name: coding-standards
-description: Universal coding standards, best practices, and patterns for TypeScript, JavaScript, React, and Node.js development.
-contest: fork
+name: coding
+description: TypeScript・JavaScript・React・Node.js開発時には常に適用する。コードを実装する、コーディング標準を確認したい、ベストプラクティスに従って実装したい時に必ず使う。Universal coding standards, best practices, and patterns.
+context: fork
 ---
 
 # Coding Standards & Best Practices
 
 Universal coding standards applicable across all projects.
+
+**See also**: `rules/coding-style.md` for Immutability, Error Handling, Input Validation patterns. `rules/patterns.md` for ApiResponse, useDebounce, Repository patterns.
 
 ## Code Quality Principles
 
@@ -62,48 +64,6 @@ function isValidEmail(email: string): boolean { }
 async function market(id: string) { }
 function similarity(a, b) { }
 function email(e) { }
-```
-
-### Immutability Pattern (CRITICAL)
-
-```typescript
-// ✅ ALWAYS use spread operator
-const updatedUser = {
-  ...user,
-  name: 'New Name'
-}
-
-const updatedArray = [...items, newItem]
-
-// ❌ NEVER mutate directly
-user.name = 'New Name'  // BAD
-items.push(newItem)     // BAD
-```
-
-### Error Handling
-
-```typescript
-// ✅ GOOD: Comprehensive error handling
-async function fetchData(url: string) {
-  try {
-    const response = await fetch(url)
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
-    }
-
-    return await response.json()
-  } catch (error) {
-    console.error('Fetch failed:', error)
-    throw new Error('Failed to fetch data')
-  }
-}
-
-// ❌ BAD: No error handling
-async function fetchData(url) {
-  const response = await fetch(url)
-  return response.json()
-}
 ```
 
 ### Async/Await Best Practices
@@ -179,28 +139,6 @@ export function Button(props) {
 }
 ```
 
-### Custom Hooks
-
-```typescript
-// ✅ GOOD: Reusable custom hook
-export function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value)
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value)
-    }, delay)
-
-    return () => clearTimeout(handler)
-  }, [value, delay])
-
-  return debouncedValue
-}
-
-// Usage
-const debouncedQuery = useDebounce(searchQuery, 500)
-```
-
 ### State Management
 
 ```typescript
@@ -240,66 +178,6 @@ DELETE /api/markets/:id          # Delete market
 
 # Query parameters for filtering
 GET /api/markets?status=active&limit=10&offset=0
-```
-
-### Response Format
-
-```typescript
-// ✅ GOOD: Consistent response structure
-interface ApiResponse<T> {
-  success: boolean
-  data?: T
-  error?: string
-  meta?: {
-    total: number
-    page: number
-    limit: number
-  }
-}
-
-// Success response
-return NextResponse.json({
-  success: true,
-  data: markets,
-  meta: { total: 100, page: 1, limit: 10 }
-})
-
-// Error response
-return NextResponse.json({
-  success: false,
-  error: 'Invalid request'
-}, { status: 400 })
-```
-
-### Input Validation
-
-```typescript
-import { z } from 'zod'
-
-// ✅ GOOD: Schema validation
-const CreateMarketSchema = z.object({
-  name: z.string().min(1).max(200),
-  description: z.string().min(1).max(2000),
-  endDate: z.string().datetime(),
-  categories: z.array(z.string()).min(1)
-})
-
-export async function POST(request: Request) {
-  const body = await request.json()
-
-  try {
-    const validated = CreateMarketSchema.parse(body)
-    // Proceed with validated data
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({
-        success: false,
-        error: 'Validation failed',
-        details: error.errors
-      }, { status: 400 })
-    }
-  }
-}
 ```
 
 ## File Organization
