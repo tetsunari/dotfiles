@@ -7,6 +7,10 @@ SESSION_FILE="$CLAUDE_DIR/.sl_session.json"
 LAST_STATE_FILE="$CLAUDE_DIR/.sl_last_state.json"
 USAGE_LOG="$CLAUDE_DIR/.sl_usage_log.csv"
 COMPRESS_FILE="$CLAUDE_DIR/.sl_compress.json"
+USAGE_CACHE="$CLAUDE_DIR/.sl_usage_cache.json"
+USAGE_CACHE_TTL=3600
+FAIL_CACHE="$CLAUDE_DIR/.sl_usage_fail.json"
+FAIL_COOLDOWN=300
 
 input=$(cat)
 
@@ -137,6 +141,44 @@ if [ $((RANDOM % 50)) -eq 0 ] && [ -f "$USAGE_LOG" ]; then
   mv "$tmp" "$USAGE_LOG"
 fi
 
+# Rate limits from stdin (Claude Code v2.1.80+)
+usage_5h_pct=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // 0' 2>/dev/null || echo 0)
+usage_7d_pct=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // 0' 2>/dev/null || echo 0)
+usage_5h_reset=""
+usage_7d_reset=""
+has_rate_limits=$(echo "$input" | jq -e '.rate_limits' >/dev/null 2>&1 && echo 1 || echo 0)
+
+reset_5h_ts=$(echo "$input" | jq -r '.rate_limits.five_hour.resets_at // 0' 2>/dev/null || echo 0)
+reset_7d_ts=$(echo "$input" | jq -r '.rate_limits.seven_day.resets_at // 0' 2>/dev/null || echo 0)
+if [ "${reset_5h_ts:-0}" -gt 0 ] 2>/dev/null; then
+  r=$(TZ="Asia/Tokyo" date -d "@$reset_5h_ts" "+%H:%M" 2>/dev/null)
+  [ -n "$r" ] && usage_5h_reset="→${r}"
+fi
+if [ "${reset_7d_ts:-0}" -gt 0 ] 2>/dev/null; then
+  r=$(TZ="Asia/Tokyo" date -d "@$reset_7d_ts" "+%m/%d %H:%M" 2>/dev/null)
+  [ -n "$r" ] && usage_7d_reset="→${r}"
+fi
+
+build_usage_bar() {
+  local pct=$1
+  local filled=$((pct / 10))
+  [ "$filled" -gt 10 ] && filled=10
+  local empty=$((10 - filled))
+  local bar=""
+  for ((i=0; i<filled; i++)); do bar+="▰"; done
+  for ((i=0; i<empty; i++)); do bar+="▱"; done
+  echo "$bar"
+}
+
+usage_color() {
+  echo "⚡"
+}
+
+bar_5h=$(build_usage_bar "$usage_5h_pct")
+bar_7d=$(build_usage_bar "$usage_7d_pct")
+color_5h=$(usage_color "$usage_5h_pct")
+color_7d=$(usage_color "$usage_7d_pct")
+
 # Build progress bar
 pct_int=$(awk "BEGIN {printf \"%.0f\", ${used_pct:-0}}" 2>/dev/null || echo "0")
 filled=$((pct_int / 10))
@@ -161,10 +203,20 @@ fi
 effort_str=""
 [ -n "$effort" ] && effort_str=" │ 💪 ${effort}"
 
-# Output (2 lines)
+# Output
 # Line 1: Session context status
 # Line 2: Burn rate + Usage history
-printf "🤖 %s%s │ 📊 %s/%s %s %d%% %s │ ⬇%s ⬆%s │ 💡残%s │ ⏳~%s │ 🔄%d回\n🔥 %s │ 🕐 Daily:%s  🗓 Weekly:%s  📊 Monthly:%s" \
+# Line 3: Usage limits (Max) or Plan info (Pro)
+if [ "$has_rate_limits" -eq 1 ]; then
+  usage_line=$(printf "⏱ 5h [%s] %d%% %s%s │ 📅 7d [%s] %d%% %s%s" \
+    "$bar_5h" "$usage_5h_pct" "$color_5h" "$usage_5h_reset" \
+    "$bar_7d" "$usage_7d_pct" "$color_7d" "$usage_7d_reset")
+else
+  sub_type=$(jq -r '.claudeAiOauth.subscriptionType // "unknown"' "$HOME/.claude/.credentials.json" 2>/dev/null)
+  usage_line="📋 Plan: ${sub_type}"
+fi
+
+printf "🤖 %s%s │ 📊 %s/%s %s %d%% %s │ ⬇%s ⬆%s │ 💡残%s │ ⏳~%s │ 🔄%d回\n🔥 %s │ 🕐 Daily:%s  🗓 Weekly:%s  📊 Monthly:%s\n%s" \
   "$model" \
   "$effort_str" \
   "$(fmt $current_used)" \
@@ -180,5 +232,6 @@ printf "🤖 %s%s │ 📊 %s/%s %s %d%% %s │ ⬇%s ⬆%s │ 💡残%s │ �
   "$burn_rate_str" \
   "$(fmt $d_total)" \
   "$(fmt $w_total)" \
-  "$(fmt $m_total)"
+  "$(fmt $m_total)" \
+  "$usage_line"
 
