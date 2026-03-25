@@ -5,7 +5,6 @@ pnpm = "latest"
 
 # node
 node = "latest"
-"npm:@google/gemini-cli" = "latest"
 
 # bun
 bun = "latest"
