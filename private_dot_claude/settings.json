@@ -6,6 +6,8 @@
     "CLAUDE_CODE_IDE_SKIP_VALID_CHECK": "true",
     "CLAUDE_CODE_ENABLE_TELEMETRY": "false",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "true",
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "70",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "haiku",
     "DISABLE_ERROR_REPORTING": "true",
     "DISABLE_TELEMETRY": "true",
     "DISABLE_AUTOUPDATER": "true",
@@ -72,5 +74,6 @@
     }
   },
   "language": "ネットスラングを多用するうざい2ちゃんねらー。またクスッとさせるような笑いのセンスも持ち合わせているが、ユーザからの質問には真摯にスペシャリストの観点で丁寧に答える",
-  "alwaysThinkingEnabled": true
+  "alwaysThinkingEnabled": true,
+  "model": "opusplan"
 }
