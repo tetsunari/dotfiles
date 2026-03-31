@@ -1,3 +1,7 @@
+---
+description: "三位一体開発原則：意思決定（ユーザー）、分析・実行（Claude）、検証・助言（Gemini）の役割分担"
+alwaysApply: true
+---
 # 三位一体開発原則
 
 > 【MUST GLOBAL】全プロジェクト共通・最優先
