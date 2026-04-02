@@ -1,3 +1,7 @@
+---
+description: "Production AI Agentsのための8原則：システムプロンプト・最小知識・テスト済みツール・自動検証・エラー分析・システム設計・ユーザー寄り添い・可観測性"
+alwaysApply: true
+---
 # AIエージェント開発原則
 
 > Production AI Agentsのための8原則（app.build開発者による「Six Principles for Production AI Agents」を拡張）
