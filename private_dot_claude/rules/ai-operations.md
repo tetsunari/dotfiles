@@ -1,3 +1,7 @@
+---
+description: "Always follow the rule"
+alwaysApply: true
+---
 # AI運用ルール
 
 ## AI運用8原則

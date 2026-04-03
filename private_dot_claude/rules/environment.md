@@ -1,3 +1,7 @@
+---
+description: "コマンドエイリアス設定：cat=bat, ls=eza, find=fd, grep=rg, cd=zoxide"
+alwaysApply: true
+---
 # 環境設定
 
 ## コマンドエイリアス

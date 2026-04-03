@@ -1,3 +1,7 @@
+---
+description: "Skills vs Subagents の使い分けガイド：思考型（skills）vs 外注型（subagents）の判断フローチャート"
+alwaysApply: true
+---
 # Skills vs Subagents 設計判断ガイド
 
 ## 結論サマリ
