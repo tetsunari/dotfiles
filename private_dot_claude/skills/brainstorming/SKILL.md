@@ -2,6 +2,7 @@
 name: brainstorming
 description: Use this skill before any implementation work — whenever exploring ideas, designing systems, or clarifying requirements. Trigger when the user says "I want to build X", "how should I design Y", "help me think through Z", or when starting a new feature or system. Explores intent, requirements, and design through structured dialogue before any code is written.
 context: fork
+allowed-tools: Read
 ---
 
 # Brainstorming Ideas Into Designs
