@@ -2,6 +2,7 @@
 name: technical-writer
 description: 技術記事・ドキュメントを書く時には必ずこのスキルを使う。Zenn/Qiita記事、GitHub README、API仕様書、チュートリアル作成を依頼された時に即座に起動。企画→構成案→執筆→推敲→ファイル生成まで対話形式でリード。
 context: fork
+allowed-tools: Read, Write
 ---
 
 # Technical Writer: 技術ドキュメント執筆支援
