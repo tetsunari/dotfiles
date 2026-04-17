@@ -10,6 +10,8 @@ os:
   open: "code"
   editPreset: "vscode"
   editCommand: "nvim"
+promptToReturnFromSubprocess: false
+
 git:
   pagers:
     - colorArg: always
