@@ -2,7 +2,7 @@
 name: deploy-commander
 description: デプロイ・リリース作業を行う時には必ずこのスキルを使う。ステージング・本番環境へのデプロイ、CI/CD設定、ビルドエラー解析、ロールバック実行を依頼された時に即座に起動。事前チェックリスト強制実行、複雑なコマンド抽象化、ビルドエラー自動解析、ロールバック手順管理。
 context: fork
-disable-model-invocation: true
+allowed-tools: Bash
 ---
 
 # Deploy Commander: デプロイ・リリース自動化

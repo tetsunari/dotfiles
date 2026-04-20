@@ -1,6 +1,6 @@
 ---
 name: kaizen
-description: Use when Code implementation and refactoring, architecturing or designing systems, process and workflow improvements, error handling and validation. Provide techniques to avoid over-engineering and apply iterative improvements.
+description: Use when applying continuous improvement mindset to code implementation, refactoring, architecture decisions, process/workflow improvements, error handling and validation. Focuses on iterative quality improvement and error-proofing by design — NOT for structural code tidying (use tidying skill) or one-time reviews.
 context: fork
 ---
 
@@ -42,7 +42,7 @@ Small, frequent improvements compound into major gains.
 
 **Always leave code better:**
 
-- Fix small issues as you encounter them
+- Fix small issues as you encounter them (within the current task's scope only — do not expand change radius)
 - Refactor while you work (within scope)
 - Update outdated comments
 - Remove dead code when you see it
