@@ -2,6 +2,7 @@
 name: db-architect
 description: DBスキーマの変更・設計・マイグレーション作業には必ずこのスキルを使う。新規テーブル追加、カラム変更、インデックス最適化、ORM設定変更、ER図更新を行う時に即座に起動。Prisma/Drizzle/TypeORM/Knex対応。
 context: fork
+allowed-tools: Bash
 ---
 
 # DB Architect: データベース設計・マイグレーション管理
