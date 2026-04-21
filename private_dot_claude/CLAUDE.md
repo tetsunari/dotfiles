@@ -5,25 +5,11 @@
 
 ---
 
-## ディレクトリ構成
-
-```
-~/.claude/
-├── CLAUDE.md          # このファイル（ハーネス全体の索引）
-├── rules/             # グローバルルール（自動読み込み）
-├── agents/            # カスタムサブエージェント定義
-├── skills/            # スキル定義（思考様式の注入）
-├── commands/          # スラッシュコマンド
-├── scripts/           # フック用スクリプト
-└── plugins/           # マーケットプレイスプラグイン
-```
-
----
-
 ## rules/ 索引
 
 | ファイル | 適用条件 | 内容 |
 |---------|---------|------|
+| `init.md` | 常時 | トークン削減：Claudeのトークン削除 の役割分担 |
 | `trinity-development.md` | 常時 | 三位一体原則：ユーザー/Claude/Gemini の役割分担 |
 | `ai-operations.md` | 常時 | AI運用8原則（確認ルール・自己改善ループ） |
 | `rule.md` | 常時 | Skills vs Subagents 使い分けガイド |
@@ -35,6 +21,7 @@
 | `agents.md` | 常時 | エージェントオーケストレーション定義 |
 | `coding-style.md` | `*.ts,tsx,js,jsx,...` | 不変性・ファイル構成・エラーハンドリング |
 | `patterns.md` | `*.ts,tsx,js,jsx` | API応答形式・Custom Hooks・Repository パターン |
+| `verification-loop.md` | 常時 | 検証完了基準（動作証明なき完了禁止・確認手順） |
 
 ---
 
