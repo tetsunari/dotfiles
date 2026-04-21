@@ -13,3 +13,4 @@ Brewfile_mac
 
 README.md
 .config/nvim/lazy-lock.json
+.codex/log/*
