@@ -9,10 +9,9 @@
 
 | ファイル | 適用条件 | 内容 |
 |---------|---------|------|
-| `init.md` | 常時 | トークン削減：Claudeのトークン削除 の役割分担 |
+| `init.md` | 常時 | 出力トークン圧縮ルール |
 | `trinity-development.md` | 常時 | 三位一体原則：ユーザー/Claude/Gemini の役割分担 |
-| `ai-operations.md` | 常時 | AI運用8原則（確認ルール・自己改善ループ） |
-| `rule.md` | 常時 | Skills vs Subagents 使い分けガイド |
+| `ai-operations.md` | 常時 | AI運用10原則（確認ルール・自己改善ループ） |
 | `agent-security.md` | 常時 | OWASP Agentic Top 10 + Least Agency 原則 |
 | `core-principles.md` | 常時 | コア開発3原則（シンプル・根本原因・影響最小化） |
 | `security.md` | 常時 | パッケージインストール時のセキュリティチェック |
