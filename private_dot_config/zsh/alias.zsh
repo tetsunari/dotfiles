@@ -10,6 +10,8 @@ alias notkill='/mnt/c/Windows/System32/taskkill.exe /F /IM Notion.exe'
 # Claude Desktop
 alias dt-claude="nohup $(wslpath $(/mnt/c/WINDOWS/system32/cmd.exe /c 'SET /P X=%USERPROFILE%<NUL' 2>/dev/null))/AppData/Local/Application\ Data/AnthropicClaude/claude.exe > /dev/null 2>&1 &"
 alias dt-claudekill='/mnt/c/Windows/System32/taskkill.exe /F /IM claude.exe'
+# Windows Claude
+alias win-claude="/mnt/c/Users/setup_user/.local/bin/claude.exe"
 
 # Modern CLI Tools (Homebrew)
 alias cat='bat'
