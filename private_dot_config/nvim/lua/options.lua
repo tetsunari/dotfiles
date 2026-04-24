@@ -42,3 +42,19 @@ vim.opt.listchars = {
   nbsp = "%", -- 不可視のスペース
 }
 
+if vim.g.vscode then
+  -- VSCode Neovim利用時のみメッセージを最大限に抑制する
+  vim.opt.shortmess = "atIWSFcCqsOm"
+  vim.opt.showmode = false
+  vim.opt.showcmd = false
+  vim.opt.report = 9999
+  vim.opt.cmdheight = 0
+  vim.opt.more = false
+  vim.opt.incsearch = false
+  vim.opt.inccommand = ""
+  vim.opt.hlsearch = false
+  vim.opt.display = "lastline,msgsep"
+
+  -- Neovimの通知機能を無効化
+  vim.notify = function() end
+end

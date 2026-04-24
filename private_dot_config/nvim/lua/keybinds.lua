@@ -1,5 +1,5 @@
 -- zenhan IME自動切り替え設定
-if vim.fn.executable('zenhan') == 1 then
+if not vim.g.vscode and vim.fn.executable('zenhan') == 1 then
   -- InsertモードからNormalモードに切り替わった時にIMEをオフにする
   vim.api.nvim_create_autocmd('ModeChanged', {
     pattern = 'i:*',
