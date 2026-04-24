@@ -40,7 +40,7 @@ function M.apply_to_config(config)
   config.use_ime = true
   config.ime_preedit_rendering = "System"
   config.send_composed_key_when_left_alt_is_pressed = true
-  config.scrollback_lines = 10000
+  config.scrollback_lines = 25000
 
   -- =============================================================================
   -- COLOR SCHEME
@@ -73,7 +73,7 @@ function M.apply_to_config(config)
   -- WINDOW & LAYOUT
   -- =============================================================================
   config.window_decorations = "RESIZE"
-  config.window_background_opacity = 0.77
+  config.window_background_opacity = 0.78
   config.text_background_opacity = 1.00
   config.adjust_window_size_when_changing_font_size = false
 
