@@ -4,7 +4,7 @@ memory=18GB
 
 # プロセッサ設定 - 物理コア数に応じて調整
 # 通常は物理コア数の75-100%を推奨
-processors=6
+processors=10
 
 # スワップ設定 - メモリが潤沢なので控えめに設定
 swap=0
@@ -16,7 +16,7 @@ networkingMode=mirrored
 # VPN DNS問題を解決
 dnsTunneling=true
 
-# firewall=true
+firewall=false
 
 # Windowsプロキシ設定を自動継承
 autoProxy=true
@@ -37,3 +37,6 @@ autoMemoryReclaim=gradual
 
 # ホストアドレスループバック - コンテナ間通信改善
 hostAddressLoopback=true
+
+# 一部読み取れないデータがあっても、無視して理解できるIPアドレスだけを抽出して繋ぐ
+bestEffortDnsParsing=true
