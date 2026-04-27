@@ -16,6 +16,7 @@ Located in `~/.claude/agents/`:
 | security-reviewer | Security vulnerability detection | User input handling, auth, API endpoints |
 | spec-researcher | Latest specs and best practices research | Project setup, adding dependencies, config |
 | web-researcher | Web search via Gemini | Latest tech info, best practices |
+| error-investigator | Error root cause analysis (fork mode) | Test failures, runtime errors, build errors |
 
 ## Immediate Agent Usage
 
