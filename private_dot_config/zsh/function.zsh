@@ -15,11 +15,11 @@ autoload -Uz compinit && compinit
 export CLOUDSDK_PYTHON=python3
 
 # code コマンド
-export PATH=$PATH:"$(wslpath $(/mnt/c/WINDOWS/system32/cmd.exe /c 'SET /P X=%USERPROFILE%<NUL' 2>/dev/null))/AppData/Local/Programs/Microsoft VS Code/bin"
+export PATH=$PATH:"$(wslpath "$(/mnt/c/WINDOWS/system32/cmd.exe /c 'echo %USERPROFILE%' 2>/dev/null | tr -d '\r')")/AppData/Local/Programs/Microsoft VS Code/bin"
 # cursor コマンド
-export PATH=$PATH:"$(wslpath $(/mnt/c/WINDOWS/system32/cmd.exe /c 'SET /P X=%USERPROFILE%<NUL' 2>/dev/null))/AppData/Local/Programs/cursor/resources/app/bin"
+export PATH=$PATH:"$(wslpath "$(/mnt/c/WINDOWS/system32/cmd.exe /c 'echo %USERPROFILE%' 2>/dev/null | tr -d '\r')")/AppData/Local/Programs/cursor/resources/app/bin"
 # kiro コマンド
-export PATH=$PATH:"$(wslpath $(/mnt/c/WINDOWS/system32/cmd.exe /c 'SET /P X=%USERPROFILE%<NUL' 2>/dev/null))/AppData/Local/Programs/kiro/bin"
+export PATH=$PATH:"$(wslpath "$(/mnt/c/WINDOWS/system32/cmd.exe /c 'echo %USERPROFILE%' 2>/dev/null | tr -d '\r')")/AppData/Local/Programs/kiro/bin"
 # Linux Brew
 export HOMEBREW_DEVELOP=1
 ## curl path
