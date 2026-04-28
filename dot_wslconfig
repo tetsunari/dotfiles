@@ -11,15 +11,16 @@ swap=0
 #swapFile=%USERPROFILE%\\AppData\\Local\\Temp\\wsl-swap.vhdx
 
 # ネットワークモード
-networkingMode=mirrored
+# networkingMode=mirrored
+networkingMode=nat
 
 # VPN DNS問題を解決
-dnsTunneling=true
+dnsTunneling=false
 
-firewall=false
+firewall=true
 
 # Windowsプロキシ設定を自動継承
-autoProxy=true
+autoProxy=false
 
 # ローカルホスト転送 - Dockerポート転送で重要
 # Setting is ignored when networkingMode=mirrored
