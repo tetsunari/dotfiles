@@ -2,6 +2,7 @@ require 'function'
 require 'keybinds'
 require 'plugin'
 require 'options'
+require 'completion'
 
 vim.api.nvim_create_user_command(
   'InitLua',

@@ -100,4 +100,22 @@ return {
       end,
     })
   end,
+  config = function(_, opts)
+    require("undo-glow").setup(opts)
+    -- VSCode では u/<C-r> を vscode.action に差し替えてメッセージを抑制
+    if vim.g.vscode then
+      local vscode = require("vscode")
+      vim.keymap.set("n", "u", function()
+        if vim.fn.undotree().seq_cur > 0 then
+          vscode.action("undo")
+        end
+      end, { silent = true, noremap = true })
+      vim.keymap.set("n", "<C-r>", function()
+        local ut = vim.fn.undotree()
+        if ut.seq_cur < ut.seq_last then
+          vscode.action("redo")
+        end
+      end, { silent = true, noremap = true })
+    end
+  end,
 }
