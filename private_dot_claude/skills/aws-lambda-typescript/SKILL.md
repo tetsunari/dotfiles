@@ -2,6 +2,7 @@
 name: aws-lambda-typescript
 description: AWS Lambda関数を実装・レビューする時は必ずこのスキルを使う。Lambda関数のコードを書く、API Gateway/EventBridge/SQSと連携する、DynamoDB操作を実装する時に即座に起動。TypeScript実装パターン・エラーハンドリング・Powertools活用・パフォーマンス最適化を含む包括的なガイド。
 context: fork
+allowed-tools: Read
 ---
 
 # AWS Lambda (TypeScript) ベストプラクティス

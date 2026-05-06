@@ -102,9 +102,47 @@ Before ANY production deployment:
 - [ ] **File Uploads**: Validated (size, type)
 - [ ] **Wallet Signatures**: Verified (if blockchain)
 
+### 10. AI固有リスク（OWASP LLM Top 10 2025）
+
+- [ ] ユーザー入力をシステムプロンプトに直接連結していない（LLM01: プロンプトインジェクション）
+- [ ] LLM出力をHTMLに埋め込む前にサニタイズしている（LLM02: インセキュアな出力処理）
+- [ ] RAGデータ・外部ドキュメントからの機密情報漏洩チェック済み（LLM06: 機密情報漏洩）
+- [ ] エージェントの権限が最小限に絞られている（LLM08: 過剰エージェント権限）
+- [ ] ループ内でLLM APIを無制限呼び出ししていない（コスト暴走防止）
+- [ ] `NEXT_PUBLIC_` プレフィックスにシークレットを格納していない
+
+## 深刻度判定基準（CVSS v3.1）
+
+| 深刻度 | スコア | 対応期限 |
+|--------|--------|---------|
+| 🔴 致命的 | 9.0–10.0 | 即時修正 |
+| 🟠 高 | 7.0–8.9 | 24時間以内 |
+| 🟡 中 | 4.0–6.9 | 次PR時 |
+| 🟢 低/問題なし | 0–3.9 | 任意 |
+
+## コミット可否判定
+
+| 状態 | 判定 |
+|------|------|
+| 🔴 致命的が1件以上 | 🚫 NG — 即時修正必須 |
+| 🟠 高が3件以上 | 🚫 NG |
+| 🟠 高が1〜2件 | ⚠️ 要修正後コミット |
+| 🟡 中のみ | ✅ OK（修正推奨） |
+| 問題なし | ✅ OK |
+
+## AI生成コード特有の注意点
+
+AIが修正・追加時に混入しやすいパターン：
+
+- 既存認証パターンを無視した認証なしエンドポイント追加
+- Secret Manager実装を無視したAPIキーベタ書き
+- LLM出力の未エスケープHTML埋め込み
+- 差分レビュー時の急速な脆弱性混入
+
 ## Resources
 
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
+- [OWASP LLM Top 10 (2025)](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
 - [Next.js Security](https://nextjs.org/docs/security)
 - [Supabase Security](https://supabase.com/docs/guides/auth)
 - [Web Security Academy](https://portswigger.net/web-security)
