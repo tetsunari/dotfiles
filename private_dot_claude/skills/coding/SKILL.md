@@ -2,6 +2,7 @@
 name: coding
 description: TypeScript・JavaScript・React・Node.js開発時には常に適用する。コードを実装する、コーディング標準を確認したい、ベストプラクティスに従って実装したい時に必ず使う。Universal coding standards, best practices, and patterns.
 context: fork
+allowed-tools: Read, Glob
 ---
 
 # Coding Standards & Best Practices
