@@ -6,7 +6,7 @@ alwaysApply: true
 
 ## パッケージインストール時の注意点
 
-npm, yarn, pnpm, bun, deno, pip コマンド等でパッケージをGitHubからインストールする際の注意点
+npm, yarn, pnpm, bun, deno, pip コマンド等でパッケージをインストールする際の注意点（公式レジストリ経由・GitHub直接インストール問わず）
 - アカウントの作成日が最近すぎないか
 - Star数やFork数が不自然に少なくないか
 - READMEの内容がリポジトリの説明と一致しているか
