@@ -20,10 +20,11 @@ java = "latest"
 
 ecspresso = "latest"
 
+kubectl = "latest"
+kind = "latest"
+
 # npm package
 "npm:@openai/codex" = "latest"
-
-kubectl = "latest"
 
 [tasks.brew-bundle]
 description = "brewのインストール一覧を`Brewfile_wsl`に書き出す(vscodeの設定は無視)"
