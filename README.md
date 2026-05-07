@@ -30,3 +30,25 @@ sh -c "$(curl -fsSL get.chezmoi.io)" -- init --apply tetsunari
 ### HHKB キーマップ変更ツール
 - https://happyhackingkb.com/jp/download/
   - notionにまとめてる
+## Obsidian
+```systemd
+[Unit]
+Description=Mount Obsidian Vault from Windows
+After=mnt-c.mount
+Requires=mnt-c.mount
+
+[Mount]
+What=/mnt/c/Users/setup_user/Documents/Obsidian Vault
+Where=/home/matsushita_te/vault
+Type=none
+Options=bind,rw,user
+
+[Install]
+WantedBy=multi-user.target
+```
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable home-matsushita_te-vault.mount
+sudo systemctl start home-matsushita_te-vault.mount
+```
+
