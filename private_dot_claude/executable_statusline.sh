@@ -16,7 +16,7 @@ input=$(cat)
 
 # Extract data
 model=$(echo "$input" | jq -r '.model.display_name // "Unknown"')
-effort=$(echo "$input" | jq -r '.effort // ""')
+effort=$(echo "$input" | jq -r '.effort | if type == "object" then .level // "" else . // "" end')
 total_input=$(echo "$input" | jq -r '.context_window.total_input_tokens // 0')
 total_output=$(echo "$input" | jq -r '.context_window.total_output_tokens // 0')
 context_size=$(echo "$input" | jq -r '.context_window.context_window_size // 200000')
@@ -201,7 +201,8 @@ fi
 
 # Build effort string
 effort_str=""
-[ -n "$effort" ] && effort_str=" │ 💪 ${effort}"
+# [ -n "$effort" ] && effort_str=" │ 💪 ${effort}"
+effort_str=" │ 💪 ${effort}"
 
 # Output
 # Line 1: Session context status
