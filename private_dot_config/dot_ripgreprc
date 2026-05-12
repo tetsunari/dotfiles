@@ -19,10 +19,10 @@
 # --with-filename
 
 # 表示の際に左側のスペースを取る
---trim
+# --trim  # grug-farでインデントが消えるWSL2問題のため無効化
 
 # 改行が \r\n であっても $ をマッチさせる (PCRE2 のとき \R が改行にマッチするようになる)
---crlf
+# --crlf  # grug-farでCRLFが混入するWSL2問題のため無効化
 
 # --multiline を使ったとき "\n" に "." でマッチするようになる
 --multiline-dotall
