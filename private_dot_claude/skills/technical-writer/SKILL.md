@@ -255,6 +255,5 @@ MIT
 
 ## Integration
 
-- **brainstorming** skill: 記事のアイデア出しに活用
 - **code-reviewer** skill: コード例のレビューに活用
 - **Gemini**: 最新情報・ファクトチェックに活用

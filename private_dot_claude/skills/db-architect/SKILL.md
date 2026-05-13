@@ -356,6 +356,5 @@ model User {
 
 ## Integration
 
-- **ddd** skill: ドメインモデルとの整合性
 - **security-review** skill: データ保護・アクセス制御
 - **Gemini**: 最新のDB設計パターン調査

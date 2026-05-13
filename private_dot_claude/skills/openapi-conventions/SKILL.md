@@ -5,6 +5,8 @@ description: |
   新しいエンドポイントを追加する、エラーレスポンスを修正する、スキーマを変更する、
   ブランチ間の差分をマージする時に即座に起動。
   「追加しない」「既存パターンに従う」を強制し、over-engineeringを防止する。
+context: fork
+allowed-tools: Bash, Read
 ---
 
 # OpenAPI Conventions Skill
