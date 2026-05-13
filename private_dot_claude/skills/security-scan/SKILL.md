@@ -1,4 +1,5 @@
 ---
+name: security-scan
 description: "ステージング環境にデプロイ済みのサーバーに対してランタイム検証を実行する。HTTPヘッダー・動的プローブ・認証テストに特化。手動呼び出し専用: /security-scan [環境名]"
 disable-model-invocation: true
 ---

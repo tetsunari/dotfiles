@@ -67,7 +67,5 @@ TaskCreateツールで各タスクを登録し、TaskUpdateで依存関係（add
 
 ## Integration
 
-- **brainstorming** skill: 要件の明確化に活用
 - **kaizen** skill: 段階的改善の視点
 - **subagent-drive-development** skill: タスク並列実行
-- skills vs subagents の判断基準: `references/skills-vs-subagents.md` 参照。

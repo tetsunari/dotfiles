@@ -1,6 +1,7 @@
 ---
 name: find-skills
 description: This skill should be used when the user asks "how do I do X", "find a skill for X", "is there a skill for X", "can you do X", or expresses interest in extending agent capabilities, discovering tools, templates, or workflows from the open skills ecosystem.
+context: fork
 allowed-tools: Bash
 ---
 
