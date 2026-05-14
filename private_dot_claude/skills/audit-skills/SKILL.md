@@ -1,7 +1,8 @@
 ---
 name: audit-skills
-description: カスタムスキルのSKILL.mdを監査・改善提案・自動修正する。トリガー: 「スキルを監査」「スキルの品質チェック」「スキルを見直したい」「スキル改善」「audit-skills」
-allowed-tools: Read, Glob, Grep, Edit, Agent
+description: カスタムスキルのSKILL.mdを監査・改善提案・自動修正する。「スキルを監査」「スキルの品質チェック」「スキルを見直したい」「スキル改善」「audit-skills」「audit skills」「review my skills」「check skill quality」と言われたら必ずこのスキルを使う。
+context: fork
+allowed-tools: Read, Glob, Grep, Edit, Agent, Bash
 ---
 
 # audit-skills
@@ -65,7 +66,7 @@ allowed-tools: Read, Glob, Grep, Edit, Agent
 エラー対処・判断基準の曖昧さ、分岐欠落、引数バリデーション不足、ロールバック無し
 
 **C3: 指示過剰**
-100行超スキル、重複指示、冗長な例示、汎用性喪失
+500行超スキル、重複指示、冗長な例示、汎用性喪失（200行超の場合は references/ への分離を検討）
 
 **C4: セキュリティ**
 機密ファイル除外、破壊操作確認、dangerouslyDisableSandboxの明確性、mainブランチ警告
