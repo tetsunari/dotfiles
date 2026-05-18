@@ -5,6 +5,8 @@ description: |
   CDKコードを編集する、デプロイエラーを調査する、コンストラクトを再構成する、
   スタック間参照を変更する時に即座に起動。
   Logical IDドリフト防止・cdk synth検証・overrideLogicalId管理を強制する。
+context: fork
+allowed-tools: Bash, Read
 ---
 
 # CDK Infrastructure Skill
