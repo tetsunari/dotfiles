@@ -41,7 +41,7 @@ Bashコマンドは必ず画面に表示してください。
 
 ## 自己改善ループ
 
-- セッション中に受けた修正・フィードバックは `tasks/lessons.md` に記録する
-- 次回セッション開始時に `tasks/lessons.md` を確認し、同じミスを繰り返さない
+- セッション中に受けた修正・フィードバックは Stop hook が自動検知して `~/.config/claude/lessons/lessons.md` に記録する（手動不要）
+- 次回セッションでは UserPromptSubmit hook が自動注入するため、明示的な参照不要
 - タスク管理は TaskCreate/TaskUpdate ツールで行う（`todos/*.json` に自動保存される）
 
