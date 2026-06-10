@@ -1,11 +1,22 @@
-model_reasoning_effort = "high"
+model_reasoning_effort = "xhigh"
 hide_agent_reasoning = true
 network_access = true
 
 notify = ["bash", "-lc", "afplay /System/Library/Sounds/Ping.aiff"]
+model = "gpt-5.5"
 
 [tools]
 web_search = true
+
+[tui]
+theme = "monokai-extended-bright"
+status_line = ["model-with-reasoning", "current-dir", "context-used", "model", "project-name", "git-branch", "context-remaining"]
+
+[tui.model_availability_nux]
+"gpt-5.5" = 4
+
+[notice.model_migrations]
+"gpt-5.3-codex" = "gpt-5.4"
 
 # mcpは一旦コメントアウト
 # [mcp_servers.context7]
