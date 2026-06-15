@@ -2,6 +2,7 @@
 name: kaizen
 description: Use when applying continuous improvement mindset to code implementation, refactoring, architecture decisions, process/workflow improvements, error handling and validation. Focuses on iterative quality improvement and error-proofing by design — NOT for structural code tidying (use tidying skill) or one-time reviews.
 context: fork
+allowed-tools: Read
 ---
 
 # Kaizen: Continuous Improvement
@@ -136,13 +137,15 @@ See `references/kaizen-patterns.md` for code examples and "In Practice" guidance
 
 ## Integration with Commands
 
-The Kaizen skill guides how you work. The commands provide structured analysis:
+The Kaizen skill guides how you work. The commands provide structured analysis (install separately if not available):
 
 - **`/why`**: Root cause analysis (5 Whys)
 - **`/cause-and-effect`**: Multi-factor analysis (Fishbone)
 - **`/plan-do-check-act`**: Iterative improvement cycles
 - **`/analyse-problem`**: Comprehensive documentation (A3)
 - **`/analyse`**: Smart method selection (Gemba/VSM/Muda)
+
+> これらのコマンドが存在しない場合は、同等の分析をインラインで実施する。
 
 Use commands for structured problem-solving. Apply skill for day-to-day development.
 
