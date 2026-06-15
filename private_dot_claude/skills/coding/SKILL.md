@@ -41,6 +41,8 @@ Universal coding standards applicable across all projects.
 
 ### Project Structure
 
+> **注意**: 以下は Next.js App Router プロジェクトの例。他フレームワークでは適宜読み替える。
+
 ```
 src/
 ├── app/                    # Next.js App Router
