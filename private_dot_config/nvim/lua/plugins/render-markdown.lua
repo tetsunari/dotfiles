@@ -9,7 +9,12 @@ return {
   keys = {
     { "<Space>sm", ":RenderMarkdown toggle<CR>", desc = "Toggle render-markdown" },
   },
+  config = function(_, opts)
+    require("render-markdown").setup(opts)
+    vim.api.nvim_set_hl(0, "RenderMarkdownChecked", { fg = "#9ece6a" })
+  end,
   opts = {
+    latex = { enabled = false },
     file_types = { "markdown", "snacks_dashboard", "snacks_notif" },
     render_modes = { "n", "c", "v" },
     heading = {
@@ -30,15 +35,17 @@ return {
       comment = { conceal = false },
     },
     checkbox = {
-      unchecked = { icon = "󰄰 " },
+      unchecked = { icon = "󰝣 " },
       checked = {
-        icon = "󰄳 ",
+        icon = "☑ ",
+        highlight = "RenderMarkdownChecked",
         scope_highlight = "@markup.strikethrough",
       },
       custom = {
-        canceled = {
+        todo = {
           raw = "[-]",
-          rendered = "󱘹 ",
+          rendered = "󰝣 ",
+          highlight = "RenderMarkdownTodo",
           scope_highlight = "@markup.strikethrough",
         },
       },
