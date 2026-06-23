@@ -21,32 +21,21 @@
 | `coding-style.md` | `*.ts,tsx,js,jsx,...` | 不変性・ファイル構成・エラーハンドリング |
 | `patterns.md` | `*.ts,tsx,js,jsx` | API応答形式・Custom Hooks・Repository パターン |
 | `verification-loop.md` | 常時 | 検証完了基準（動作証明なき完了禁止・確認手順） |
+| `delegation.md` | 常時 | サブエージェント委譲基準・委譲マトリクス |
 
 ---
 
 ## agents/ 索引
-
-| エージェント | 用途 |
-|------------|------|
-| `code-reviewer` | コード品質・セキュリティレビュー |
-| `security-reviewer` | セキュリティ脆弱性検出 |
-| `spec-researcher` | 最新仕様・ベストプラクティス調査 |
-| `web-researcher` | Gemini 経由 Web 検索 |
-| `doc-updater` | ドキュメント・README 更新 |
-| `refactor-cleaner` | デッドコード除去・整理 |
-| `error-investigator` | エラー原因調査（試行錯誤を隔離） |
-
----
-
-## 設計3原則（要約）
-
-1. **シンプル第一** — 最小変更で要件を満たす
-2. **根本原因対応** — 表面的な回避策を避ける
-3. **影響最小化** — 変更範囲を要求箇所に限定
-
----
-
-## セキュリティフレームワーク（要約）
-
-- **OWASP Agentic Top 10**: ASI01（プロンプトインジェクション）・ASI02（ツール悪用）・ASI04（サードパーティリスク）・ASI09（人間の過信）
-- **Least Agency**: Read=即実行 / Write・Bash・削除=事前確認必須 / 外部送信=機密チェック後に確認
+| エージェント | モデル | 用途 |
+|------------|--------|------|
+| `code-explore` | sonnet | 広範なコード調査・シンボル検索・依存関係追跡 |
+| `implementer` | sonnet | 仕様明確な実装（設計不要・箇所特定済み） |
+| `heavy-implementer` | opus | 複雑な実装・大規模変更・設計判断あり |
+| `test-runner` | haiku | テスト実行・結果確認 |
+| `code-reviewer` | sonnet | コード品質・セキュリティレビュー |
+| `security-reviewer` | opus | セキュリティ脆弱性検出 |
+| `spec-researcher` | sonnet | 最新仕様・ベストプラクティス調査 |
+| `web-researcher` | sonnet | Gemini 経由 Web 検索 |
+| `doc-updater` | opus | ドキュメント・README 更新 |
+| `refactor-cleaner` | opus | デッドコード除去・整理 |
+| `error-investigator` | opus | エラー原因調査（試行錯誤を隔離） |
