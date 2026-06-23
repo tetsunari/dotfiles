@@ -40,6 +40,7 @@ return {
     {
       "p",
       function()
+        NormalizeCRInRegister(vim.v.register)
         require("undo-glow").paste_below()
       end,
       mode = "n",
@@ -49,6 +50,7 @@ return {
     {
       "P",
       function()
+        NormalizeCRInRegister(vim.v.register)
         require("undo-glow").paste_above()
       end,
       mode = "n",
