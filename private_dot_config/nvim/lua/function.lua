@@ -58,14 +58,30 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.opt.fileformat = "unix"
 vim.opt.fileformats = { "unix", "dos" }
 
--- 貼り付け時に^Mを自動削除
-vim.api.nvim_create_autocmd("TextYankPost", {
-  group = vim.api.nvim_create_augroup("RemoveCR", { clear = true }),
-  callback = function()
-    -- 貼り付けたテキストから\rを削除
-    local text = vim.fn.getreg('"')
-    if string.find(text, "\r") then
-      vim.fn.setreg('"', string.gsub(text, "\r", ""))
+function _G.NormalizeCRInRegister(register)
+  register = register ~= '' and register or '"'
+
+  local registers = { register }
+  if register == '"' then
+    local clipboard = vim.opt.clipboard:get()
+    if vim.tbl_contains(clipboard, 'unnamedplus') then
+      table.insert(registers, '+')
+    elseif vim.tbl_contains(clipboard, 'unnamed') then
+      table.insert(registers, '*')
     end
-  end,
-})
+  end
+
+  local seen = {}
+  for _, target_register in ipairs(registers) do
+    if not seen[target_register] then
+      seen[target_register] = true
+
+      local text = vim.fn.getreg(target_register)
+      if text:find('\r', 1, true) then
+        local register_type = vim.fn.getregtype(target_register)
+        text = text:gsub('\r\n', '\n'):gsub('\r', '\n')
+        vim.fn.setreg(target_register, text, register_type)
+      end
+    end
+  end
+end
