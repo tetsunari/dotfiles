@@ -22,6 +22,7 @@
 | `patterns.md` | `*.ts,tsx,js,jsx` | API応答形式・Custom Hooks・Repository パターン |
 | `verification-loop.md` | 常時 | 検証完了基準（動作証明なき完了禁止・確認手順） |
 | `delegation.md` | 常時 | サブエージェント委譲基準・委譲マトリクス |
+| `document-writing.md` | ドキュメント作成時 | 見やすい手順書ノウハウ（簡潔・3階層・項番・コピペ完結・危険箇所強調） |
 
 ---
 
