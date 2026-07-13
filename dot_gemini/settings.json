@@ -27,6 +27,6 @@
     "usageStatisticsEnabled": false
   },
   "model": {
-    "name": "gemini-3-flash-preview"
+    "name": "gemini-3.5-flash"
   }
 }
