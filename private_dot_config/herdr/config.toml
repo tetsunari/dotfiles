@@ -1,0 +1,46 @@
+onboarding = false
+
+# TUI がカーソルを隠していても、IME が候補ウィンドウの位置を
+# 追えるように外側のターミナルへカーソル位置を公開する
+# reveal_hidden_cursor_for_cjk_ime = true
+# 上の設定を適用するエージェント（フォーカス中のペインで判定）
+# cjk_ime_agents = ["claude", "codex", "agy"]
+# IME 用に表示するカーソルの形状
+# cjk_ime_cursor_shape = "bar"
+# prefix モードの間だけ macOS の入力ソースを ASCII 系に切り替え、抜けたら元の入力ソースに戻す
+# switch_ascii_input_source_in_prefix = true
+
+[ui.toast]
+delivery = "terminal"
+
+[ui]
+pane_gaps = false
+prompt_new_tab_name = false
+show_agent_labels_on_pane_borders = true
+
+agent_panel_sort = "spaces"
+
+host_cursor = "native"
+
+[ui.sidebar.agents]
+rows = [["state_icon", "workspace", "tab"], ["state_text", "agent"]]
+
+[theme]
+name = "solarized"
+auto_switch = false
+
+[keys]
+prefix = "ctrl+q"
+
+split_vertical = "prefix+\\"
+split_horizontal = "prefix+-"
+
+# サイドバー
+toggle_sidebar = "ctrl+s"
+
+# エージェント
+next_agent = "prefix+shift+j"
+previous_agent = "prefix+shift+k"
+
+[experimental]
+kitty_graphics = true
