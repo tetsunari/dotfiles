@@ -60,7 +60,22 @@ function M.apply_to_config(config)
     -- === BASIC OPERATIONS ===
     -- Left Control + C/V: コピー&ペースト（Macスタイル）
     { key = "c", mods = "CTRL", action = act.CopyTo("Clipboard") },
-    { key = "v", mods = "CTRL", action = act.PasteFrom("Clipboard") },
+    -- nvim実行中はCtrl+Vをそのままアプリへ送る（矩形選択を発火させるため）
+    -- それ以外（シェル等）では従来通りクリップボードからペースト
+    -- WSLドメイン越しではget_foreground_process_nameがwslhost.exeしか返さず判定不能なため、
+    -- nvim側からOSC 1337 SetUserVar(IN_NVIM)で通知してもらう方式を採る
+    {
+      key = "v",
+      mods = "CTRL",
+      action = wezterm.action_callback(function(window, pane)
+        local user_vars = pane:get_user_vars()
+        if user_vars.IN_NVIM == "1" then
+          window:perform_action(act.SendKey { key = "v", mods = "CTRL" }, pane)
+        else
+          window:perform_action(act.PasteFrom("Clipboard"), pane)
+        end
+      end),
+    },
 
     -- Right Control + C: プロセスの終了（Ctrl+Cシグナル送信）
     { key = "c", mods = "CTRL|SHIFT", action = act.SendKey { key = "c", mods = "CTRL" } },

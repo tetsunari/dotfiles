@@ -24,6 +24,23 @@ end
 vim.keymap.set('n', 'ZZ', '<NOP>')
 vim.keymap.set('n', 'ZQ', '<NOP>')
 
+-- WezTerm連携: OSC 1337 SetUserVarでnvim起動中であることを通知
+-- WezTerm側はこれを見てCtrl+Vをペーストではなく矩形選択としてnvimへ渡す
+if not vim.g.vscode and vim.env.TERM_PROGRAM == 'WezTerm' then
+  local function wezterm_set_user_var(name, value)
+    io.stdout:write(string.format('\027]1337;SetUserVar=%s=%s\007', name, vim.base64.encode(value)))
+    io.stdout:flush()
+  end
+  vim.api.nvim_create_autocmd('VimEnter', {
+    callback = function()
+      vim.defer_fn(function() wezterm_set_user_var('IN_NVIM', '1') end, 300)
+    end,
+  })
+  vim.api.nvim_create_autocmd('VimLeavePre', {
+    callback = function() wezterm_set_user_var('IN_NVIM', '0') end,
+  })
+end
+
 vim.keymap.set('i', 'jj', '<Esc>')
 
 local function paste_after_normalize_cr(keys)
@@ -52,6 +69,10 @@ vim.keymap.set({ 'n', 'x' }, 'P', paste_after_normalize_cr('P`]'), { expr = true
 
 vim.keymap.set('n', '<c-s>', '<cmd>write<cr>', { desc = 'Write' })
 vim.keymap.set({ 'n', 'x' }, 'so', ':source<cr>', { silent = true, desc = "Source crrent script" })
+
+-- Insertモードでは<C-v>を矩形選択ではなくシステムクリップボードからの貼り付けとして使う
+-- （Normal/Visualモードは標準のVisual Block動作のまま）
+vim.keymap.set('i', '<C-v>', '<C-r><C-o>+', { desc = 'Paste from system clipboard' })
 
 vim.keymap.set('i', '<c-a>', '<ESC>^i')
 vim.keymap.set('i', '<c-d>', '<ESC>s')
