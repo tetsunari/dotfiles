@@ -1,46 +1,99 @@
+# Freely available high-quality data compressor
 brew "bzip2"
+# Cryptography and SSL/TLS Toolkit
 brew "openssl@3"
+# Clone of cat(1) with syntax highlighting and Git integration
 brew "bat"
+# Text-based UI library
 brew "ncurses"
+# Portable Foreign Function Interface library
 brew "libffi"
+# Library for command-line editing
 brew "readline"
+# Command-line interface for SQLite
 brew "sqlite"
+# Extraction utility for .zip compressed archives
 brew "unzip"
+# General-purpose data compression with high compression ratio
 brew "xz"
+# Interpreted, interactive, object-oriented programming language
 brew "python@3.14"
+# C string library for manipulating Unicode strings
 brew "libunistring"
+# International domain name library (IDNA2008, Punycode and TR46)
 brew "libidn2"
+# Modern, maintained replacement for ls
 brew "eza"
+# Simple, fast and user-friendly alternative to find
 brew "fd"
+# Play, record, convert, and stream select audio and video codecs
 brew "ffmpeg"
+# Command-line fuzzy finder written in Go
 brew "fzf"
+# Interact with Google Gemini AI models from the command-line
 brew "gemini-cli"
+# Syntax-highlighting pager for git and diff output
 brew "git-delta"
+# ASN.1 structure parser library
 brew "libtasn1"
+# Open source programming language to build simple/reliable/efficient software
 brew "go"
+# Smarter Dockerfile linter to validate best practices
 brew "hadolint"
+# Tools and libraries to manipulate images in select formats
 brew "imagemagick"
+# Lightweight and flexible command-line JSON processor
 brew "jq"
+# Simple terminal UI for git commands
 brew "lazygit"
+# Polyglot runtime manager (asdf rust clone)
 brew "mise"
+# Incremental parsing library
 brew "tree-sitter"
+# Ambitious Vim-fork focused on extensibility and agility
 brew "neovim"
+# Port scanning utility for large networks
 brew "nmap"
+# PDF rendering library (based on the xpdf-3.0 code base)
 brew "poppler"
+# Object-relational database system
+brew "postgresql@18", link: true
+# SVG rendering tool and library
 brew "resvg"
+# Search tool like grep and The Silver Searcher
 brew "ripgrep"
+# Display and control your Android device
 brew "scrcpy"
+# 7-Zip is a file archiver with a high compression ratio
 brew "sevenzip"
+# Fast, configurable, shell plugin manager
 brew "sheldon"
+# SOcket CAT: netcat on steroids
 brew "socat"
+# Cross-shell prompt for astronauts
 brew "starship"
+# Command-line packet analyzer
 brew "tcpdump"
+# Display directories as trees (with optional color/HTML output)
 brew "tree"
+# Parser generator tool
+brew "tree-sitter-cli"
+# Internet file retriever
 brew "wget"
+# Access X11 clipboards from the command-line
 brew "xclip"
+# Blazing fast terminal file manager written in Rust, based on async I/O
 brew "yazi"
+# Compression and file packaging/archive utility
 brew "zip"
+# General-purpose lossless data-compression library
 brew "zlib"
+# Shell extension to navigate your filesystem faster
 brew "zoxide"
+# Terminal-based AI coding assistant
 cask "claude-code"
+# OpenAI's coding agent that runs in your terminal
+cask "codex"
 cask "font-symbols-only-nerd-font"
+go "cmd/go"
+go "cmd/gofmt"
