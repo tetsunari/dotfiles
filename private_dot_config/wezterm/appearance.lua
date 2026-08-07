@@ -12,8 +12,14 @@ function M.apply_to_config(config)
   -- =============================================================================
   config.font = wezterm.font_with_fallback({
     {
-      family = "Maple Mono NL NF CN SemiBold",
+      family = "Maple Mono NL NF SemiBold",
       weight = "ExtraBold",
+      -- style = "Oblique",
+    },
+    -- テスト置く
+    {
+      family = "IBM Plex Sans JP",
+      weight = "Medium",
       -- style = "Oblique",
     },
     {
@@ -31,7 +37,7 @@ function M.apply_to_config(config)
     --   weight = "DemiBold",
     -- },
   })
-  config.font_size = 8.5
+  config.font_size = 8.8
   config.line_height = 1.0
 
   -- =============================================================================
@@ -79,7 +85,7 @@ function M.apply_to_config(config)
 
   config.window_padding = {
     left = 2,
-    right = 2,
+    right = 0,
     top = 0,
     bottom = 0,
   }
