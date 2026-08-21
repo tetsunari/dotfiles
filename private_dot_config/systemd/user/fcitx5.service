@@ -1,0 +1,12 @@
+[Unit]
+Description=Fcitx5 Input Method
+
+[Service]
+Type=simple
+Environment=DISPLAY=:0
+ExecStart=/usr/bin/fcitx5 --disable=waylandim --disable=wayland
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=default.target
