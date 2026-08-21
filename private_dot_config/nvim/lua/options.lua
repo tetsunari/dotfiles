@@ -9,6 +9,8 @@ vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.inccommand = 'split'
 vim.opt.clipboard = 'unnamedplus'
+-- WSL2: クリップボードは自動検出(xclip)に任せる
+-- 貼り付けで + が空になる場合は WSLg のブリッジ片肺を疑い Windows 側で wsl --shutdown する
 vim.opt.virtualedit = 'onemore'
 vim.opt.swapfile = false
 
