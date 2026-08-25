@@ -41,7 +41,11 @@ Bashコマンドは必ず画面に表示してください。
 
 ## 自己改善ループ
 
-- セッション中に受けた修正・フィードバックは Stop hook が自動検知して `~/.config/claude/lessons/lessons.md` に記録する（手動不要）
-- 次回セッションでは UserPromptSubmit hook が自動注入するため、明示的な参照不要
+- セッション中に受けた修正・フィードバックは Stop hook（`remember-nudge.sh`）が haiku 判定で検知し、`/remember` 提案漏れがあればユーザーに提案する（自動記録ではなく提案ベース）
+- 記録は `/remember` 実行時にユーザー確認の上で `~/.config/claude/lessons/` 配下のカテゴリ別ファイル（`review-behavior.md`・`general.md`・`aws-network.md` 等）へ振り分けて追記する（`lessons.md` は初期の残骸で、新規記録の既定の置き場ではない）
+- UserPromptSubmit hook（`inject-lessons.py`）が `~/.config/claude/lessons/` 配下から**プロンプトとの関連度が高いセクションの本文**を**毎プロンプト**自動注入する（セッション冒頭のみではない）。IDF 重み付けスコアリングで上位8件・合計6000バイトまでに絞る
+- 注入された本文は、該当する作業では必ず遵守すること。関連セクションが検出されなかった場合はファイル名＋見出し数の軽量索引にフォールバックするので、作業に関係しそうなファイルは自分で Read して本文を確認する
+- 注入は絞り込み済みのため通常は退避されないが、**hook の出力が `persisted-output`（「Output too large (NNKB). Full output saved to: ...」）へ退避された場合は、プレビューで判断を止めず保存先ファイルを Read して全文を確認する。** 退避時はプレビューに載る先頭2KB分しか見えず、残りは一切見えない。読まずに着手すると既存の教訓を見落とす
+- Claude 自身が `~/.config/claude/lessons/` 配下にファイルを新規作成・追記する場合（`/remember` スキル実行時・直接編集時等）は、必ず事前に内容を提示しユーザーの確認を得てから実行する
 - タスク管理は TaskCreate/TaskUpdate ツールで行う（`todos/*.json` に自動保存される）
 
