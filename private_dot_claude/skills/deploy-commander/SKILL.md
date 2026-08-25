@@ -3,6 +3,7 @@ name: deploy-commander
 description: デプロイ・リリース作業を行う時には必ずこのスキルを使う。ステージング・本番環境へのデプロイ、CI/CD設定、ビルドエラー解析、ロールバック実行を依頼された時に即座に起動。事前チェックリスト強制実行、複雑なコマンド抽象化、ビルドエラー自動解析、ロールバック手順管理。
 context: fork
 allowed-tools: Bash, Read
+bash-restrictions: "aws ecs update-service, serverless deploy, cdk deploy 等の破壊操作は事前に差分確認（cdk diff 等）を経てからユーザー承認を得る。本番環境への直接操作は制限。cdk deploy 前は必ず cdk-infrastructure スキルで cdk diff を実行済みであること。"
 ---
 
 # Deploy Commander: デプロイ・リリース自動化
@@ -23,16 +24,14 @@ allowed-tools: Bash, Read
 
 ## Supported Platforms
 
-| プラットフォーム | デプロイコマンド | 特徴 |
-|-----------------|-----------------|------|
-| Vercel | `vercel --prod` | Next.js最適化 |
-| Cloudflare Pages | `wrangler pages deploy` | エッジデプロイ |
-| AWS Lambda | `serverless deploy` | サーバーレス |
-| AWS ECS | `aws ecs update-service` | コンテナ |
-| Google Cloud Run | `gcloud run deploy` | コンテナ |
-| Fly.io | `fly deploy` | グローバルエッジ |
-| Railway | `railway up` | 簡単デプロイ |
-| Docker | `docker compose up` | 汎用 |
+| プラットフォーム | デプロイコマンド | 詳細手順 |
+|-----------------|-----------------|---------|
+| AWS Lambda (Serverless Framework) | `serverless deploy` | `references/aws-lambda.md` |
+| AWS ECS | `aws ecs update-service` | `references/aws-ecs.md` |
+| Cloudflare Pages | `wrangler pages deploy` | `references/cloudflare-pages.md` |
+| AWS CDK | `cdk deploy` | `references/cdk.md`（コード変更・synth検証は `cdk-infrastructure` スキル管轄） |
+
+対象プラットフォームを判定したら、該当する `references/*.md` を読んでコマンド・ロールバック手順を実行する。
 
 ## Pre-Deploy Checklist
 
@@ -90,70 +89,11 @@ allowed-tools: Bash, Read
 
 ## Deploy Commands
 
-### Vercel
-
-```bash
-# プレビューデプロイ
-vercel
-
-# 本番デプロイ
-vercel --prod
-
-# 環境変数設定
-vercel env add VARIABLE_NAME production
-
-# ロールバック
-vercel rollback [deployment-url]
-```
-
-### AWS Lambda (Serverless Framework)
-
-```bash
-# ステージングデプロイ
-serverless deploy --stage staging
-
-# 本番デプロイ
-serverless deploy --stage production
-
-# 関数単位デプロイ
-serverless deploy function -f functionName --stage production
-
-# ロールバック
-serverless rollback --timestamp 1234567890
-```
-
-### AWS ECS
-
-```bash
-# イメージビルド & プッシュ
-docker build -t app:latest .
-docker tag app:latest $ECR_REPO:latest
-docker push $ECR_REPO:latest
-
-# サービス更新
-aws ecs update-service \
-  --cluster production \
-  --service app-service \
-  --force-new-deployment
-
-# デプロイ状況確認
-aws ecs describe-services \
-  --cluster production \
-  --services app-service
-```
-
-### Cloudflare Pages
-
-```bash
-# デプロイ
-wrangler pages deploy dist --project-name my-project
-
-# プレビュー
-wrangler pages deploy dist --project-name my-project --branch preview
-
-# 環境変数設定
-wrangler pages secret put SECRET_NAME
-```
+プラットフォーム別のデプロイコマンドは `references/` を参照:
+- `references/aws-lambda.md`
+- `references/aws-ecs.md`
+- `references/cloudflare-pages.md`
+- `references/cdk.md`
 
 ## Error Analysis
 
@@ -237,26 +177,7 @@ const deployErrorPatterns = {
 
 ### プラットフォーム別ロールバック
 
-```bash
-# Vercel
-vercel rollback [deployment-url]
-
-# AWS Lambda
-serverless rollback --timestamp <timestamp>
-
-# AWS ECS
-aws ecs update-service \
-  --cluster production \
-  --service app-service \
-  --task-definition app:previous-version
-
-# Kubernetes
-kubectl rollout undo deployment/app-deployment
-
-# Docker Compose
-docker compose down
-docker compose up -d --no-build
-```
+各 `references/*.md` の「ロールバック」セクションを参照。
 
 ### データベースロールバック
 
@@ -342,4 +263,5 @@ jobs:
 
 - **security-review** skill: デプロイ前セキュリティチェック
 - **code-reviewer** skill: コード品質確認
+- **cdk-infrastructure** skill: CDK 使用時のコード変更・`cdk synth` 検証・Logical ID ドリフト対応（デプロイ実行前に必ず経由する）
 - **Gemini**: プラットフォーム固有の問題調査
