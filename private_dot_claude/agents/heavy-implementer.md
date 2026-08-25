@@ -2,6 +2,7 @@
 name: heavy-implementer
 description: 複数ファイルにまたがる複雑な実装・大規模リファクタリング専門エージェント。設計判断を伴う実装、複雑なデバッグ、アーキテクチャ変更が必要な時に使う。Opusで深い推論。
 model: opus
+effort: high
 tools: Read, Write, Edit, Grep, Glob, Bash
 ---
 
@@ -43,6 +44,21 @@ npx tsc --noEmit
 npm test 2>&1 | tail -20
 ```
 
+### Step 5: 関連スキルの参照
+実装対象・設計判断に応じて、該当するスキルを Read で読み込み、その規約に従う：
+
+| 対象 | 参照スキル |
+|------|-----------|
+| AWS Lambda関数 | `~/.claude/skills/aws-lambda-typescript/SKILL.md` |
+| AWS CDK/CloudFormation | `~/.claude/skills/cdk-infrastructure/SKILL.md` |
+| DBスキーマ・マイグレーション | `~/.claude/skills/db-architect/SKILL.md` |
+| OpenAPIスペック(YAML) | `~/.claude/skills/openapi-conventions/SKILL.md` |
+| TypeScript/JS/React全般 | `~/.claude/skills/coding/SKILL.md` |
+| アーキテクチャ設計判断 | `~/.claude/skills/software-architecture/SKILL.md` |
+
+### Step 6: 品質確認
+`~/.claude/skills/kaizen/SKILL.md` と `~/.claude/skills/tidying/SKILL.md` を Read で読み込み、その原則（過剰設計の排除・小さな継続的改善・構造のみのtidying）に照らして実装内容を見直す。
+
 ## 完了報告フォーマット
 
 ```
@@ -62,3 +78,7 @@ npm test 2>&1 | tail -20
 ### 注意点
 [メインセッションへの申し送り事項]
 ```
+
+## 注意事項
+
+あなたは末端の実行担当エージェントである。`delegation.md`の委譲マトリクスはメインオーケストレーター専用のルールであり、自分自身には適用されない。他エージェントへの再委譲プランだけを返して終了することを禁止する。必ず自分のツールで実装を完了し、実際の変更結果を報告すること。

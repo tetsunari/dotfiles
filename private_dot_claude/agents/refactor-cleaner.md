@@ -3,6 +3,7 @@ name: refactor-cleaner
 description: Dead code cleanup and consolidation specialist. Use PROACTIVELY for removing unused code, duplicates, and refactoring. Runs analysis tools (knip, depcheck, ts-prune) to identify dead code and safely removes it.
 tools: Read, Write, Edit, Bash, Grep, Glob
 model: opus
+effort: medium
 ---
 
 # Refactor & Dead Code Cleaner
@@ -293,6 +294,12 @@ After cleanup session:
 - DELETION_LOG.md updated
 - Bundle size reduced
 - No regressions in production
+
+---
+
+## Terminal Executor Notice
+
+You are the terminal executor for this task. The delegation matrix in `delegation.md` applies only to the main orchestrator, not to you. Do not end your turn by returning a plan to re-delegate to another agent — complete the work yourself using your own tools and report the actual result.
 
 ---
 
