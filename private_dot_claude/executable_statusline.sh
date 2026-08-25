@@ -204,9 +204,22 @@ effort_str=""
 # [ -n "$effort" ] && effort_str=" │ 💪 ${effort}"
 effort_str=" │ 💪 ${effort}"
 
+# Working directory and git branch
+cwd_raw=$(echo "$input" | jq -r '.cwd // ""' 2>/dev/null)
+[ -z "$cwd_raw" ] && cwd_raw="$PWD"
+# Show only current dir + one parent level (e.g. parent/current)
+cwd_base=$(basename "$cwd_raw")
+cwd_parent=$(basename "$(dirname "$cwd_raw")")
+if [ "$cwd_parent" = "/" ] || [ "$cwd_parent" = "$cwd_base" ]; then
+  cwd_display="$cwd_base"
+else
+  cwd_display="$cwd_parent/$cwd_base"
+fi
+git_branch=$(git -C "$cwd_raw" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "—")
+
 # Output
 # Line 1: Session context status
-# Line 2: Burn rate + Usage history
+# Line 2: Dir + Branch + Burn rate + Usage history
 # Line 3: Usage limits (Max) or Plan info (Pro)
 if [ "$has_rate_limits" -eq 1 ]; then
   usage_line=$(printf "⏱ 5h [%s] %d%% %s%s │ 📅 7d [%s] %d%% %s%s" \
@@ -217,7 +230,7 @@ else
   usage_line="📋 Plan: ${sub_type}"
 fi
 
-printf "🤖 %s%s │ 📊 %s/%s %s %d%% %s │ ⬇%s ⬆%s │ 💡残%s │ ⏳~%s │ 🔄%d回\n🔥 %s │ 🕐 Daily:%s  🗓 Weekly:%s  📊 Monthly:%s\n%s" \
+printf "🤖 %s%s │ 📊 %s/%s %s %d%% %s │ 💡残%s │ ⏳~%s\n📁 %s  🌿 %s │ 🔥 %s │ 🕐 Daily:%s  🗓 Weekly:%s  📊 Monthly:%s\n%s" \
   "$model" \
   "$effort_str" \
   "$(fmt $current_used)" \
@@ -225,11 +238,10 @@ printf "🤖 %s%s │ 📊 %s/%s %s %d%% %s │ ⬇%s ⬆%s │ 💡残%s │ �
   "$bar" \
   "$pct_int" \
   "$perf" \
-  "$(fmt $total_input)" \
-  "$(fmt $total_output)" \
   "$(fmt $remaining_tokens)" \
   "$eta_str" \
-  "$compress_count" \
+  "$cwd_display" \
+  "$git_branch" \
   "$burn_rate_str" \
   "$(fmt $d_total)" \
   "$(fmt $w_total)" \
