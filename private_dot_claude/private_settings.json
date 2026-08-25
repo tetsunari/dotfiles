@@ -63,7 +63,8 @@
     "evidence-based": "off",
     "full-scan": "off",
     "db-architect": "off",
-    "coding": "off"
+    "coding": "off",
+    "ax": "off"
   },
   "hooks": {
     "PermissionRequest": [
@@ -125,7 +126,9 @@
     "refreshInterval": 30
   },
   "enabledPlugins": {
-    "example-skills@anthropic-agent-skills": false
+    "example-skills@anthropic-agent-skills": false,
+    "typescript-lsp@claude-plugins-official": true,
+    "context7@context7-marketplace": true
   },
   "extraKnownMarketplaces": {
     "anthropic-agent-skills": {
