@@ -79,12 +79,12 @@ function M.apply_to_config(config)
   -- WINDOW & LAYOUT
   -- =============================================================================
   config.window_decorations = "RESIZE"
-  config.window_background_opacity = 0.78
+  config.window_background_opacity = 0.83
   config.text_background_opacity = 1.00
   config.adjust_window_size_when_changing_font_size = false
 
   config.window_padding = {
-    left = 2,
+    left = 1,
     right = 0,
     top = 0,
     bottom = 0,
