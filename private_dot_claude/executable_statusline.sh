@@ -3,10 +3,7 @@
 # Model | Context | In/Out | Remaining | ETA | Compression | Burn Rate | D/W/M
 
 CLAUDE_DIR="$HOME/.claude"
-SESSION_FILE="$CLAUDE_DIR/.sl_session.json"
-LAST_STATE_FILE="$CLAUDE_DIR/.sl_last_state.json"
 USAGE_LOG="$CLAUDE_DIR/.sl_usage_log.csv"
-COMPRESS_FILE="$CLAUDE_DIR/.sl_compress.json"
 USAGE_CACHE="$CLAUDE_DIR/.sl_usage_cache.json"
 USAGE_CACHE_TTL=3600
 FAIL_CACHE="$CLAUDE_DIR/.sl_usage_fail.json"
@@ -22,6 +19,13 @@ total_output=$(echo "$input" | jq -r '.context_window.total_output_tokens // 0')
 context_size=$(echo "$input" | jq -r '.context_window.context_window_size // 200000')
 used_pct=$(echo "$input" | jq -r '.context_window.used_percentage // 0')
 session_id=$(echo "$input" | jq -r '.session_id // "unknown"')
+total_cost=$(echo "$input" | jq -r '.cost.total_cost_usd // 0')
+
+# State files are per-session to avoid cross-session interference when
+# multiple Claude Code windows/tabs run concurrently (see multi-process-state-management lesson)
+SESSION_FILE="$CLAUDE_DIR/.sl_session_${session_id}.json"
+LAST_STATE_FILE="$CLAUDE_DIR/.sl_last_state_${session_id}.json"
+COMPRESS_FILE="$CLAUDE_DIR/.sl_compress_${session_id}.json"
 
 used_tokens=$((total_input + total_output))
 current_used=$(awk "BEGIN {printf \"%.0f\", ($used_pct * $context_size) / 100}")
@@ -53,6 +57,7 @@ new_session=0
 if [ -f "$LAST_STATE_FILE" ]; then
   last_sid=$(jq -r '.sid // ""' "$LAST_STATE_FILE" 2>/dev/null)
   last_tok=$(jq -r '.tok // 0' "$LAST_STATE_FILE" 2>/dev/null)
+  last_cost=$(jq -r '.cost // 0' "$LAST_STATE_FILE" 2>/dev/null)
 
   if [ "$session_id" != "$last_sid" ] || [ "$current_used" -lt "${last_tok:-0}" ]; then
     new_session=1
@@ -64,6 +69,7 @@ if [ -f "$LAST_STATE_FILE" ]; then
   fi
 else
   new_session=1
+  last_cost=0
   printf '{"ts":%d,"tok":0}' "$current_time" > "$SESSION_FILE"
   printf '{"sid":"%s","count":0,"last_used":%d}' "$session_id" "$current_used" > "$COMPRESS_FILE"
 fi
@@ -88,8 +94,14 @@ if [ -f "$COMPRESS_FILE" ]; then
   fi
 fi
 
+# Turn cost (delta since last statusline invocation)
+turn_cost="0.0000"
+if [ "$new_session" -eq 0 ]; then
+  turn_cost=$(awk "BEGIN {d=$total_cost - ${last_cost:-0}; if (d<0) d=0; printf \"%.4f\", d}")
+fi
+
 # Update last state
-printf '{"sid":"%s","tok":%d,"ts":%d}' "$session_id" "$current_used" "$current_time" > "$LAST_STATE_FILE"
+printf '{"sid":"%s","tok":%d,"ts":%d,"cost":%s}' "$session_id" "$current_used" "$current_time" "$total_cost" > "$LAST_STATE_FILE"
 
 # Calculate burn rate & ETA
 if [ -f "$SESSION_FILE" ]; then
@@ -139,6 +151,12 @@ if [ $((RANDOM % 50)) -eq 0 ] && [ -f "$USAGE_LOG" ]; then
   head -1 "$USAGE_LOG" > "$tmp"
   tail -n +2 "$USAGE_LOG" | awk -F, -v c="$cutoff" '$1 >= c' >> "$tmp"
   mv "$tmp" "$USAGE_LOG"
+fi
+
+# Prune stale per-session state files (older than 7 days) occasionally
+if [ $((RANDOM % 50)) -eq 0 ]; then
+  find "$CLAUDE_DIR" -maxdepth 1 -name '.sl_session_*.json' -o -name '.sl_last_state_*.json' -o -name '.sl_compress_*.json' 2>/dev/null | \
+    xargs -r -I{} find {} -maxdepth 0 -mtime +7 -delete 2>/dev/null
 fi
 
 # Rate limits from stdin (Claude Code v2.1.80+)
@@ -230,7 +248,10 @@ else
   usage_line="📋 Plan: ${sub_type}"
 fi
 
-printf "🤖 %s%s │ 📊 %s/%s %s %d%% %s │ 💡残%s │ ⏳~%s\n📁 %s  🌿 %s │ 🔥 %s │ 🕐 Daily:%s  🗓 Weekly:%s  📊 Monthly:%s\n%s" \
+session_cost_str=$(awk "BEGIN {printf \"\$%.4f\", $total_cost}")
+turn_cost_str=$(awk "BEGIN {printf \"\$%.4f\", $turn_cost}")
+
+printf "🤖 %s%s │ 📊 %s/%s %s %d%% %s │ 💡残%s │ ⏳~%s\n📁 %s  🌿 %s │ 🔥 %s │ 💰 %s (Δ%s/turn)\n🕐 Daily:%s  🗓 Weekly:%s  📊 Monthly:%s\n%s" \
   "$model" \
   "$effort_str" \
   "$(fmt $current_used)" \
@@ -243,6 +264,8 @@ printf "🤖 %s%s │ 📊 %s/%s %s %d%% %s │ 💡残%s │ ⏳~%s\n📁 %s  �
   "$cwd_display" \
   "$git_branch" \
   "$burn_rate_str" \
+  "$session_cost_str" \
+  "$turn_cost_str" \
   "$(fmt $d_total)" \
   "$(fmt $w_total)" \
   "$(fmt $m_total)" \
