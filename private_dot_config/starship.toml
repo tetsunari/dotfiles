@@ -59,11 +59,12 @@ symbol = ''
 # CompanyGroupFrobozzOnCallAccess = 'Frobozz'
 
 [gcloud]
-format = '[](fg:#28405c)[$symbol($profile)(\($project\))(\($region\))]($style)[](fg:#28405c)'
-style = 'fg:white bg:#28405c'
-symbol = ''
+# format = '[](fg:#28405c)[$symbol($profile)(\($project\))(\($region\))]($style)[](fg:#28405c)'
+# style = 'fg:white bg:#28405c'
+# symbol = ''
 # [gcloud.project_aliases]
 # very-long-project-name = 'vlpn'
+disabled = true
 
 [git_branch]
 symbol = ""
