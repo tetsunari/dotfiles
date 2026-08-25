@@ -17,12 +17,10 @@
 | `security.md` | 常時 | パッケージインストール時のセキュリティチェック |
 | `ai-agent-principles.md` | 常時 | Production AIエージェント8原則 |
 | `environment.md` | 常時 | コマンドエイリアス（bat/eza/fd/rg/zoxide） |
-| `agents.md` | 常時 | エージェントオーケストレーション定義 |
 | `coding-style.md` | `*.ts,tsx,js,jsx,...` | 不変性・ファイル構成・エラーハンドリング |
 | `patterns.md` | `*.ts,tsx,js,jsx` | API応答形式・Custom Hooks・Repository パターン |
 | `verification-loop.md` | 常時 | 検証完了基準（動作証明なき完了禁止・確認手順） |
 | `delegation.md` | 常時 | サブエージェント委譲基準・委譲マトリクス |
-| `document-writing.md` | ドキュメント作成時 | 見やすい手順書ノウハウ（簡潔・3階層・項番・コピペ完結・危険箇所強調） |
 
 ---
 
