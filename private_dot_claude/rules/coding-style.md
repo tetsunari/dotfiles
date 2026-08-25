@@ -62,6 +62,15 @@ const schema = z.object({
 const validated = schema.parse(input)
 ```
 
+## Comments
+
+コメントは「コードから復元できない非自明なWHY」のみ許可。禁止：
+- WHAT（コードを読めば分かる説明）
+- 変更履歴・PR/タスクID参照（コミットメッセージ・PR本文の役割）
+- 自明な処理の説明
+
+許可：隠れた制約・workaroundの理由など、コードだけでは伝わらない背景。
+
 ## Code Quality Checklist
 
 Before marking work complete:
