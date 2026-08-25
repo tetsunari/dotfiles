@@ -7,6 +7,7 @@ description: |
   Logical IDドリフト防止・cdk synth検証・overrideLogicalId管理を強制する。
 context: fork
 allowed-tools: Bash, Read
+bash-restrictions: "cdk synth, cdk diff の読み取り専用コマンド。cdk deploy, cdk destroy は事前に必ず cdk diff で差分確認・ユーザー承認を経る。"
 ---
 
 # CDK Infrastructure Skill

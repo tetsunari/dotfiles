@@ -1,7 +1,9 @@
 ---
 name: full-scan
-description: "リリース前の全ファイル静的解析スキル。プロジェクト構造を自動検出し、ソースモジュールごとのサブエージェントと依存関係スキャンを並列実行してコードベース全体の脆弱性を検出する。手動呼び出し専用: /full-scan"
+description: "リリース前の全ファイル静的解析スキル。プロジェクト構造を自動検出し、ソースモジュールごとのサブエージェントと依存関係スキャンを並列実行してコードベース全体の脆弱性を検出する（デプロイ後のランタイム検証は /security-scan、PR差分は /security-review）。手動呼び出し専用: /full-scan"
 disable-model-invocation: true
+allowed-tools: Agent, Write, Bash, Read
+context: fork
 ---
 
 # full-scan

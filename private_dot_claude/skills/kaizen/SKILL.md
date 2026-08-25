@@ -1,6 +1,6 @@
 ---
 name: kaizen
-description: Use when applying continuous improvement mindset to code implementation, refactoring, architecture decisions, process/workflow improvements, error handling and validation. Focuses on iterative quality improvement and error-proofing by design — NOT for structural code tidying (use tidying skill) or one-time reviews.
+description: Apply continuous improvement mindset to code implementation and architecture - small incremental changes, error prevention by design, following established patterns, just-in-time building. Guides quality through mindset, not one-time actions (vs. tidying for refactoring structure, simplify for efficiency). Use during implementation, refactoring, architecture decisions, error handling design.
 context: fork
 allowed-tools: Read
 ---

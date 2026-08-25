@@ -1,8 +1,9 @@
 ---
 name: security-scan
-description: "ステージング環境にデプロイ済みのサーバーに対してランタイム検証を実行する。HTTPヘッダー・動的プローブ・認証テストに特化。手動呼び出し専用: /security-scan [環境名]"
+description: "ステージング環境にデプロイ済みのサーバーに対してランタイム検証を実行する。HTTPヘッダー・動的プローブ・認証テストに特化。手動呼び出し専用。デプロイ後の実際の挙動を動的にテスト（/full-scan は静的解析・/security-review はPR差分対象）。/security-scan [環境名]"
 disable-model-invocation: true
-allowed-tools: Bash, Write
+allowed-tools: Bash
+bash-restrictions: "curl, jq のみ許可。echo, tee, cat の出力リダイレクトは禁止（機密データ漏洩防止）。ファイル書き込みは Write ツール経由に統一。"
 ---
 
 # security-scan
