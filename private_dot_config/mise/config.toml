@@ -1,21 +1,17 @@
 [tools]
 aws-cli = "latest"
 gcloud = "latest"
+
 pnpm = "latest"
 
-# node
 node = "latest"
 
-# bun
 bun = "latest"
 
-# chezmoi
 chezmoi = "latest"
 
-# golang
 go = "latest"
 
-# java
 java = "latest"
 
 ecspresso = "latest"
@@ -23,8 +19,18 @@ ecspresso = "latest"
 kubectl = "latest"
 kind = "latest"
 
-# npm package
-"npm:@openai/codex" = "latest"
+helm = "latest"
+
+kustomize = "latest"
+
+hadolint = "latest"
+
+eksctl = "latest"
+
+# npm
+"npm:@usebruno/cli" = "latest"
+"npm:cdk-nag" = "latest"
+gh = "latest"
 
 [tasks.brew-bundle]
 description = "brewのインストール一覧を`Brewfile_wsl`に書き出す(vscodeの設定は無視)"
