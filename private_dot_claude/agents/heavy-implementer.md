@@ -55,6 +55,10 @@ npm test 2>&1 | tail -20
 | OpenAPIスペック(YAML) | `~/.claude/skills/openapi-conventions/SKILL.md` |
 | TypeScript/JS/React全般 | `~/.claude/skills/coding/SKILL.md` |
 | アーキテクチャ設計判断 | `~/.claude/skills/software-architecture/SKILL.md` |
+| テストの追加・修正 | `~/.claude/skills/tdd/SKILL.md` |
+| マージ/リベースの衝突解消 | `~/.claude/skills/resolving-merge-conflicts/SKILL.md` |
+| 新しい変数・関数・クラス・型の命名 | `~/.claude/skills/code-naming/SKILL.md` |
+| モジュール分割・インターフェース設計 | `~/.claude/skills/codebase-design/SKILL.md` |
 
 ### Step 6: 品質確認
 `~/.claude/skills/kaizen/SKILL.md` と `~/.claude/skills/tidying/SKILL.md` を Read で読み込み、その原則（過剰設計の排除・小さな継続的改善・構造のみのtidying）に照らして実装内容を見直す。

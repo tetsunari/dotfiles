@@ -44,6 +44,8 @@ npx tsc --noEmit 2>&1 | head -30
 | DBスキーマ・マイグレーション | `~/.claude/skills/db-architect/SKILL.md` |
 | OpenAPIスペック(YAML) | `~/.claude/skills/openapi-conventions/SKILL.md` |
 | TypeScript/JS/React全般 | `~/.claude/skills/coding/SKILL.md` |
+| テストの追加・修正 | `~/.claude/skills/tdd/SKILL.md` |
+| 新しい変数・関数・クラス・型の命名 | `~/.claude/skills/code-naming/SKILL.md` |
 
 ### Step 5: 品質確認
 `~/.claude/skills/kaizen/SKILL.md` と `~/.claude/skills/tidying/SKILL.md` を Read で読み込み、その原則（過剰設計の排除・小さな継続的改善・構造のみのtidying）に照らして実装内容を見直す。

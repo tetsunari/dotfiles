@@ -1,7 +1,8 @@
 ---
-description: "Production AI Agentsのための8原則：システムプロンプト・最小知識・テスト済みツール・自動検証・エラー分析・システム設計・ユーザー寄り添い・可観測性"
-alwaysApply: true
+name: ai-agent-principles
+description: AIエージェント・LLMアプリケーションを設計/実装する時は必ずこのスキルを使う。「エージェントを作る」「システムプロンプト設計」「ツール定義」「サブエージェント設計」「LLMアプリ」「agent を実装」と言われた時に即座に起動。Production AI Agents の8原則（システムプロンプト・最小知識・テスト済みツール・自動検証ループ・エラー分析・システム設計・ユーザー寄り添い・可観測性）を提供する。
 ---
+
 # AIエージェント開発原則
 
 > Production AI Agentsのための8原則（app.build開発者による「Six Principles for Production AI Agents」を拡張）

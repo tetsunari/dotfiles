@@ -1,8 +1,8 @@
 ---
 name: grill-mi
-description: Interview the user relentlessly about a plan or design until reaching shared understanding, resolving each branch of the decision tree. Use when user wants to stress-test a plan, get grilled on their design, or mentions "grill me" / "grill-mi" / "グリルして" / "問い詰めて".
-context: fork
-allowed-tools: Read, Glob, Agent
+description: Interview the user relentlessly about a plan or design until reaching shared understanding, resolving each branch of the decision tree. Use when user wants to stress-test a plan, get grilled on their design, or mentions "grill me" / "grill-mi" / "グリルして" / "問い詰めて" / "要件を固めたい" / "曖昧さを潰したい".
+context: inject
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Agent
 ---
 
 計画・設計のあらゆる側面について、共通理解に達するまで徹底的にインタビューする。決定を設計ツリーのノードとして扱い、「フロンティア」(前提条件が確定済みで質問可能な決定群)を軸に進める。
@@ -20,7 +20,9 @@ allowed-tools: Read, Glob, Agent
 ➡️ <推奨回答>
 ```
 
-事実調査は自分(fork)の責務とし、ユーザーにファイルシステムやコードベースの確認を求めない。自身のRead/Globで足りない調査はAgentツールでサブエージェントに委託する。
+事実調査は自分の責務とし、ユーザーにファイルシステムやコードベースの確認を求めない。自身のRead/Grep/Globで足りない調査はAgentツールでサブエージェントに委託する。
+
+**ユーザーの前提が事実と食い違っていたら、質問より先にそれを提示する。** 前提がズレたまま質問を重ねても合意は積み上がらない。
 
 ## 終了判定
 
@@ -39,3 +41,42 @@ allowed-tools: Read, Glob, Agent
 ## 未解決の懸念
 [残課題があれば列挙。なければ「なし」]
 ```
+
+## 完了後の成果物
+
+インタビューの結果を、消えない形で残す。
+
+### 1. 出力先の確認
+
+**毎回 AskUserQuestion で確認する。** 自動判定しない。
+
+- **Markdown** — リポジトリ内 `.scratch/` 配下
+- **GitHub Issue** — `gh issue create`（未認証なら Markdown へ切り替え、その旨を伝える）
+
+`.scratch/` に書く場合、**`.gitignore` に `.scratch/` が含まれているか確認**し、
+無ければ追記の可否をユーザーに確認する。中間成果物を誤ってコミットする事故を防ぐ。
+
+### 2. CONTEXT.md の更新
+
+インタビュー中に確定したドメイン用語を、リポジトリ直下の `CONTEXT.md` に反映する。
+無ければ新規作成する。
+
+- **日本語で書く**（人間が読んで議論する資産のため）
+- 形式は**日本語の概念名 ⇄ 英語の識別子**の対応表にする。
+  コード上の識別子と会話の語彙が繋がり、`code-naming` の判断材料にもなる
+
+```markdown
+| 概念 | 識別子 | 意味 |
+|---|---|---|
+| 予約済み在庫 | `ReservedItem` | 注文確定前に確保された在庫。引当済みだが出荷前 |
+```
+
+既存の用語を勝手に書き換えない。追加と、明確な誤りの訂正のみ行う。
+
+### 3. 理解の確認
+
+**成果物を出して終わりにしない。** `close-the-gap` の理解度クイズに繋ぎ、
+ユーザー自身の言葉で説明してもらう。
+
+インタビューで合意したつもりでも、説明できなければ理解していない。
+理解を外注しないことが、このステップの存在理由である。
