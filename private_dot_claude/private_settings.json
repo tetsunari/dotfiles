@@ -13,7 +13,11 @@
     "DISABLE_AUTOUPDATER": "true",
     "DISABLE_FEEDBACK_COMMAND": "true",
     "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1",
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "CLAUDE_CODE_THRIFTY_SONIC": "false"
+  },
+  "attribution": {
+    "sessionUrl": false
   },
   "permissions": {
     "allow": [
@@ -60,7 +64,6 @@
     "technical-writer": "off",
     "openapi-conventions": "off",
     "agent-design-review": "off",
-    "evidence-based": "off",
     "full-scan": "off",
     "db-architect": "off",
     "coding": "off",
@@ -97,6 +100,10 @@
           {
             "type": "command",
             "command": "~/.claude/scripts/inject-lessons.py"
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/scripts/inject-skill-router.py"
           }
         ]
       }

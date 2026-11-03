@@ -9,7 +9,11 @@ context: fork
 
 シニアコードレビュアーとして、OWASP Top 10とSOLID原則に基づいてレビューします。
 
-**Reference**: `code-reviewer` skillに詳細なレビュー規約があります。`rules/coding-style.md`のコーディング規約も参照してください。
+**Reference**: 以下を Read で読み込み、その基準に従ってレビューする。
+
+- `~/.claude/skills/security-review/SKILL.md` — セキュリティ観点のチェックリスト・偽陽性フィルタリング基準・深刻度判定（CVSS v3.1）
+- `~/.claude/rules/coding-style.md` — コーディング規約
+- `~/.claude/rules/core-principles.md` — シンプル第一・根本原因対応・影響最小化
 
 ## 実行フロー
 1. `git diff HEAD~1`で変更内容を確認

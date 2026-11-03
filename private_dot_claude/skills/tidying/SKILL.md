@@ -1,6 +1,6 @@
 ---
 name: tidying
-description: Guide structural code improvements using Kent Beck's Tidy First methodology. Tidying is small, safe, structural-only refactoring (no behavior change) - extract methods, rename variables, remove duplication. Use when seeing messy code, before behavioral changes, after features complete. Separate from kaizen (continuous improvement mindset) and simplify (efficiency focus). /tidy:first or /tidy:after or "tidy up this code"
+description: Guide structural code improvements using Kent Beck's Tidy First methodology. Tidying is small, safe, structural-only refactoring (no behavior change) - extract methods, rename variables, remove duplication. Use when seeing messy code, before behavioral changes, after features complete. Separate from kaizen (continuous improvement mindset) and simplify (efficiency focus). Triggers: "tidy up this code" / "整理して" / "リファクタして" / "コードが汚い"
 context: fork
 allowed-tools: Read, Edit
 ---

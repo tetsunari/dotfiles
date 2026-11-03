@@ -1,6 +1,17 @@
 ---
 description: "パッケージインストール時のセキュリティチェック（GitHubアカウント信頼性・Star数・難読化スクリプト検出）"
-alwaysApply: true
+paths:
+  - "**/package.json"
+  - "**/package-lock.json"
+  - "**/pnpm-lock.yaml"
+  - "**/yarn.lock"
+  - "**/bun.lock*"
+  - "**/deno.json*"
+  - "**/requirements*.txt"
+  - "**/pyproject.toml"
+  - "**/Pipfile"
+  - "**/Cargo.toml"
+  - "**/go.mod"
 ---
 # セキュリティ設定
 
