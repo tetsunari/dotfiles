@@ -65,14 +65,50 @@ local function spawn_in_cwd(label, args)
   end)
 end
 
+-- herdr 実行中はホイールイベントをherdrへ送り、herdr側のペインをスクロールさせる
+-- herdr は alternate screen で動くため WezTerm の ScrollByLine では何も起きない
+-- ホイールはマウス座標のペインに作用するので、フォーカス中ペインに置かれるカーソル位置へ送る
+-- （herdr の host_cursor = "native" が前提）
+local HERDR_LINES_PER_WHEEL = 3 -- herdr の 1 ホイールあたりのスクロール行数（実測値）
+
+-- macOS: フォアグラウンドプロセス名で判定
+-- WSL2: プロセス名が wslhost.exe しか取れないため、zsh の preexec/precmd が送る
+--       user var IN_HERDR で判定する（function.zsh.tmpl）。
+--       値が残留してもシェルへ誤送信しないよう alternate screen 中であることも条件にする
+local function is_herdr_running(pane)
+  if utils.is_mac then
+    return (pane:get_foreground_process_name() or ""):match("/herdr$") ~= nil
+  end
+  return pane:get_user_vars().IN_HERDR == "1" and pane:is_alt_screen_active()
+end
+
+-- direction: 1 = 下, -1 = 上 / half_page: true なら半ページ、false なら最小単位（1ホイール）
+local function scroll_or_herdr(direction, half_page, fallback)
+  return wezterm.action_callback(function(window, pane)
+    if not is_herdr_running(pane) then
+      window:perform_action(fallback, pane)
+      return
+    end
+    local cursor = pane:get_cursor_position()
+    local dims = pane:get_dimensions()
+    local col = cursor.x + 1
+    local row = cursor.y - dims.physical_top + 1
+    local count = half_page and math.max(1, math.floor(dims.viewport_rows / 2 / HERDR_LINES_PER_WHEEL)) or 1
+    -- SGR マウス: 64 = ホイール上, 65 = ホイール下
+    local button = direction < 0 and 64 or 65
+    local seq = string.format("\027[<%d;%d;%dM", button, col, row)
+    window:perform_action(act.SendString(seq:rep(count)), pane)
+  end)
+end
+
 -- macOS固有のキーバインド（Commandキー中心）
 local function mac_keys()
   return {
     -- === SCROLLING ===
-    { key = "j", mods = "SUPER", action = act.ScrollByLine(1) },
-    { key = "k", mods = "SUPER", action = act.ScrollByLine(-1) },
-    { key = "j", mods = "SUPER|CTRL", action = act.ScrollByPage(0.5) },
-    { key = "k", mods = "SUPER|CTRL", action = act.ScrollByPage(-0.5) },
+    { key = "j", mods = "SUPER", action = scroll_or_herdr(1, false, act.ScrollByLine(1)) },
+    { key = "k", mods = "SUPER", action = scroll_or_herdr(-1, false, act.ScrollByLine(-1)) },
+    { key = "j", mods = "SUPER|CTRL", action = scroll_or_herdr(1, true, act.ScrollByPage(0.5)) },
+    { key = "k", mods = "SUPER|CTRL", action = scroll_or_herdr(-1, true, act.ScrollByPage(-0.5)) },
 
     -- === PANE RESIZING ===
     { key = "K", mods = "LEADER|SHIFT", action = act.AdjustPaneSize({ "Up", 3 }) },
@@ -123,10 +159,10 @@ local function windows_keys()
     { key = "c", mods = "CTRL|SHIFT", action = act.SendKey { key = "c", mods = "CTRL" } },
 
     -- === SCROLLING ===
-    { key = "j", mods = "CTRL", action = act.ScrollByLine(1) },
-    { key = "k", mods = "CTRL", action = act.ScrollByLine(-1) },
-    { key = "j", mods = "CTRL|SHIFT", action = act.ScrollByPage(0.5) },
-    { key = "k", mods = "CTRL|SHIFT", action = act.ScrollByPage(-0.5) },
+    { key = "j", mods = "CTRL", action = scroll_or_herdr(1, false, act.ScrollByLine(1)) },
+    { key = "k", mods = "CTRL", action = scroll_or_herdr(-1, false, act.ScrollByLine(-1)) },
+    { key = "j", mods = "CTRL|SHIFT", action = scroll_or_herdr(1, true, act.ScrollByPage(0.5)) },
+    { key = "k", mods = "CTRL|SHIFT", action = scroll_or_herdr(-1, true, act.ScrollByPage(-0.5)) },
     { key = "G", mods = "CTRL|SHIFT", action = act.ScrollToBottom },
     -- RCtrl+j/k プロキシ → アプリへ Ctrl+n/k を転送（Ctrl+j は 0x0A=Enter と同一のため Ctrl+n で代替）
     { key = "j", mods = "CTRL|ALT", action = act.SendKey { key = "n", mods = "CTRL" } },

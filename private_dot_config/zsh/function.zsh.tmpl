@@ -82,6 +82,26 @@ precmd() {
 preexec() { print -Pn "\e]0;$1\a" }
 {{- if eq .chezmoi.os "linux" }}
 
+# herdr 実行中を WezTerm へ通知（OSC 1337 SetUserVar IN_HERDR）
+# WSLドメイン越しでは WezTerm がフォアグラウンドプロセス名を取れないため、
+# keymaps.lua のスクロールキーはこの値で herdr かどうかを判定する。
+# herdr 内のペイン（HERDR_ENV=1）では送らない（内側の値が外へ漏れるのを防ぐ）
+if [[ -z $HERDR_ENV ]]; then
+  _herdr_user_var_preexec() {
+    [[ ${1%% *} == herdr ]] || return
+    printf '\e]1337;SetUserVar=IN_HERDR=MQ==\a'  # "1"
+    _herdr_user_var_set=1
+  }
+  _herdr_user_var_precmd() {
+    (( ${_herdr_user_var_set:-0} )) || return
+    printf '\e]1337;SetUserVar=IN_HERDR=MA==\a'  # "0"
+    _herdr_user_var_set=0
+  }
+  autoload -Uz add-zsh-hook
+  add-zsh-hook preexec _herdr_user_var_preexec
+  add-zsh-hook precmd _herdr_user_var_precmd
+fi
+
 # Claude
 export CLAUDE_CODE_SUBAGENT_MODEL="claude-opus-4-6"
 {{- end }}
