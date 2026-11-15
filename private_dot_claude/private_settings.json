@@ -103,7 +103,7 @@
           },
           {
             "type": "command",
-            "command": "~/.claude/scripts/inject-skill-router.py"
+            "command": "if [ -x ~/.claude/scripts/inject-skill-router.py ]; then exec ~/.claude/scripts/inject-skill-router.py; fi"
           }
         ]
       }

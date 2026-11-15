@@ -1,8 +1,23 @@
 #!/bin/bash
 # =============================================================================
-# Claude Code notification script for WezTerm + WSL2
-# BELを送信 → WezTerm Luaでフォーカス判定して通知
+# Claude Code notification script
+# macOS: osascriptでネイティブ通知を送信（WezTermがフォーカス中は抑制）
+# WSL2 : BELを送信 → WezTerm Luaでフォーカス判定して通知
 # =============================================================================
+
+TITLE="${1:-Claude Code}"
+MESSAGE="${2:-タスクが完了しました}"
+
+notify_macos() {
+    # 現在フォーカスされているアプリを取得
+    local front_app
+    front_app=$(osascript -e 'tell application "System Events" to get name of first application process whose frontmost is true' 2>/dev/null)
+
+    # WezTermがフォーカス中でなければ通知を送信
+    if [ "$front_app" != "wezterm-gui" ]; then
+        osascript -e "display notification \"$MESSAGE\" with title \"$TITLE\""
+    fi
+}
 
 # Claude Codeの親プロセスのPTYを特定して送信
 find_claude_tty() {
@@ -22,8 +37,17 @@ find_claude_tty() {
     return 1
 }
 
-target_tty=$(find_claude_tty)
+notify_wsl() {
+    local target_tty
+    target_tty=$(find_claude_tty)
 
-if [[ -n "$target_tty" && -w "$target_tty" ]]; then
-    printf '\a' > "$target_tty" 2>/dev/null
+    if [[ -n "$target_tty" && -w "$target_tty" ]]; then
+        printf '\a' > "$target_tty" 2>/dev/null
+    fi
+}
+
+if [[ "$(uname -s)" == "Darwin" ]]; then
+    notify_macos
+else
+    notify_wsl
 fi

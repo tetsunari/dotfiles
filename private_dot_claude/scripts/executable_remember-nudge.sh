@@ -85,7 +85,11 @@ printf '%s' "$PROMPT" > "$PROMPT_FILE"
 nohup bash -c '
   trap "rm -f \"$1\"" EXIT
   export CLAUDE_REMEMBER_NUDGE_ACTIVE=1
-  J=$(timeout 20s "$3" -p "$(cat "$1")" --model haiku --output-format text \
+  # macOSには標準でtimeoutが無いため、gtimeout(coreutils)→タイムアウト無しの順にフォールバックする
+  if command -v timeout >/dev/null 2>&1; then T="timeout 20s"
+  elif command -v gtimeout >/dev/null 2>&1; then T="gtimeout 20s"
+  else T=""; fi
+  J=$($T "$3" -p "$(cat "$1")" --model haiku --output-format text \
     --setting-sources "" --strict-mcp-config \
     --system-prompt "あなたは分類器です。与えられた指示に厳密に従い、YESかNOの一語のみを出力してください。他の文章・説明・提案は一切書かないでください。" \
     2>/dev/null) || exit 0

@@ -90,7 +90,8 @@ else
 fi
 
 printf '%s' "古い判定結果" > "$STATE_FIXTURE/remember-nudge.pending"
-touch -d '2 hours ago' "$STATE_FIXTURE/remember-nudge.pending"
+# touch -d はGNU専用でmacOS(BSD)では失敗するため、python3でmtimeを2時間前にする
+python3 -c 'import os, sys, time; t = time.time() - 7200; os.utime(sys.argv[1], (t, t))' "$STATE_FIXTURE/remember-nudge.pending"
 OUT=$(printf '%s' '{"prompt":"やる"}' \
   | INJECT_LESSONS_DIR="$FIXTURE_DIR" INJECT_STATE_DIR="$STATE_FIXTURE" "$HOOK" \
   | jq -r '.hookSpecificOutput.additionalContext')
