@@ -8,9 +8,9 @@ vim.opt.scrolloff = 5
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.inccommand = 'split'
-vim.opt.clipboard = 'unnamedplus'
--- WSL2: クリップボードは自動検出(xclip)に任せる
--- 貼り付けで + が空になる場合は WSLg のブリッジ片肺を疑い Windows 側で wsl --shutdown する
+vim.opt.clipboard = { 'unnamedplus', 'unnamed' }
+-- OS標準のクリップボードを自動検出する（macOS: pbcopy/pbpaste、WSL2: xclip等）
+-- WSL2で貼り付け時に + が空になる場合は、Windows側の wsl --shutdown でブリッジを再起動する
 vim.opt.virtualedit = 'onemore'
 vim.opt.swapfile = false
 
@@ -27,8 +27,6 @@ vim.opt.shiftwidth = 0
 vim.opt.expandtab = true
 
 vim.opt.helplang = { "ja", "en" }
-
-vim.opt.clipboard:append('unnamedplus,unnamed')
 
 -- 行末から次の行へ移動できる
 vim.opt.whichwrap = 'b,s,h,l,<,>,[,],~'

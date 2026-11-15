@@ -1,3 +1,7 @@
+-- Vaultを利用していないためObsidian連携を無効化する
+return {}
+
+--[[
 return {
   "epwalsh/obsidian.nvim",
   version = "*",  -- recommended, use latest release instead of latest commit
@@ -64,3 +68,4 @@ return {
     vim.api.nvim_create_user_command("ObsidianReview", create_note("レビュー", "レビュー"), { nargs = "?" })
   end,
 }
+]]

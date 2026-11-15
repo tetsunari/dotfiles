@@ -175,6 +175,15 @@ function M.apply_to_config(config)
     },
   }
 
+  -- macOS: Command+SをNeovimの保存キーとして直接送る
+  if wezterm.target_triple:find("apple-darwin", 1, true) then
+    table.insert(config.keys, {
+      key = "s",
+      mods = "SUPER",
+      action = act.SendString("\027[115;9u"),
+    })
+  end
+
   -- =============================================================================
   -- KEY TABLES (モード)
   -- =============================================================================

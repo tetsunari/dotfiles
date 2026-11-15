@@ -1,5 +1,6 @@
 return {
   "petertriho/nvim-scrollbar",
+  branch = "v1", -- 既存のsetupオプションとscrollbar.handlers.searchを維持する
   event = "VeryLazy", -- nvim-hlslensの初期化にあわせる
   opts = {
     handle = {

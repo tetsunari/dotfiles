@@ -1,5 +1,8 @@
--- zenhan IME自動切り替え設定
-if not vim.g.vscode and vim.fn.executable('zenhan') == 1 then
+local is_mac = vim.fn.has('macunix') == 1
+local is_linux = vim.fn.has('linux') == 1
+
+-- WSL2向けのzenhan IME自動切り替え設定
+if is_linux and not vim.g.vscode and vim.fn.executable('zenhan') == 1 then
   -- InsertモードからNormalモードに切り替わった時にIMEをオフにする
   vim.api.nvim_create_autocmd('ModeChanged', {
     pattern = 'i:*',
@@ -26,7 +29,7 @@ vim.keymap.set('n', 'ZQ', '<NOP>')
 
 -- WezTerm連携: OSC 1337 SetUserVarでnvim起動中であることを通知
 -- WezTerm側はこれを見てCtrl+Vをペーストではなく矩形選択としてnvimへ渡す
-if not vim.g.vscode and vim.env.TERM_PROGRAM == 'WezTerm' then
+if is_linux and not vim.g.vscode and vim.env.TERM_PROGRAM == 'WezTerm' then
   local function wezterm_set_user_var(name, value)
     io.stdout:write(string.format('\027]1337;SetUserVar=%s=%s\007', name, vim.base64.encode(value)))
     io.stdout:flush()
@@ -57,8 +60,9 @@ vim.keymap.set('n', 's', '"_s')
 vim.api.nvim_set_var('mapleader', ' ')
 
 -- https://zenn.dev/kawarimidoll/books/6064bf6f193b51/viewer/6c77c3
-vim.keymap.set({ 'n', 'x' }, 'p', paste_after_normalize_cr('p`]'), { expr = true, desc = 'Paste and move to the end' })
-vim.keymap.set({ 'n', 'x' }, 'P', paste_after_normalize_cr('P`]'), { expr = true, desc = 'Paste and move to the end' })
+-- Normalモードのp/Pはundo-glow.nvimで設定する
+vim.keymap.set('x', 'p', paste_after_normalize_cr('p`]'), { expr = true, desc = 'Paste and move to the end' })
+vim.keymap.set('x', 'P', paste_after_normalize_cr('P`]'), { expr = true, desc = 'Paste and move to the end' })
 
 -- vim.keymap.set('x', 'p', 'P', { desc = 'Paste without change register' })
 -- vim.keymap.set('x', 'P', 'p', { desc = 'Paste with change register' })
@@ -68,14 +72,39 @@ vim.keymap.set({ 'n', 'x' }, 'P', paste_after_normalize_cr('P`]'), { expr = true
 -- vim.keymap.set('o', 'x', 'd', { desc = 'Delete using x' })
 
 vim.keymap.set('n', '<c-s>', '<cmd>write<cr>', { desc = 'Write' })
+if is_mac then
+  -- WezTermからCSI-uで届くCommand+S。Oil等のCtrl+S割り当てと分離する
+  vim.keymap.set({ 'n', 'i', 'x' }, '<D-s>', '<cmd>write<cr>', { desc = 'Write' })
+end
 vim.keymap.set({ 'n', 'x' }, 'so', ':source<cr>', { silent = true, desc = "Source crrent script" })
 
--- Insertモードでは<C-v>を矩形選択ではなくシステムクリップボードからの貼り付けとして使う
--- （Normal/Visualモードは標準のVisual Block動作のまま）
-vim.keymap.set('i', '<C-v>', '<C-r><C-o>+', { desc = 'Paste from system clipboard' })
+-- Linux/WSL2ではInsertモードの<C-v>をシステムクリップボードの貼り付けに使う
+-- macOSでは端末標準のCommand+Vを使い、<C-v>はVim本来の入力操作を維持する
+if is_linux then
+  vim.keymap.set('i', '<C-v>', '<C-r><C-o>+', { desc = 'Paste from system clipboard' })
+end
 
-vim.keymap.set('i', '<c-a>', '<ESC>^i')
+vim.keymap.set('i', '<c-a>', is_mac and not vim.g.vscode and '<Home>' or '<ESC>^i')
 vim.keymap.set('i', '<c-d>', '<ESC>s')
+
+-- Macの単体Neovimでは挿入モードのままEmacs風にカーソルを移動する
+if is_mac and not vim.g.vscode then
+  local cursor_keys = {
+    ['<C-e>'] = '<End>',
+    ['<C-b>'] = '<Left>',
+    ['<C-f>'] = '<Right>',
+  }
+  for key, movement in pairs(cursor_keys) do
+    vim.keymap.set('i', key, movement)
+  end
+  -- 補完候補があるときは従来どおり候補の選択に使う
+  vim.keymap.set('i', '<C-n>', function()
+    return vim.fn.pumvisible() == 1 and '<C-n>' or '<Down>'
+  end, { expr = true })
+  vim.keymap.set('i', '<C-p>', function()
+    return vim.fn.pumvisible() == 1 and '<C-p>' or '<Up>'
+  end, { expr = true })
+end
 
 -- VSCode
 if vim.g.vscode then
@@ -155,7 +184,8 @@ if vim.g.vscode then
     vscode.action("workbench.action.toggleZenMode")
   end)
 
-  vim.keymap.set("n", "<C-w>", function()
+  -- macOSではCommand+Wで閉じ、<C-w>はウィンドウ操作のプレフィックスとして維持する
+  vim.keymap.set("n", is_mac and "<D-w>" or "<C-w>", function()
     vscode.action("workbench.action.closeActiveEditor")
   end)
   --

@@ -57,7 +57,8 @@ return {
           require("lasterisk").search()
           require("hlslens").start()
         end)
-        vim.keymap.set({ "n", "x" }, "g*", function()
+        -- Normalモードのg*は下で標準検索＋hlslensとして設定する
+        vim.keymap.set("x", "g*", function()
           require("lasterisk").search({ is_whole = false })
           require("hlslens").start()
         end)
