@@ -8,12 +8,14 @@ Brewfile_wsl
 .config/wayvnc
 .config/NvChad
 setup-ahk
+.codex/config.toml
 {{- else if eq .chezmoi.os "linux" }}
 Brewfile_mac
 {{- end }}
 
 README.md
 .config/nvim/lazy-lock.json
+.codex/log
 .codex/log/*
 .codex/version.json
 
