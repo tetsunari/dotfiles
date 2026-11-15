@@ -1,5 +1,5 @@
 require("full-border"):setup({
-  type = ui.Border.ROUNDED,
+  set = "rounded",
 })
 require("zoxide"):setup({
   update_db = true,
