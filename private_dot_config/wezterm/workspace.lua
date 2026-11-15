@@ -3,8 +3,12 @@
 -- =============================================================================
 local wezterm = require("wezterm")
 local act = wezterm.action
+local utils = require("modules.utils")
 
 local M = {}
+
+-- macOSのGUI起動ではPATHにweztermが無いため、実行中バイナリのフルパスを使う
+local wezterm_cli = utils.is_mac and (wezterm.executable_dir .. "/wezterm") or "wezterm"
 
 -- スクラッチワークスペースから戻る前のワークスペースを記録
 local previous_workspace = nil
@@ -198,7 +202,7 @@ function M.apply_to_config(config)
       -- CLIで対象ワークスペースの全ペインを取得してkill
       wezterm.time.call_after(0.3, function()
         local success, stdout, stderr = wezterm.run_child_process({
-          "wezterm", "cli", "list", "--format", "json"
+          wezterm_cli, "cli", "list", "--format", "json"
         })
 
         if success then
@@ -206,7 +210,7 @@ function M.apply_to_config(config)
           for _, p in ipairs(panes_list) do
             if p.workspace == current then
               wezterm.run_child_process({
-                "wezterm", "cli", "kill-pane", "--pane-id", tostring(p.pane_id)
+                wezterm_cli, "cli", "kill-pane", "--pane-id", tostring(p.pane_id)
               })
             end
           end

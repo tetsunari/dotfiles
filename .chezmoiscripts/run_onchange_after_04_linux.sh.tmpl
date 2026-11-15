@@ -9,7 +9,7 @@ WINDOWS_HOME_DIR=$(wslpath $(/mnt/c/WINDOWS/system32/cmd.exe /c 'SET /P x=%USERP
 echo "📦 Copying WezTerm configuration..."
 
 # メインファイル
-WEZTERM_SOURCE_FILE="{{ .chezmoi.sourceDir }}/dot_wezterm_linux.lua"
+WEZTERM_SOURCE_FILE="{{ .chezmoi.sourceDir }}/private_dot_config/wezterm/wezterm.lua"
 WEZTERM_DEST_FILE="$WINDOWS_HOME_DIR/.wezterm.lua"
 cp "$WEZTERM_SOURCE_FILE" "$WEZTERM_DEST_FILE"
 echo "✅ Copied main WezTerm config: .wezterm.lua"

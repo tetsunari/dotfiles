@@ -1,6 +1,8 @@
 -- =============================================================================
 -- WezTerm Configuration Entry Point
--- モジュール分割版
+-- モジュール分割版（macOS / Windows(WSL2) 共通）
+-- macOS: chezmoiで ~/.config/wezterm/ に展開
+-- Windows: run_onchange_after_04_linux で %USERPROFILE%\.wezterm.lua と .config\wezterm\ にコピー
 -- =============================================================================
 local wezterm = require("wezterm")
 
@@ -9,15 +11,23 @@ local home = wezterm.home_dir
 local module_dir = home .. "/.config/wezterm"
 package.path = module_dir .. "/?.lua;" .. module_dir .. "/?/init.lua;" .. package.path
 
+local utils = require("modules.utils")
 local config = wezterm.config_builder()
 
 -- =============================================================================
 -- BASIC CONFIGURATION
 -- =============================================================================
--- WSL Ubuntuをデフォルトドメインとして使用
-config.default_domain = "WSL:Ubuntu"
+if utils.is_windows then
+  -- WSL Ubuntuをデフォルトドメインとして使用
+  config.default_domain = "WSL:Ubuntu"
+end
 config.check_for_updates = true
 config.check_for_updates_interval_seconds = 86400
+
+if utils.is_mac then
+  -- 通知設定（OSC 777/9 エスケープシーケンス対応）
+  config.notification_handling = "SuppressFromFocusedWindow"
+end
 
 -- タブを閉じた時に前回アクティブだったタブに戻る
 config.switch_to_last_active_tab_when_closing_tab = true
@@ -34,24 +44,22 @@ require("tab").apply_to_config(config)
 require("statusbar").apply_to_config(config)
 require("workspace").apply_to_config(config)
 
--- オプショナルモジュール（keymapsの後に読み込む）
-require("modules.wsl").apply_to_config(config)
-require("modules.notification").apply_to_config(config)
+if utils.is_windows then
+  -- オプショナルモジュール（keymapsの後に読み込む）
+  local wsl = require("modules.wsl")
+  wsl.apply_to_config(config)
+  require("modules.notification").apply_to_config(config)
 
--- =============================================================================
--- INITIALIZATION
--- =============================================================================
-local wsl = require("modules.wsl")
+  -- 最適化：初期化時はPowerShellコマンド実行を避け、デフォルト値を使用
+  -- 実際のデータは最初の update-right-status イベント以降に取得される
+  wezterm.on("window-config-reloaded", function(window, pane)
+    -- WSL2ネットワークテストはバックグラウンドで実行
+    wezterm.time.call_after(500, function()
+      wsl.test_wsl_network()
+    end)
 
--- 最適化：初期化時はPowerShellコマンド実行を避け、デフォルト値を使用
--- 実際のデータは最初の update-right-status イベント以降に取得される
-wezterm.on("window-config-reloaded", function(window, pane)
-  -- WSL2ネットワークテストはバックグラウンドで実行
-  wezterm.time.call_after(500, function()
-    wsl.test_wsl_network()
+    wezterm.emit("update-right-status", window, pane)
   end)
-
-  wezterm.emit("update-right-status", window, pane)
-end)
+end
 
 return config

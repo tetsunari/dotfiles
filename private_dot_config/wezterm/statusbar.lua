@@ -1,10 +1,13 @@
 -- =============================================================================
--- ステータスバー（右側：ネットワーク・バッテリー・時刻）
+-- ステータスバー（右側）
+-- Windows(WSL2): ネットワーク・WSL・VPN・時刻・バッテリー
+-- macOS: CPU・RAM・ネットワーク・時刻・バッテリー
 -- tabline.wez のコンポーネントを参考に実装
 -- =============================================================================
 local wezterm = require("wezterm")
 local colors = require("modules.colors")
-local wsl = require("modules.wsl")
+local utils = require("modules.utils")
+local wsl = utils.is_windows and require("modules.wsl") or nil
 
 local M = {}
 
@@ -30,6 +33,9 @@ local ICONS = {
   battery_charging_60 = wezterm.nerdfonts.md_battery_charging_60,
   battery_charging_40 = wezterm.nerdfonts.md_battery_charging_40,
   battery_charging_20 = wezterm.nerdfonts.md_battery_charging_20,
+  -- System (macOS)
+  cpu = wezterm.nerdfonts.oct_cpu,
+  ram = wezterm.nerdfonts.cod_server,
   -- Calendar
   calendar = wezterm.nerdfonts.fa_calendar,
 }
@@ -77,6 +83,14 @@ local status_cache = {
   battery_text = ICONS.battery_full .. " --",
   battery_color = colors.fg_muted,
   last_battery_update = 0,
+  -- CPU (macOS)
+  cpu_text = ICONS.cpu .. " --%",
+  cpu_color = colors.accent_blue,
+  last_cpu_update = 0,
+  -- RAM (macOS)
+  ram_text = ICONS.ram .. " --GB",
+  ram_color = colors.accent_purple,
+  last_ram_update = 0,
 }
 
 -- =============================================================================
@@ -133,7 +147,7 @@ end
 -- =============================================================================
 -- ネットワーク情報取得（Windows PowerShell経由 - デフォルトルートで検出）
 -- =============================================================================
-local function get_network_info()
+local function get_network_info_windows()
   local success, stdout, _ = wezterm.run_child_process({
     "powershell.exe",
     "-NoProfile",
@@ -203,6 +217,84 @@ local function get_vpn_info()
 end
 
 -- =============================================================================
+-- ネットワーク情報取得（macOS用）
+-- =============================================================================
+local function get_network_info_mac()
+  -- system_profilerでネットワークタイプを確認
+  local success, stdout, _ = wezterm.run_child_process({
+    "/bin/sh", "-c",
+    "system_profiler SPNetworkDataType 2>/dev/null | grep -B 5 'IPv4 Addresses' | head -20"
+  })
+
+  if success and stdout then
+    -- Wi-Fi (AirPort) 接続チェック
+    if stdout:match("Type: AirPort") or stdout:match("Wi%-Fi") then
+      return ICONS.wifi .. " Wi-Fi", colors.network_wifi
+    end
+
+    -- Ethernet接続チェック
+    if stdout:match("Type: Ethernet") then
+      return ICONS.ethernet .. " Ethernet", colors.network_ethernet
+    end
+  end
+
+  -- フォールバック: ifconfigでen0の状態確認
+  local ifconfig_success, ifconfig_stdout, _ = wezterm.run_child_process({
+    "/sbin/ifconfig", "en0"
+  })
+
+  if ifconfig_success and ifconfig_stdout and ifconfig_stdout:match("status: active") then
+    return ICONS.wifi .. " Connected", colors.info
+  end
+
+  return ICONS.offline .. " Offline", colors.network_error
+end
+
+-- =============================================================================
+-- CPU情報取得（macOS用）
+-- user + sys = 総CPU使用率
+-- =============================================================================
+local function get_cpu_info()
+  local success, stdout, _ = wezterm.run_child_process({
+    "/bin/sh", "-c",
+    "top -l 1 -n 0 | grep 'CPU usage' | awk '{gsub(/%/,\"\",$3); gsub(/%/,\"\",$5); print $3 + $5}'"
+  })
+
+  if success and stdout then
+    local cpu = stdout:match("[%d%.]+")
+    if cpu then
+      return string.format("%s %s%%", ICONS.cpu, math.floor(tonumber(cpu) + 0.5)), colors.accent_blue
+    end
+  end
+
+  return ICONS.cpu .. " --%", colors.accent_blue
+end
+
+-- =============================================================================
+-- RAM情報取得（macOS用）
+-- ページサイズを動的に取得（Apple Silicon: 16384, Intel: 4096）
+-- =============================================================================
+local function get_ram_info()
+  local success, stdout, _ = wezterm.run_child_process({
+    "/bin/sh", "-c",
+    [[
+      page_size=$(vm_stat | head -1 | awk '{print $(NF-1)}')
+      pages=$(vm_stat | awk '/Pages active:|Pages wired down:|Pages occupied by compressor:/ {gsub(/\./,"",$NF); sum += $NF} END {print sum}')
+      echo "scale=1; $pages * $page_size / 1024 / 1024 / 1024" | bc
+    ]]
+  })
+
+  if success and stdout then
+    local ram = stdout:match("[%d%.]+")
+    if ram then
+      return string.format("%s %sGB", ICONS.ram, ram), colors.accent_purple
+    end
+  end
+
+  return ICONS.ram .. " --GB", colors.accent_purple
+end
+
+-- =============================================================================
 -- 時刻情報取得（動的アイコン付き）
 -- =============================================================================
 local function get_datetime_info()
@@ -226,21 +318,59 @@ function M.apply_to_config(config)
   wezterm.on("update-right-status", function(window, pane)
     local current_time = os.time()
 
-    -- WSL状態の更新（60秒間隔）
-    if current_time - wsl.status_cache.last_update >= 60 then
-      wsl.test_wsl_network()
+    local status_elements = {}
+    local function add_segment(bg, fg, text)
+      table.insert(status_elements, { Background = { Color = bg } })
+      table.insert(status_elements, { Foreground = { Color = fg } })
+      table.insert(status_elements, { Text = " " .. text .. " " })
     end
 
-    -- ネットワーク情報の更新（15秒間隔）
-    if current_time - status_cache.last_network_update >= 15 then
-      status_cache.last_network_update = current_time
-      status_cache.network_text, status_cache.network_color = get_network_info()
-    end
+    if utils.is_windows then
+      -- WSL状態の更新（60秒間隔）
+      if current_time - wsl.status_cache.last_update >= 60 then
+        wsl.test_wsl_network()
+      end
 
-    -- VPN情報の更新（15秒間隔）
-    if current_time - status_cache.last_vpn_update >= 15 then
-      status_cache.last_vpn_update = current_time
-      status_cache.vpn_name = get_vpn_info()
+      -- ネットワーク情報の更新（15秒間隔）
+      if current_time - status_cache.last_network_update >= 15 then
+        status_cache.last_network_update = current_time
+        status_cache.network_text, status_cache.network_color = get_network_info_windows()
+      end
+
+      -- VPN情報の更新（15秒間隔）
+      if current_time - status_cache.last_vpn_update >= 15 then
+        status_cache.last_vpn_update = current_time
+        status_cache.vpn_name = get_vpn_info()
+      end
+
+      -- Windows Network
+      add_segment(status_cache.network_color, colors.bg_primary, status_cache.network_text)
+      -- WSL2
+      add_segment(wsl.status_cache.status_color, colors.bg_primary, wsl.status_cache.status)
+      -- VPN（接続時のみ表示）
+      if status_cache.vpn_name then
+        add_segment(colors.vpn_connected, colors.bg_primary, ICONS.vpn .. " " .. status_cache.vpn_name)
+      end
+    elseif utils.is_mac then
+      -- ネットワーク情報の更新（15秒間隔）
+      if current_time - status_cache.last_network_update >= 15 then
+        status_cache.last_network_update = current_time
+        status_cache.network_text, status_cache.network_color = get_network_info_mac()
+      end
+
+      -- CPU・RAM情報の更新（30秒間隔 - 負荷軽減）
+      if current_time - status_cache.last_cpu_update >= 30 then
+        status_cache.last_cpu_update = current_time
+        status_cache.cpu_text, status_cache.cpu_color = get_cpu_info()
+      end
+      if current_time - status_cache.last_ram_update >= 30 then
+        status_cache.last_ram_update = current_time
+        status_cache.ram_text, status_cache.ram_color = get_ram_info()
+      end
+
+      add_segment(status_cache.cpu_color, colors.bg_primary, status_cache.cpu_text)
+      add_segment(status_cache.ram_color, colors.bg_primary, status_cache.ram_text)
+      add_segment(status_cache.network_color, colors.bg_primary, status_cache.network_text)
     end
 
     -- バッテリー情報の更新（10秒間隔）
@@ -252,40 +382,10 @@ function M.apply_to_config(config)
     -- 時刻情報（毎回更新）
     local datetime = get_datetime_info()
 
-    -- ステータスバー表示
-    local status_elements = {
-      -- Windows Network
-      { Background = { Color = status_cache.network_color } },
-      { Foreground = { Color = colors.bg_primary } },
-      { Text = " " .. status_cache.network_text .. " " },
-
-      -- WSL2
-      { Background = { Color = wsl.status_cache.status_color } },
-      { Foreground = { Color = colors.bg_primary } },
-      { Text = " " .. wsl.status_cache.status .. " " },
-    }
-
-    -- VPN（接続時のみ表示）
-    if status_cache.vpn_name then
-      table.insert(status_elements, { Background = { Color = colors.vpn_connected } })
-      table.insert(status_elements, { Foreground = { Color = colors.bg_primary } })
-      table.insert(status_elements, { Text = " " .. ICONS.vpn .. " " .. status_cache.vpn_name .. " " })
-    end
-
-    -- Date
-    table.insert(status_elements, { Background = { Color = colors.bg_tertiary } })
-    table.insert(status_elements, { Foreground = { Color = colors.fg_primary } })
-    table.insert(status_elements, { Text = " " .. datetime.date .. " " })
-
-    -- Time
-    table.insert(status_elements, { Background = { Color = colors.clock_time } })
-    table.insert(status_elements, { Foreground = { Color = colors.bg_primary } })
-    table.insert(status_elements, { Text = " " .. datetime.time .. " " })
-
-    -- Battery
-    table.insert(status_elements, { Background = { Color = status_cache.battery_color } })
-    table.insert(status_elements, { Foreground = { Color = colors.bg_primary } })
-    table.insert(status_elements, { Text = " " .. status_cache.battery_text .. " " })
+    -- Date / Time / Battery
+    add_segment(colors.bg_tertiary, colors.fg_primary, datetime.date)
+    add_segment(colors.clock_time, colors.bg_primary, datetime.time)
+    add_segment(status_cache.battery_color, colors.bg_primary, status_cache.battery_text)
 
     local success, formatted = pcall(wezterm.format, status_elements)
     if success then

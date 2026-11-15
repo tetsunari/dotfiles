@@ -22,6 +22,9 @@ local ICONS = {
   lazygit = wezterm.nerdfonts.dev_git,
   ssh = wezterm.nerdfonts.md_server,
   wslhost = wezterm.nerdfonts.md_microsoft_windows,
+  -- macOS
+  login = wezterm.nerdfonts.md_apple,
+  terminal = wezterm.nerdfonts.md_apple,
   -- File Manager
   yazi = wezterm.nerdfonts.md_folder,
   -- AI Tools
@@ -145,7 +148,7 @@ local function setup_tab_title()
       mode_text = wezterm.GLOBAL.mode_text or ""
     end
 
-    -- WSL環境対応: foreground_process_name を優先、次に tab_title, title をチェック
+    -- foreground_process_name を優先、次に tab_title, title をチェック
     local process = pane.foreground_process_name or ""
     local title = pane.title or ""
     local tab_title = tab.tab_title or ""

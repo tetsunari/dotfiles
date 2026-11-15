@@ -3,8 +3,55 @@
 -- =============================================================================
 local wezterm = require("wezterm")
 local colors = require("modules.colors")
+local utils = require("modules.utils")
 
 local M = {}
+
+-- macOS固有の外観（Windows用の共通設定を上書きする）
+local function apply_mac(config)
+  config.font = wezterm.font_with_fallback({
+    {
+      family = "Maple Mono NL NF SemiBold",
+    },
+    {
+      family = "IBM Plex Sans JP",
+    },
+    {
+      family = "Firge35Nerd Console",
+      stretch = "UltraCondensed",
+      weight = "DemiBold",
+    },
+    {
+      family = "UDEV Gothic 35NF",
+      stretch = "UltraExpanded",
+      weight = "ExtraBlack",
+    },
+    {
+      family = "JetBrainsMonoNL Nerd Font",
+      weight = "DemiBold",
+    },
+  })
+  config.font_size = 10.5
+  config.scrollback_lines = 10000
+
+  config.window_decorations = "RESIZE | MACOS_FORCE_SQUARE_CORNERS"
+  config.window_background_opacity = 0.80
+  config.text_background_opacity = 0.80
+  config.window_padding = {
+    left = 2,
+    right = 2,
+    top = 0,
+    bottom = 0,
+  }
+
+  config.audible_bell = "Disabled"
+  config.visual_bell = {
+    fade_in_duration_ms = 0,
+    fade_out_duration_ms = 0,
+  }
+
+  config.tab_bar_at_bottom = true
+end
 
 function M.apply_to_config(config)
   -- =============================================================================
@@ -125,6 +172,10 @@ function M.apply_to_config(config)
   -- =============================================================================
   config.enable_scroll_bar = true
   config.min_scroll_bar_height = "3cell"
+
+  if utils.is_mac then
+    apply_mac(config)
+  end
 end
 
 return M

@@ -3,6 +3,7 @@
 -- =============================================================================
 local wezterm = require("wezterm")
 local act = wezterm.action
+local utils = require("modules.utils")
 
 local M = {}
 
@@ -47,16 +48,48 @@ local function equalize_panes()
   end)
 end
 
-function M.apply_to_config(config)
-  -- =============================================================================
-  -- LEADER KEY SYSTEM
-  -- =============================================================================
-  config.leader = { key = "g", mods = "CTRL", timeout_milliseconds = 2000 }
+-- 現在のディレクトリで新しいタブを開き、コマンドを実行する
+local function spawn_in_cwd(label, args)
+  return wezterm.action_callback(function(window, pane)
+    local cwd = pane:get_current_working_dir()
+    local cwd_path = cwd and cwd.file_path or nil
+    window:perform_action(
+      act.SpawnCommandInNewTab {
+        label = label,
+        domain = "CurrentPaneDomain",
+        cwd = cwd_path,
+        args = args,
+      },
+      pane
+    )
+  end)
+end
 
-  -- =============================================================================
-  -- KEY BINDINGS
-  -- =============================================================================
-  config.keys = {
+-- macOS固有のキーバインド（Commandキー中心）
+local function mac_keys()
+  return {
+    -- === SCROLLING ===
+    { key = "j", mods = "SUPER", action = act.ScrollByLine(1) },
+    { key = "k", mods = "SUPER", action = act.ScrollByLine(-1) },
+    { key = "j", mods = "SUPER|CTRL", action = act.ScrollByPage(0.5) },
+    { key = "k", mods = "SUPER|CTRL", action = act.ScrollByPage(-0.5) },
+
+    -- === PANE RESIZING ===
+    { key = "K", mods = "LEADER|SHIFT", action = act.AdjustPaneSize({ "Up", 3 }) },
+    { key = "J", mods = "LEADER|SHIFT", action = act.AdjustPaneSize({ "Down", 3 }) },
+
+    -- Command+SをNeovimの保存キー(<D-s>)としてCSI-uで直接送る
+    { key = "s", mods = "SUPER", action = act.SendString("\027[115;9u") },
+
+    -- === POPUP ALTERNATIVES (tmux popup 代替) ===
+    { key = "g", mods = "LEADER", action = spawn_in_cwd("lazygit", { "/bin/zsh", "-l", "-c", "lazygit" }) },
+    { key = "y", mods = "LEADER", action = spawn_in_cwd("yazi", { "/opt/homebrew/bin/yazi" }) },
+  }
+end
+
+-- Windows(WSL2)固有のキーバインド（AutoHotkeyでMac風に寄せたControlキー中心）
+local function windows_keys()
+  return {
     -- === BASIC OPERATIONS ===
     -- Left Control + C/V: コピー&ペースト（Macスタイル）
     { key = "c", mods = "CTRL", action = act.CopyTo("Clipboard") },
@@ -90,6 +123,26 @@ function M.apply_to_config(config)
     { key = "j", mods = "CTRL|ALT", action = act.SendKey { key = "n", mods = "CTRL" } },
     { key = "k", mods = "CTRL|ALT", action = act.SendKey { key = "k", mods = "CTRL" } },
 
+    -- === PANE RESIZING ===
+    { key = "K", mods = "LEADER|SHIFT", action = act.AdjustPaneSize({ "Up", 5 }) },
+    { key = "J", mods = "LEADER|SHIFT", action = act.AdjustPaneSize({ "Down", 5 }) },
+
+    -- === POPUP ALTERNATIVES (tmux popup 代替) ===
+    { key = "g", mods = "LEADER", action = spawn_in_cwd("lazygit", { "/home/linuxbrew/.linuxbrew/bin/lazygit" }) },
+    { key = "y", mods = "LEADER", action = spawn_in_cwd("yazi", { "/home/linuxbrew/.linuxbrew/bin/yazi" }) },
+  }
+end
+
+function M.apply_to_config(config)
+  -- =============================================================================
+  -- LEADER KEY SYSTEM
+  -- =============================================================================
+  config.leader = { key = "g", mods = "CTRL", timeout_milliseconds = 2000 }
+
+  -- =============================================================================
+  -- KEY BINDINGS（共通）
+  -- =============================================================================
+  config.keys = {
     -- === PANE MANAGEMENT ===
     { key = "\\", mods = "LEADER", action = act.SplitHorizontal { domain = "CurrentPaneDomain" } },
     { key = "-", mods = "LEADER", action = act.SplitVertical { domain = "CurrentPaneDomain" } },
@@ -104,8 +157,6 @@ function M.apply_to_config(config)
     -- === PANE RESIZING ===
     { key = "H", mods = "LEADER|SHIFT", action = act.AdjustPaneSize({ "Left", 5 }) },
     { key = "L", mods = "LEADER|SHIFT", action = act.AdjustPaneSize({ "Right", 5 }) },
-    { key = "K", mods = "LEADER|SHIFT", action = act.AdjustPaneSize({ "Up", 5 }) },
-    { key = "J", mods = "LEADER|SHIFT", action = act.AdjustPaneSize({ "Down", 5 }) },
 
     -- === TAB MANAGEMENT ===
     { key = "c", mods = "LEADER", action = act.SpawnTab("CurrentPaneDomain") },
@@ -135,53 +186,13 @@ function M.apply_to_config(config)
 
     -- === RESIZE MODE ===
     { key = "r", mods = "LEADER", action = act.ActivateKeyTable({ name = "resize_pane", one_shot = false }) },
-
-    -- === POPUP ALTERNATIVES (tmux popup 代替) ===
-    -- lazygit を新タブで起動（現在のディレクトリで）
-    {
-      key = "g",
-      mods = "LEADER",
-      action = wezterm.action_callback(function(window, pane)
-        local cwd = pane:get_current_working_dir()
-        local cwd_path = cwd and cwd.file_path or nil
-        window:perform_action(
-          act.SpawnCommandInNewTab {
-            label = "lazygit",
-            domain = "CurrentPaneDomain",
-            cwd = cwd_path,
-            args = { "/home/linuxbrew/.linuxbrew/bin/lazygit" },
-          },
-          pane
-        )
-      end),
-    },
-    -- yazi を新タブで起動（現在のディレクトリで）
-    {
-      key = "y",
-      mods = "LEADER",
-      action = wezterm.action_callback(function(window, pane)
-        local cwd = pane:get_current_working_dir()
-        local cwd_path = cwd and cwd.file_path or nil
-        window:perform_action(
-          act.SpawnCommandInNewTab {
-            label = "yazi",
-            domain = "CurrentPaneDomain",
-            cwd = cwd_path,
-            args = { "/home/linuxbrew/.linuxbrew/bin/yazi" },
-          },
-          pane
-        )
-      end),
-    },
   }
 
-  -- macOS: Command+SをNeovimの保存キーとして直接送る
-  if wezterm.target_triple:find("apple-darwin", 1, true) then
-    table.insert(config.keys, {
-      key = "s",
-      mods = "SUPER",
-      action = act.SendString("\027[115;9u"),
-    })
+  -- =============================================================================
+  -- KEY BINDINGS（OS別）
+  -- =============================================================================
+  for _, key in ipairs(utils.is_mac and mac_keys() or windows_keys()) do
+    table.insert(config.keys, key)
   end
 
   -- =============================================================================

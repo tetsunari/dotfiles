@@ -6,6 +6,13 @@ local wezterm = require("wezterm")
 local M = {}
 
 -- =============================================================================
+-- PLATFORM
+-- =============================================================================
+-- WSL2環境のWezTermはWindows側で動くため、Linuxではなくwindowsとして判定される
+M.is_mac = wezterm.target_triple:find("apple-darwin", 1, true) ~= nil
+M.is_windows = wezterm.target_triple:find("windows", 1, true) ~= nil
+
+-- =============================================================================
 -- UTF-8 SAFETY FUNCTIONS
 -- =============================================================================
 
