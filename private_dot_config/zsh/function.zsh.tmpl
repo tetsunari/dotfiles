@@ -1,3 +1,17 @@
+{{- if eq .chezmoi.os "darwin" -}}
+# homebrew
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# lazygit
+export XDG_CONFIG_HOME="$HOME/.config"
+
+PATH=~/.console-ninja/.bin:$PATH
+
+# direnv
+eval "$(direnv hook zsh)"
+
+export RIPGREP_CONFIG_PATH="$HOME/.config/.ripgreprc"
+{{- else -}}
 # export VOLTA_HOME="$HOME/.volta"
 # export PATH="$VOLTA_HOME/bin:$PATH"
 # export NVIM_HOME="/opt/nvim"
@@ -24,6 +38,7 @@ export PATH=$PATH:"$(wslpath "$(/mnt/c/WINDOWS/system32/cmd.exe /c 'echo %USERPR
 export HOMEBREW_DEVELOP=1
 ## curl path
 export HOMEBREW_CURL_PATH="/home/linuxbrew/.linuxbrew/bin/curl"
+{{- end }}
 
 # fzfの設定
 export FZF_DEFSULT_OPST="
@@ -65,6 +80,8 @@ precmd() {
   print -Pn "\e]7;file://${HOST}${PWD}\a"
 }
 preexec() { print -Pn "\e]0;$1\a" }
+{{- if eq .chezmoi.os "linux" }}
 
 # Claude
 export CLAUDE_CODE_SUBAGENT_MODEL="claude-opus-4-6"
+{{- end }}

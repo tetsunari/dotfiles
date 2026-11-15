@@ -5,6 +5,9 @@ export PATH=$PATH:$HOME/.local/bin
 # Homebrew (Linux)
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 {{ end }}
+{{- if eq .chezmoi.os "darwin" }}
+export MAS_NO_AUTO_INDEX=1
+{{ end }}
 # Common shell enhancements
 eval "$(sheldon source)"
 
