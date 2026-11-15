@@ -1,3 +1,4 @@
+# chezmoi:template:left-delimiter="[[" right-delimiter="]]"
 gui:
   nerdFontsVersion: "3"
   showFileIcons: true
@@ -14,7 +15,7 @@ promptToReturnFromSubprocess: false
 git:
   diffRenderers:
     - colorArg: always
-      command: /home/linuxbrew/.linuxbrew/bin/delta --dark --paging=never -s
+      command: [[ if eq .chezmoi.os "darwin" ]]/opt/homebrew/bin/delta[[ else ]]/home/linuxbrew/.linuxbrew/bin/delta[[ end ]] --dark --paging=never -s
   branchLogCmd: git log --graph --color=always --date=format:'%Y-%m-%d %H:%M' --pretty=format:'%C(#a0a0a0 reverse)%h%Creset %C(cyan)%ad%Creset %C(#dd4814)%ae%Creset %C(yellow reverse)%d%Creset %n%C(white bold)%s%Creset%n' {{branchName}} --
   allBranchesLogCmds:
     - git log --graph --color=always --date=format:'%Y-%m-%d %H:%M' --pretty=format:'%C(#a0a0a0 reverse)%h%Creset %C(cyan)%ad%Creset %C(#dd4814)%ae%Creset %C(yellow reverse)%d%Creset %n%C(white bold)%s%Creset%n' --

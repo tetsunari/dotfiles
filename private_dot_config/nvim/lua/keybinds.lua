@@ -28,8 +28,8 @@ vim.keymap.set('n', 'ZZ', '<NOP>')
 vim.keymap.set('n', 'ZQ', '<NOP>')
 
 -- WezTerm連携: OSC 1337 SetUserVarでnvim起動中であることを通知
--- WezTerm側はこれを見てCtrl+Vをペーストではなく矩形選択としてnvimへ渡す
-if is_linux and not vim.g.vscode and vim.env.TERM_PROGRAM == 'WezTerm' then
+-- WezTerm側はこれを見て、WSL2ではCtrl+Vを矩形選択として、macOSではCommand+Sを保存キーとしてnvimへ渡す
+if not vim.g.vscode and vim.env.TERM_PROGRAM == 'WezTerm' then
   local function wezterm_set_user_var(name, value)
     io.stdout:write(string.format('\027]1337;SetUserVar=%s=%s\007', name, vim.base64.encode(value)))
     io.stdout:flush()

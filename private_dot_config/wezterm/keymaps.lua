@@ -78,8 +78,17 @@ local function mac_keys()
     { key = "K", mods = "LEADER|SHIFT", action = act.AdjustPaneSize({ "Up", 3 }) },
     { key = "J", mods = "LEADER|SHIFT", action = act.AdjustPaneSize({ "Down", 3 }) },
 
-    -- Command+SをNeovimの保存キー(<D-s>)としてCSI-uで直接送る
-    { key = "s", mods = "SUPER", action = act.SendString("\027[115;9u") },
+    -- nvim実行中のみCommand+SをNeovimの保存キー(<D-s>)としてCSI-uで送る
+    -- nvim以外（シェル等）では未知のエスケープシーケンスが入力されないよう何もしない
+    {
+      key = "s",
+      mods = "SUPER",
+      action = wezterm.action_callback(function(window, pane)
+        if pane:get_user_vars().IN_NVIM == "1" then
+          window:perform_action(act.SendString("\027[115;9u"), pane)
+        end
+      end),
+    },
 
     -- === POPUP ALTERNATIVES (tmux popup 代替) ===
     { key = "g", mods = "LEADER", action = spawn_in_cwd("lazygit", { "/bin/zsh", "-l", "-c", "lazygit" }) },

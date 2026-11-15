@@ -3,6 +3,11 @@ Brewfile_wsl
 .bashrc
 .profile
 .wslconfig
+.config/sway
+.config/systemd
+.config/wayvnc
+.config/NvChad
+setup-ahk
 {{- else if eq .chezmoi.os "linux" }}
 Brewfile_mac
 {{- end }}
@@ -10,5 +15,6 @@ Brewfile_mac
 README.md
 .config/nvim/lazy-lock.json
 .codex/log/*
+.codex/version.json
 
 docs/
