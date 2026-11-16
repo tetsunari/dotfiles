@@ -20,6 +20,8 @@ local config = wezterm.config_builder()
 if utils.is_windows then
   -- WSL Ubuntuをデフォルトドメインとして使用
   config.default_domain = "WSL:Ubuntu"
+  -- GPU/OpenGL ドライバーの不具合を避けるため CPU で描画する（公式: front_end の Software）
+  config.front_end = "Software"
 end
 config.check_for_updates = true
 config.check_for_updates_interval_seconds = 86400

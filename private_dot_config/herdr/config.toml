@@ -12,6 +12,7 @@ onboarding = false
 
 [ui.toast]
 delivery = "terminal"
+delay_seconds = 15
 
 [ui]
 # pane_gaps = false

@@ -8,13 +8,14 @@ Brewfile_wsl
 .config/wayvnc
 .config/NvChad
 setup-ahk
-.codex/config.toml
 {{- else if eq .chezmoi.os "linux" }}
 Brewfile_mac
 {{- end }}
 
 README.md
 .config/nvim/lazy-lock.json
+# Codex が信頼済みフォルダ等を自動で書き換えるため、全 OS で管理外
+.codex/config.toml
 .codex/log
 .codex/log/*
 .codex/version.json

@@ -14,6 +14,7 @@
 | `ai-operations.md` | 常時 | AI運用10原則（確認ルール・自己改善ループ） |
 | `agent-security.md` | 常時 | OWASP Agentic Top 10 + Least Agency 原則 |
 | `core-principles.md` | 常時 | コア開発3原則（シンプル・根本原因・影響最小化） |
+| `writing.md` | 常時 | 人に読まれる文の書き方（造語を混ぜない・設計書は決まったことだけ） |
 | `ponytail.md` | 常時 | 怠惰ラダー（実装前の探索順）・削ってはいけないもの |
 | `security.md` | パッケージマニフェスト操作時 | パッケージインストール時のセキュリティチェック |
 | `environment.md` | 常時 | コマンドエイリアス（bat/eza/fd/rg/zoxide） |

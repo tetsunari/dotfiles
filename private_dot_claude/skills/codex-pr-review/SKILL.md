@@ -31,11 +31,8 @@ allowed-tools: Read, Bash, Grep, Glob
 | ブランチ全体（PR相当） | `codex review --base <base-branch>` |
 | 特定コミット | `codex review --commit <SHA>` |
 
-レビュー観点を足したい場合は、プロンプトを引数で渡せる。
-
-```bash
-codex review --base main "このリポジトリの規約との整合性も見てください"
-```
+`--base` とプロンプト引数は同時に渡せない（エラーで止まる）。観点を足したいときは、
+範囲指定を外して `codex review "<観点>"` にするか、Step 3 のトリアージで扱う。
 
 ### Step 2: 実行と回収
 

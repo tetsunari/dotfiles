@@ -45,6 +45,8 @@ python3 <このスキルのディレクトリ>/scripts/validate.py diagram.drawi
 - 終了コード 1（ERROR あり）のまま渡さない。自分で書いたパースや id 重複の検査が通っても、このスクリプトを必ず通す
 - WARN も直す。「はみ出し」は座標か枠の寸法、「ラベルを貫く」は `exitDy`/`entryDy`。既存の図を直すときに元からあった WARN は除く
 - 検査は構造だけ。線がラベルに重なるか、アイコン名が正しいかは分からない。描画して確かめていないことを最後に伝える
+- そのため、線が 10 本を超える図は、XML をスクリプトで生成し、同じスクリプトで**重なりを座標で数えて 0 にしてから渡す**。文字の幅は日本語 1 字 12px・英数字 7px、高さは 1 行 16px で見積もる（`fontSize=12`）。数えるのは、線が文字を貫く・文字どうし・文字が図形や枠の線にかかる・線が図形を貫く・2 本の線が同じ経路を通る・斜めの区間の 6 つ。見積もりなので、実際の字形とは数 px ずれうることも伝える
+- 生成と検査の実績: 2026-11-09 の AWS 構成図で、最初の版で 15 か所の重なりを見つけ、0 にした
 
 ## 依頼に無いもの
 
@@ -80,14 +82,17 @@ python3 <このスキルのディレクトリ>/scripts/validate.py diagram.drawi
 - 線の `parent` はレイヤー（新しく描く図では `1`）にする。両端が別々の枠の中にあっても同じ
 - 本流は実線、ログ・メトリクス・レプリケーション・関連付けのような補助の流れは破線にして色も変える。凡例は置かない
 - 矢印は呼び出し・データが流れる向き
-- 線が重なる場合は「円弧」で線のジャンプをする
-- なるべく直線（不用意に線に確度をつけない）で表示する
+- **線どうしが交差するところは、すべて円弧でまたぐ（トンネル表示）。** 線のスタイルに必ず `jumpStyle=arc;jumpSize=10` を入れる（下の汎用のスタイルにも入れてある）。またぐのは XML で後に書いた線なので、またがせたい線（短い縦の線など）を後に書く
+- **直線で描ける線は、必ず直線で描く。** つなぐ 2 つの図形の中心の x か y をそろえて置き（図形を列と行の格子に並べる）、その線は waypoint なしで引く。曲げてよいのは、1 つから何本にも分かれる・何本も集まるなど、そろえようがない線だけ
+- 曲がる線は、曲がり角をすべて waypoint（`<Array as="points">`）で与え、全区間を縦か横にする。draw.io に経路を選ばせると、描画のたびに経路が変わり、重なりを確かめられない
+- **出入りの位置は辺の中央（0.5）が基本。** ずらすのは、上の決まりどおり同じ辺に 2 本以上つなぐときだけ。汎用のアイコン（`traditional_server`・`users` など）は絵が枠より細いので、中央以外から出すと線が絵から外れて「ズレて」見える
+- **線と文字、文字と文字を重ねない。** 文字は、線のラベル・図形のラベル・枠の名前の 3 つ。線のラベルは、ほかの線が通らない長い直線の区間に置き、`mxGeometry` の `x`（-1〜1。経路の上の位置）で場所を決める。左右の辺どうしをつなぐ線のラベルは中央そろえで、線の上の両側に広がる
 
 汎用の線のスタイル（AWS の図は `references/aws-styles.md` を使う）:
 
 ```text
-本流: edgeStyle=orthogonalEdgeStyle;html=1;rounded=0;endArrow=block;endFill=1;strokeColor=#545B64;labelBackgroundColor=none;verticalAlign=bottom;align=left;spacingLeft=6
-補助: edgeStyle=orthogonalEdgeStyle;html=1;rounded=0;endArrow=block;endFill=1;strokeColor=#E7157B;dashed=1;labelBackgroundColor=none;verticalAlign=bottom;align=left;spacingLeft=6
+本流: edgeStyle=orthogonalEdgeStyle;html=1;rounded=0;endArrow=block;endFill=1;strokeColor=#545B64;labelBackgroundColor=none;verticalAlign=bottom;align=left;spacingLeft=6;jumpStyle=arc;jumpSize=10
+補助: edgeStyle=orthogonalEdgeStyle;html=1;rounded=0;endArrow=block;endFill=1;strokeColor=#E7157B;dashed=1;labelBackgroundColor=none;verticalAlign=bottom;align=left;spacingLeft=6;jumpStyle=arc;jumpSize=10
 ```
 
 左右の辺どうしをつなぐ線（`exitX` と `entryX` がどちらも 0 か 1）は、`align=left;spacingLeft=6` を `align=center` に置き換える。

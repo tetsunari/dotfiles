@@ -106,6 +106,9 @@ alwaysApply: true
    - **`codex exec` / `codex review` には必ず `< /dev/null` を付ける。** stdin が tty でないと
      `Reading additional input from stdin...` のまま無言で止まる（バックグラウンド実行でも同じ。3回踏んだ）。
      git 管理外のディレクトリでは `--skip-git-repo-check` も付ける。標準出力は絞らずログへ丸ごと書く
+   - **`codex review --base` とプロンプト引数は同時に渡せない**（0.167.2 で実測。
+     `the argument '--base <BRANCH>' cannot be used with '[PROMPT]'` で止まる）。
+     観点を足したいときは `--base` を外すか、Claude 側のトリアージで扱う。`--uncommitted`・`--commit` は未確認
    - **ラウンドの継続は `codex exec ... resume <SESSION_ID>`**。
      `resume` サブコマンドは `-s` `-C` `--add-dir` を受け付けないため、
      それらは `codex exec` 側（`resume` より前）に置く

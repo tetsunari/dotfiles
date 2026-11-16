@@ -115,7 +115,7 @@ fontColor=#16191F;fillColor={CATEGORY_COLOR};strokeColor=none;verticalLabelPosit
 ### 通常の流れ
 
 ```text
-edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B64;rounded=0;labelBackgroundColor=none;verticalAlign=bottom;align=left;spacingLeft=6
+edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B64;rounded=0;labelBackgroundColor=none;verticalAlign=bottom;align=left;spacingLeft=6;jumpStyle=arc;jumpSize=10
 ```
 
 ### 補助の流れ
@@ -123,7 +123,7 @@ edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B6
 ログ、メトリクス、レプリケーション、関連付けなど、リクエストの本流ではないもの。破線にし、色も本流と変えてある。
 
 ```text
-edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#E7157B;rounded=0;dashed=1;labelBackgroundColor=none;verticalAlign=bottom;align=left;spacingLeft=6
+edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#E7157B;rounded=0;dashed=1;labelBackgroundColor=none;verticalAlign=bottom;align=left;spacingLeft=6;jumpStyle=arc;jumpSize=10
 ```
 
 `align=center` への置き換えと接続点は SKILL.md の「線」の節に従う。

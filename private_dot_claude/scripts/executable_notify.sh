@@ -5,6 +5,16 @@
 # WSL2 : BELを送信 → WezTerm Luaでフォーカス判定して通知
 # =============================================================================
 
+# Stop 時に鳴らさない条件は2つ。権限確認（PermissionRequest）は対象外で、常に鳴らす。
+# 1. herdr 配下（HERDR_ENV=1）: herdr 自身が完了通知を出すので、鳴らすと二重に届く。
+# 2. サブエージェントが実行中: 1体戻るたびに親が再開→Stop するため、並列実行で通知が連発する。
+#    最後の1体が戻った後の Stop（一覧から subagent が消えている）で1回だけ鳴る。
+#    teammate は待機中も running のまま残り、shell は常駐プロセスがあり得るので判定に含めない。
+# jq の失敗時は従来どおり鳴らす。
+if [[ ! -t 0 ]] && jq -e --arg herdr "${HERDR_ENV:-}" '.hook_event_name == "Stop" and ($herdr == "1" or any(.background_tasks[]?; .type == "subagent" and .status == "running"))' >/dev/null 2>&1; then
+    exit 0
+fi
+
 TITLE="${1:-Claude Code}"
 MESSAGE="${2:-タスクが完了しました}"
 
