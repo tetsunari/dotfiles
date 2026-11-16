@@ -53,7 +53,7 @@
 - **プラグイン化しない。** SKILL.md の手動配置のみ。auto-update の経路は存在しない
 - 更新は手動: `git clone` → 上記 SHA との差分を審査 → 再配置 → このファイルを更新
 - 既存 rules との優先順位は `~/.claude/rules/ai-operations.md` の「ponytail スキルとの優先順位」節に記載
-- `ponytail-review` / `ponytail-audit` の削除提案は採否を人間が判断する。安全性に関わるものは `code-reviewer` / `security-reviewer` に別途かける
+- `ponytail-review` / `ponytail-audit` の削除提案は採否を人間が判断する。安全性に関わるものは `/code-review` / `security-review` スキルに別途かける
 
 ## 審査記録
 

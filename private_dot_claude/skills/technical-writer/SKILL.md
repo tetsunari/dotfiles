@@ -255,5 +255,5 @@ MIT
 
 ## Integration
 
-- **code-reviewer** skill: コード例のレビューに活用
+- **code-review** skill: コード例のレビューに活用
 - **Gemini**: 最新情報・ファクトチェックに活用

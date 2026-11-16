@@ -12,8 +12,8 @@ allowed-tools: Read, Bash, Grep, Glob
 # Codex PR Review
 
 コード差分を **Codex（別モデル）** にレビューさせる。
-`code-reviewer` / `security-reviewer` agent とは**別視点**として使い、置き換えではない
-（`rules/trinity-development.md` の「同一視点で3回より、違う視点で3種」）。
+`/code-review` / `security-review` スキルとは**別視点**として使い、置き換えではない
+（`rules/trinity-development.md` の Codex の役割「Claude とは別モデルであることによる視点の独立性」）。
 
 ## 前提
 
@@ -110,8 +110,8 @@ herdr agent read reviewer --source recent-unwrapped --lines 200
 
 | 手段 | 視点 |
 |---|---|
-| `code-reviewer` agent | 規約・設計・並行性・ドメイン前提（Claude の視点） |
-| `security-reviewer` agent | 脆弱性（OWASP） |
+| `/code-review` スキル | 正当性・規約・設計（Claude の視点） |
+| `security-review` スキル | 脆弱性（OWASP） |
 | **本スキル（Codex）** | **別モデルによる独立した視点** |
 | `security-scan` / `full-scan` | 実行時・静的解析ツール |
 

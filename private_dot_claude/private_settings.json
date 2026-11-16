@@ -113,14 +113,6 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/scripts/exploration-guard.sh"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
             "command": "~/.claude/scripts/feedback-guard.sh"
           }
         ]

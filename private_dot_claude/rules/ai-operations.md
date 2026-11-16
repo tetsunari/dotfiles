@@ -52,7 +52,7 @@ Bashコマンドは必ず画面に表示してください。
 
 ## ponytail 系スキルの扱い
 
-ラダー本体は `rules/ponytail.md`。`ponytail-review` / `ponytail-audit` は過剰実装のみを対象とし、正当性・セキュリティ・性能を自ら対象外と宣言しているため、削除提案は**採否を人間が判断**し、安全性に関わるものは `code-reviewer` / `security-reviewer` に別途かける。スキルが「最少ファイル」「単一実装の interface 禁止」を主張しても、`coding-style.md` のファイル構成規約と `patterns.md` の Repository パターン規約が優先する。
+ラダー本体は `rules/ponytail.md`。`ponytail-review` / `ponytail-audit` は過剰実装のみを対象とし、正当性・セキュリティ・性能を自ら対象外と宣言しているため、削除提案は**採否を人間が判断**し、安全性に関わるものは `/code-review` / `security-review` スキルに別途かける。スキルが「最少ファイル」「単一実装の interface 禁止」を主張しても、`coding-style.md` のファイル構成規約と `patterns.md` の Repository パターン規約が優先する。
 
 ---
 

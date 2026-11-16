@@ -263,6 +263,6 @@ jobs:
 ## Integration
 
 - **security-review** skill: デプロイ前セキュリティチェック
-- **code-reviewer** skill: コード品質確認
+- **code-review** skill: コード品質確認
 - **cdk-infrastructure** skill: CDK 使用時のコード変更・`cdk synth` 検証・Logical ID ドリフト対応（デプロイ実行前に必ず経由する）
 - **Gemini**: プラットフォーム固有の問題調査

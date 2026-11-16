@@ -22,7 +22,7 @@
 | `patterns.md` | `*.ts,tsx,js,jsx` | API応答形式・Custom Hooks・Repository パターン |
 | `wsl-operations.md` | **Windows側のみ** | Windows版 claude.exe から WSL を操作する際の知見。WSL側では出番が無いため**同期対象外**（WSL側に存在しないのが正常） |
 | `verification-loop.md` | 常時 | 検証完了基準（動作証明なき完了禁止・確認手順） |
-| `delegation.md` | 常時 | サブエージェント委譲基準・委譲マトリクス |
+| `delegation.md` | 常時 | サブエージェント委譲基準（大きな出力を使い捨てる時だけ委譲） |
 
 ---
 
