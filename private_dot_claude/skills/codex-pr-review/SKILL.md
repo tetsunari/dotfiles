@@ -5,7 +5,7 @@ description: |
   「差分をレビュー」「PRをレビュー」「codex review」「pr review」
   「herdr で差分をレビュー」と言われた時、およびPR作成前・コミット前に即座に起動。
   別モデルの独立した視点でコードを叩かせ、指摘は人間がトリアージする。
-context: inject
+  実行前に /ponytail-review を通す（未実行だと hook が止める）。
 allowed-tools: Read, Bash, Grep, Glob
 ---
 
@@ -57,6 +57,9 @@ test "${HERDR_ENV:-}" = 1 && echo "条件1 OK" || echo "経路A 確定"
 
 リポジトリのルートで実行する。標準出力に出る `rmcp transport` / `websocket` の
 ERROR 行は**非致命**なので、提示する際は除去してよい。
+
+**`< /dev/null` を必ず付ける**（例: `codex review --base main < /dev/null > /tmp/codex-review.log 2>&1`）。
+無いと `Reading additional input from stdin...` のまま無言で止まる。バックグラウンド実行でも同じ。
 
 #### 経路B: Herdr ペインに常駐（上記の条件1・2を両方満たす場合のみ）
 

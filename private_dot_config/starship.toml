@@ -20,10 +20,14 @@ disabled = false
 vimcmd_symbol = '[V](bold green)'
 
 [directory]
-truncation_length = 10
+# 親階層の短縮文字数（1文字）
+fish_style_pwd_dir_length = 1
+
+# 直近3階層はフルネームで維持する
+truncation_length = 3
 truncation_symbol = ' '
 # git repositoryでもフルパスを表示
-# truncate_to_repo = false
+truncate_to_repo = false
 home_symbol = '~'
 read_only = '󰌾 '
 format = """
@@ -46,12 +50,12 @@ disabled = true
 #format = '[$symbol \[$name\]]($style) '
 
 [aws]
-format = '[](fg:#583622)[$symbol($profile)(\($project\))(\($region\))]($style)[](fg:#583622)'
+#format = '[](fg:#583622)[$symbol($profile)(\($project\))(\($region\))]($style)[](fg:#583622)'
 # style = '#ffa500'
-style = 'fg:white bg:#583622'
-symbol = ''
+# style = 'fg:white bg:#583622'
+# symbol = ''
 # force_display = true
-# disabled = false
+disabled = true
 # [aws.region_aliases]
 # ap-southeast-2 = 'au'
 # us-east-1 = 'va'

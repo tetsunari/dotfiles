@@ -208,6 +208,7 @@ After that failed read, ask the agent to write its complete response as Markdown
 
 ## Safety and coordination rules
 
+- Before targeting any pane, read your own ID with `echo $HERDR_PANE_ID`. Never infer which pane is "yours" from memory, a summary, or a terminal title. Create worker panes with `herdr pane split --current` so they land in your own tab.
 - Use `--no-focus` for background work unless the user asked to switch context.
 - Use `--current`, an explicit pane ID, or a unique agent name. Do not rely on another client's focused pane.
 - Parse IDs from JSON responses. Do not derive them from sidebar order or examples.

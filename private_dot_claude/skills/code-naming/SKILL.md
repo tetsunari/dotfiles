@@ -5,7 +5,6 @@ description: |
   「名前どうする」「命名」「リネーム」「naming」「変数名」「関数名」「クラス名」
   と言われた時、および実装・実装計画でメソッドやクラスを新設する時に即座に起動。
   get の乱用を排し、名前だけで意図・処理の重さが伝わる状態を強制する。
-context: inject
 allowed-tools: Read, Grep, Glob
 ---
 

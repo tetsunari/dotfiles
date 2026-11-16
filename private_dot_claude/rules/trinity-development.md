@@ -60,6 +60,7 @@ alwaysApply: true
    - 判断基準: 「公式ドキュメントに書いてある事実」→ context7 ／「調べて考える必要がある」→ agy
    - バージョン差異が論点なら必ず context7 を使う（agyはバージョンを取り違えることがある）
    - 迷ったら context7 を先に試す（高速・機密送信リスクが小さい）
+   - **例外**: Claude Code 自体の公式 docs を読むだけなら、`claude-code-guide` サブエージェント（中で WebFetch を使う）を使ってよい（2026-10-28 ユーザー判断。`audit-skills` の Step 2 がこれに頼っている）
 
 4. **⚠️ 機密情報保護**: 送信先ごとに扱いが異なる。取り違えないこと
 
@@ -102,6 +103,9 @@ alwaysApply: true
    - 非対話実行は `codex exec`、コード差分のレビューは `codex review`
    - **サンドボックスは必ず `-s read-only` を明示**する。書き込みが要る場面は現状想定しない
    - 最終メッセージは `-o <FILE>` でファイルに回収する（標準出力にはログが混ざる）
+   - **`codex exec` / `codex review` には必ず `< /dev/null` を付ける。** stdin が tty でないと
+     `Reading additional input from stdin...` のまま無言で止まる（バックグラウンド実行でも同じ。3回踏んだ）。
+     git 管理外のディレクトリでは `--skip-git-repo-check` も付ける。標準出力は絞らずログへ丸ごと書く
    - **ラウンドの継続は `codex exec ... resume <SESSION_ID>`**。
      `resume` サブコマンドは `-s` `-C` `--add-dir` を受け付けないため、
      それらは `codex exec` 側（`resume` より前）に置く

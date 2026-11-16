@@ -2,6 +2,7 @@
 name: kaizen
 description: Apply continuous improvement mindset to code implementation and architecture - small incremental changes, error prevention by design, following established patterns, just-in-time building. Guides quality through mindset, not one-time actions (vs. tidying for refactoring structure, simplify for efficiency). Use during implementation, refactoring, architecture decisions, error handling design.
 context: fork
+background: false
 allowed-tools: Read
 ---
 

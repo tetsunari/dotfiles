@@ -2,6 +2,7 @@
 name: software-architecture
 description: システムアーキテクチャの設計・評価・レビュー時には必ずこのスキルを使う。新しいシステム設計、アーキテクチャ決定、コード構造のレビュー、設計パターン適用時に即座に起動。Clean Architecture・DDD原則に基づく品質重視のガイドを提供。
 context: fork
+background: false
 ---
 
 # Software Architecture Development Skill

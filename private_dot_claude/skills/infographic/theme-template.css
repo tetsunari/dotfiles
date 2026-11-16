@@ -1,0 +1,36 @@
+/*
+ * お題ごとに埋めるテーマの型。手順2で世界観と一緒に値を決め、成果物の <style> に写して埋める。
+ * 役割の名前（左辺）は変えない。値（右辺）はお題の世界観から決める。見本の値はあえて置かない。
+ * 前の一枚絵の値を流用しないこと。
+ */
+:root {
+  /* 地と文字 */
+  --ig-color-bg: ;            /* キャンバスの地 */
+  --ig-color-text: ;          /* 本文 */
+  --ig-color-text-sub: ;      /* 補足・出典 */
+  --ig-color-line: ;          /* 枠線・キャラの輪郭 */
+  --ig-color-surface: ;       /* 吹き出しやカードの中 */
+
+  /* セクションの色（読む順番 1→5） */
+  --ig-color-tone-1: ;
+  --ig-color-tone-2: ;
+  --ig-color-tone-3: ;
+  --ig-color-tone-4: ;
+  --ig-color-tone-5: ;
+
+  /* 強調は ToDo だけ。注意は ToDo より控えめに */
+  --ig-color-todo: ;
+  --ig-color-todo-bg: ;
+  --ig-color-caution: ;
+  --ig-color-caution-bg: ;
+
+  /* 文字の段階（どれも --ig-text-min 以上） */
+  --ig-text-title: ;
+  --ig-text-heading: ;
+  --ig-text-body: ;
+  --ig-text-small: ;
+
+  /* 線・形 */
+  --ig-line: ;                /* 線の太さ */
+  --ig-radius: ;              /* 角の丸み（巻物やリボンなど四角以外の枠なら使わなくてよい） */
+}

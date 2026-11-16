@@ -2,6 +2,7 @@
 name: deploy-commander
 description: デプロイ・リリース作業を行う時には必ずこのスキルを使う。ステージング・本番環境へのデプロイ、CI/CD設定、ビルドエラー解析、ロールバック実行を依頼された時に即座に起動。事前チェックリスト強制実行、複雑なコマンド抽象化、ビルドエラー自動解析、ロールバック手順管理。
 context: fork
+background: false
 allowed-tools: Bash, Read
 bash-restrictions: "aws ecs update-service, serverless deploy, cdk deploy 等の破壊操作は事前に差分確認（cdk diff 等）を経てからユーザー承認を得る。本番環境への直接操作は制限。cdk deploy 前は必ず cdk-infrastructure スキルで cdk diff を実行済みであること。"
 ---

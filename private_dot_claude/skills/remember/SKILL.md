@@ -1,7 +1,6 @@
 ---
 name: remember
 description: 指摘・フィードバック・学習内容を構造化してルールファイルに追記する。「覚えて」「記録して」「/remember」で起動。Claudeが自発的に提案する場合もある。
-context: inject
 allowed-tools: Read, Write, Edit
 ---
 

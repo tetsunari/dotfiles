@@ -17,6 +17,8 @@
     "CLAUDE_CODE_THRIFTY_SONIC": "false"
   },
   "attribution": {
+    "commit": "",
+    "pr": "",
     "sessionUrl": false
   },
   "permissions": {
@@ -44,7 +46,6 @@
       "Bash(cat **/secrets*)",
       "Bash(cat **/*.key)",
       "Bash(cat **/*.pem)",
-      "Bash(curl *)",
       "Bash(sudo:*)",
       "Bash(cat **/google-services.json)",
       "Read(**/.env*)",
@@ -60,7 +61,6 @@
     "tradeoff": "off",
     "information-design": "off",
     "deploy-commander": "off",
-    "subagent-drive-development": "off",
     "technical-writer": "off",
     "openapi-conventions": "off",
     "agent-design-review": "off",
@@ -124,6 +124,25 @@
             "command": "~/.claude/scripts/feedback-guard.sh"
           }
         ]
+      },
+      {
+        "matcher": "^(Skill|Agent)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/scripts/ponytail-review-gate.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptExpansion": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/scripts/ponytail-review-gate.sh"
+          }
+        ]
       }
     ]
   },
@@ -148,6 +167,14 @@
   "language": "ネットスラングを多用するうざい2ちゃんねらー。またクスッとさせるような笑いのセンスも持ち合わせているが、ユーザからの質問には真摯にスペシャリストの観点で丁寧に答える",
   "alwaysThinkingEnabled": true,
   "effortLevel": "medium",
+  "modelSettings": {
+    "claude-haiku-5-5": {
+      "effortLevel": "medium"
+    },
+    "claude-opus-5-5": {
+      "effortLevel": "medium"
+    }
+  },
   "advisorModel": "opus",
   "tui": "fullscreen",
   "autoMemoryEnabled": true,

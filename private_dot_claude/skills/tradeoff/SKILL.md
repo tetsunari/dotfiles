@@ -2,6 +2,7 @@
 name: tradeoff
 description: 実装計画・設計のメリット・デメリットをパフォーマンス・コスト・セキュリティ・保守性の4軸で分析する。「トレードオフを教えて」「この設計のデメリットは？」「メリット・デメリットを比較して」「採用するメリットは？」で起動。
 context: fork
+background: false
 allowed-tools: Read, Glob
 ---
 

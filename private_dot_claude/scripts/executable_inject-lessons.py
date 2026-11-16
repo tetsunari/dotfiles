@@ -36,9 +36,28 @@ MIN_TOP_SCORE_FACTOR = 1.5
 MAX_TOKENS = 120
 PENDING_MAX_AGE_SEC = 900  # これより古い判定結果は陳腐化しているとみなし破棄する
 
+# 「続けて」「y」のような短い入力では語が拾えないため、直前の assistant の発言と
+# ツール呼び出しも材料にする。ただし今回の入力より弱い手掛かりなので重みを下げる。
+# 大きなファイルを Read した結果の行は 64KB を超え、それだけで枠が埋まる。
+# 後ろから解析して必要量で打ち切るので、広げて増えるのは読み込みの分だけ。
+TRANSCRIPT_TAIL_BYTES = 1 << 20
+TRANSCRIPT_MAX_CHARS = 4000
+TRANSCRIPT_WEIGHT = 0.3
+TOOL_INPUT_MAX_CHARS = 200
+
+# 通知のターンでも hook は発火するが、prompt は通知文そのもので作業内容を表さない。
+# 後ろ2つは handoff 記載の形で、実際の hook 入力では未採取。
+NOTIFICATION_PREFIXES = (
+    "<task-notification",
+    "[SYSTEM NOTIFICATION",
+    "Another Claude session sent a message",
+    "<agent-message",
+)
+
 # 英数字列 / カタカナ2文字以上 / 漢字2文字以上。ひらがなは助詞ノイズのため対象外
 TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z0-9_.\-]+|[ァ-ヶー]{2,}|[一-鿿々]{2,}")
 KANJI_RE = re.compile(r"^[一-鿿々]{2,}$")
+ASCII_RE = re.compile(r"^[a-z0-9_.\-]+$")
 
 
 def log_error(exc):
@@ -60,7 +79,10 @@ def tokenize(text):
             tokens.update(match[i:i + 2] for i in range(len(match) - 1))
             tokens.add(match)
         else:
-            tokens.add(match.lower())
+            # 文末の "completed." の句点などを語に含めると一致しなくなる
+            word = match.lower().rstrip(".-")
+            if len(word) >= 2:
+                tokens.add(word)
     if len(tokens) > MAX_TOKENS:
         tokens = set(sorted(tokens, key=len, reverse=True)[:MAX_TOKENS])
     return tokens
@@ -83,20 +105,30 @@ def load_sections():
     return sections
 
 
-def score_sections(sections, prompt_tokens):
+def occurs(token, text):
+    if token not in text:
+        return False
+    if not ASCII_RE.match(token):
+        return True  # 漢字・カタカナは複合語の一部を拾うため部分一致のまま
+    # 英字の部分一致は code が CodeBuild や codex にまで当たるため、語の境目で切る
+    return re.search(rf"(?<![a-z0-9_]){re.escape(token)}(?![a-z0-9_])", text) is not None
+
+
+def score_sections(sections, weighted_tokens):
     total = len(sections)
-    for token in prompt_tokens:
-        df = sum(1 for s in sections if token in s["heading_key"] or token in s["body_key"])
+    for token, weight in weighted_tokens.items():
+        hits = [(s, occurs(token, s["heading_key"]), occurs(token, s["body_key"])) for s in sections]
+        df = sum(1 for _, in_heading, in_body in hits if in_heading or in_body)
         if df == 0:
             continue
         idf = math.log(total / df)
         if idf <= 0:
             continue  # 全セクションに出現する語は無情報
-        for s in sections:
-            if token in s["heading_key"]:
-                s["score"] += idf * 2
-            elif token in s["body_key"]:
-                s["score"] += idf
+        for s, in_heading, in_body in hits:
+            if in_heading:
+                s["score"] += idf * 2 * weight
+            elif in_body:
+                s["score"] += idf * weight
 
 
 def pick(sections):
@@ -120,7 +152,7 @@ def pick(sections):
 
 
 def render(picked):
-    lines = ["【関連しそうな学習済みルール】", "以下は過去の指摘から蓄積したルール。該当する作業では必ず遵守すること。", ""]
+    lines = ["【関連しそうな学習済みルール】", "以下は過去の指摘から蓄積したルール。該当する作業ではこれに従う。", ""]
     current = None
     for s in sorted(picked, key=lambda s: s["file"]):
         if s["file"] != current:
@@ -157,28 +189,106 @@ def take_pending():
         return ""
 
 
-def build_context(prompt):
+def content_blocks(entry):
+    message = entry.get("message")
+    content = message.get("content") if isinstance(message, dict) else None
+    return content if isinstance(content, (list, str)) else []
+
+
+def user_prompt_text(entry):
+    """ユーザーが打った入力の行なら本文を返す。ツールの結果を運ぶ user 行は None。"""
+    if entry.get("type") != "user":
+        return None
+    content = content_blocks(entry)
+    if isinstance(content, str):
+        return content
+    texts = [b.get("text") for b in content if isinstance(b, dict) and b.get("type") == "text"]
+    return "\n".join(t for t in texts if isinstance(t, str)) if texts else None
+
+
+def assistant_texts(entry):
+    if entry.get("type") != "assistant" or isinstance(content_blocks(entry), str):
+        return []
+    texts = []
+    for block in content_blocks(entry):
+        if not isinstance(block, dict):
+            continue
+        if block.get("type") == "text" and isinstance(block.get("text"), str):
+            texts.append(block["text"])
+        elif block.get("type") == "tool_use" and isinstance(block.get("input"), dict):
+            # Write の本文や Edit の差し替え文字列で枠を使い切らないよう、値ごとに切る
+            texts.extend(str(v)[:TOOL_INPUT_MAX_CHARS] for v in block["input"].values())
+    return texts
+
+
+def read_recent_assistant_text(transcript_path, current_prompt):
+    """transcript 末尾から、前のユーザー入力以降の assistant の発言とツール呼び出しの入力を集める。"""
+    try:
+        with open(transcript_path, "rb") as f:
+            f.seek(0, os.SEEK_END)
+            f.seek(max(0, f.tell() - TRANSCRIPT_TAIL_BYTES))
+            # splitlines は JSON 文字列中の生の U+2028 でも行を割るため使わない
+            lines = f.read().decode("utf-8", errors="replace").split("\n")
+    except (OSError, TypeError, ValueError):
+        return ""
+    texts = []
+    for line in reversed(lines):
+        try:
+            entry = json.loads(line)
+        except ValueError:
+            continue  # tail 読みで先頭行は途中から始まる
+        if not isinstance(entry, dict):
+            continue
+        prompt_text = user_prompt_text(entry)
+        if prompt_text is not None:
+            # 今回の入力が hook より先に transcript へ書かれるかは未確認のため、どちらでも動くようにする
+            if not texts and prompt_text.strip() == current_prompt.strip():
+                continue
+            break  # それより前は別の話題の可能性がある
+        texts.extend(assistant_texts(entry))
+        if sum(len(t) for t in texts) >= TRANSCRIPT_MAX_CHARS:
+            break
+    return "\n".join(texts)[:TRANSCRIPT_MAX_CHARS]
+
+
+def build_context(prompt, transcript_path=None):
     if not LESSONS_DIR.is_dir():
         return ""
     sections = load_sections()
     if not sections or not prompt.strip():
         return ""
-    score_sections(sections, tokenize(prompt))
+    prompt_tokens = {token: 1.0 for token in tokenize(prompt)}
+    score_sections(sections, prompt_tokens)
     picked = pick(sections)
+    if not picked and transcript_path:
+        # 常に足すと、直前の発言の語数が入力を圧倒して入力と無関係な教訓が1位になる
+        # (実測: CDK の質問に codex の教訓が混入)。入力だけで決まらないときに限る。
+        for s in sections:
+            s["score"] = 0.0
+        weighted = {token: TRANSCRIPT_WEIGHT for token in tokenize(read_recent_assistant_text(transcript_path, prompt))}
+        score_sections(sections, {**weighted, **prompt_tokens})
+        picked = pick(sections)
     return render(picked) if picked else render_index(sections)
+
+
+def is_notification(prompt):
+    return prompt.lstrip().startswith(NOTIFICATION_PREFIXES)
 
 
 def main():
     try:
-        prompt = json.load(sys.stdin).get("prompt", "")
-    except (json.JSONDecodeError, ValueError):
+        payload = json.load(sys.stdin)
+        prompt = payload.get("prompt") or ""
+    except (json.JSONDecodeError, ValueError, AttributeError):
         return
+    if is_notification(prompt):
+        return  # pending も次の実入力まで残す
 
     parts = []
     pending = take_pending()
     if pending:
         parts.append(f"【前ターンの /remember 判定結果】\n{pending}")
-    context = build_context(prompt)
+    context = build_context(prompt, payload.get("transcript_path"))
     if context:
         parts.append(context)
     if not parts:

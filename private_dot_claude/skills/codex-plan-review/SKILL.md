@@ -5,7 +5,6 @@ description: |
   「計画をレビュー」「計画の穴を探して」「codex にレビューさせて」「plan review」
   「herdr で計画をレビュー」と言われた時、および実装着手の直前に即座に起動。
   別モデルの独立した視点で計画の欠落を突かせ、指摘は人間がトリアージする。
-context: inject
 allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 
@@ -54,10 +53,12 @@ codex exec -s read-only --skip-git-repo-check -C "<リポジトリルート>" \
   -o /tmp/codex-plan-review.txt \
   "以下の実装計画をレビューし、欠落・矛盾・リスクを指摘してください。
    指摘ごとに深刻度（blocking / non-blocking）を付けてください。
-   $(cat <計画ファイル>)"
+   $(cat <計画ファイル>)" < /dev/null > /tmp/codex-plan-review.log 2>&1
 ```
 
 - **`-s read-only` を必ず付ける**（書き込ませない）
+- **`< /dev/null` を必ず付ける。** 無いと `Reading additional input from stdin...` のまま無言で止まる
+- 標準出力は絞らずログへ丸ごと書く。`-o` のファイルが無ければログの末尾を読む
 - 結果は `-o` でファイルに回収する。標準出力にはログが混ざる
 - 標準出力に出る `rmcp transport` / `websocket` の ERROR 行は**非致命**なので無視してよい
 - 標準出力の `session id:` を控える（次ラウンドで使う）
@@ -119,7 +120,7 @@ codex exec -s read-only --skip-git-repo-check -C "<リポジトリルート>" \
   -o /tmp/codex-plan-review-r2.txt \
   resume <SESSION_ID> \
   "指摘を反映して計画を更新しました。残っている問題を指摘してください。
-   $(cat <計画ファイル>)"
+   $(cat <計画ファイル>)" < /dev/null > /tmp/codex-plan-review-r2.log 2>&1
 ```
 
 **`resume` は `-s` `-C` を受け付けない。** それらは `codex exec` 側（`resume` より前）に置く。

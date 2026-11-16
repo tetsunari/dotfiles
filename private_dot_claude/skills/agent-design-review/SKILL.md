@@ -1,7 +1,6 @@
 ---
 name: agent-design-review
 description: AIエージェントの仕様書・要件定義をレビュー。ハーネス設計・ツール分類・コンテキスト設計・マルチエージェント構成・陳腐化リスクの5軸で問題を検出。「仕様書を見て」「設計レビューして」「これで問題ないか確認して」で起動。
-context: inject
 allowed-tools: Read, Grep
 ---
 

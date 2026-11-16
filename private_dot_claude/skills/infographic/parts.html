@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>一枚絵の部品（骨組み）</title>
+<link rel="stylesheet" href="constraints.css">
+<style>
+/*
+ * 部品の骨組み。決めているのは「役割の名前」「並べ方」「内側の余白」「最小の文字サイズ」だけ。
+ * 灰色の線と四角はテーマが未設定であることを示す仮の見た目で、真似をしない。
+ * 色・形（四角／巻物／リボン／吹き出し）・線・影は、テーマの値と世界観に合わせて作り手が描く。
+ */
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { font-family: var(--ig-font); background: var(--ig-color-bg, #fff); color: var(--ig-color-text, #333); }
+
+.ig-canvas {
+  width: var(--ig-canvas-w); height: var(--ig-canvas-h); overflow: hidden;
+  padding: var(--ig-margin) var(--ig-margin) var(--ig-margin-bottom);
+  display: flex; flex-direction: column; gap: var(--ig-gap);
+}
+.ig-title__main { margin: 0; font-size: var(--ig-text-title, 48px); }
+.ig-title__sub { margin: 0; font-size: var(--ig-text-body, 24px); color: var(--ig-color-text-sub, #777); }
+
+/* セクション。data-tone は読む順番の番号に合わせる */
+.ig-panel {
+  min-width: 0; min-height: 0; display: flex; flex-direction: column; gap: var(--ig-gap);
+  padding: var(--ig-pad-min); border: 2px dashed var(--ig-color-line, #999);
+}
+.ig-panel[data-tone="1"] { background: var(--ig-color-tone-1, transparent); }
+.ig-panel[data-tone="2"] { background: var(--ig-color-tone-2, transparent); }
+.ig-panel[data-tone="3"] { background: var(--ig-color-tone-3, transparent); }
+.ig-panel[data-tone="4"] { background: var(--ig-color-tone-4, transparent); }
+.ig-panel[data-tone="5"] { background: var(--ig-color-tone-5, transparent); }
+.ig-panel__head { display: flex; align-items: center; gap: 12px; }
+.ig-panel__title { margin: 0; font-size: var(--ig-text-heading, 28px); }
+.ig-panel__body { margin: 0; font-size: var(--ig-text-body, 24px); }
+
+/* セクションの番号。手順の番号（.ig-step__num）とは形か色で区別する */
+.ig-badge { flex: none; padding: 0 8px; border: 2px solid var(--ig-color-line, #999); font-size: var(--ig-text-heading, 28px); }
+
+/* キャラのセリフ。data-tail は話している向き（down / up / left / right） */
+.ig-bubble {
+  position: relative; margin: 0; padding: var(--ig-pad-min);
+  font-size: var(--ig-text-body, 24px); background: var(--ig-color-surface, #fff);
+  border: 2px solid var(--ig-color-line, #999);
+}
+.ig-bubble::after { content: ""; position: absolute; border: 10px solid transparent; }
+.ig-bubble[data-tail="down"]::after  { left: 40px; top: 100%; border-top-color: var(--ig-color-line, #999); }
+.ig-bubble[data-tail="up"]::after    { left: 40px; bottom: 100%; border-bottom-color: var(--ig-color-line, #999); }
+.ig-bubble[data-tail="left"]::after  { right: 100%; top: 50%; margin-top: -10px; border-right-color: var(--ig-color-line, #999); }
+.ig-bubble[data-tail="right"]::after { left: 100%; top: 50%; margin-top: -10px; border-left-color: var(--ig-color-line, #999); }
+
+/* キャラの置き場。中身は配役表から描いたインライン SVG */
+.ig-cast { flex: none; display: block; }
+.ig-cast > svg { width: 100%; height: 100%; display: block; }
+.ig-scene { display: flex; align-items: flex-end; gap: var(--ig-gap); }
+.ig-scene[data-cast="right"] { flex-direction: row-reverse; }
+
+.ig-arrow { flex: none; align-self: center; }
+
+/* やること。画面で一番強調する */
+.ig-todo { display: flex; flex-direction: column; gap: var(--ig-gap); padding: var(--ig-pad-min); border: 2px solid var(--ig-color-todo, #999); background: var(--ig-color-todo-bg, transparent); }
+.ig-todo__label { margin: 0; font-size: var(--ig-text-heading, 28px); }
+.ig-steps { display: flex; gap: var(--ig-gap); }
+.ig-step { flex: 1; min-width: 0; padding: var(--ig-pad-min); border: 2px solid var(--ig-color-line, #999); background: var(--ig-color-surface, #fff); }
+.ig-step__num { font-size: var(--ig-text-body, 24px); }
+.ig-step__text { margin: 0; font-size: var(--ig-text-heading, 28px); }
+
+/* 注意。やることより控えめに */
+.ig-note { margin: 0; padding: var(--ig-pad-min); font-size: var(--ig-text-small, 20px); border: 2px solid var(--ig-color-caution, #999); background: var(--ig-color-caution-bg, transparent); }
+
+/* 出典。見る人に意味が通じる名前で1行 */
+.ig-source { margin: auto 0 0; font-size: var(--ig-text-min); color: var(--ig-color-text-sub, #777); }
+
+.demo-row { display: flex; gap: var(--ig-gap); flex: 1; min-height: 0; }
+.demo-row > .ig-panel { flex: 1; }
+</style>
+</head>
+<body>
+<main class="ig-canvas">
+  <header class="ig-title">
+    <h1 class="ig-title__main">.ig-title__main</h1>
+    <p class="ig-title__sub">.ig-title__sub</p>
+  </header>
+  <div class="demo-row">
+    <section class="ig-panel" data-tone="1">
+      <div class="ig-panel__head"><span class="ig-badge">1</span><h2 class="ig-panel__title">.ig-panel__title</h2></div>
+      <p class="ig-bubble" data-tail="down">.ig-bubble[data-tail="down"]</p>
+      <div class="ig-scene"><span class="ig-cast" style="width:120px;height:140px"><svg viewBox="0 0 120 140" aria-hidden="true"><rect x="2" y="2" width="116" height="136" fill="none" stroke="#999" stroke-dasharray="6 6"/></svg></span></div>
+    </section>
+    <section class="ig-panel" data-tone="2">
+      <div class="ig-panel__head"><span class="ig-badge">2</span><h2 class="ig-panel__title">.ig-panel__title</h2></div>
+      <div class="ig-scene" data-cast="right"><span class="ig-cast" style="width:96px;height:112px"><svg viewBox="0 0 96 112" aria-hidden="true"><rect x="2" y="2" width="92" height="108" fill="none" stroke="#999" stroke-dasharray="6 6"/></svg></span><p class="ig-bubble" data-tail="right">data-tail="right"</p></div>
+      <p class="ig-panel__body">.ig-panel__body</p>
+    </section>
+    <section class="ig-panel" data-tone="3">
+      <div class="ig-panel__head"><span class="ig-badge">3</span><h2 class="ig-panel__title">.ig-panel__title</h2></div>
+      <p class="ig-note">.ig-note</p>
+    </section>
+  </div>
+  <section class="ig-todo">
+    <p class="ig-todo__label">.ig-todo__label</p>
+    <div class="ig-steps">
+      <div class="ig-step"><span class="ig-step__num">(1)</span><p class="ig-step__text">.ig-step__text</p></div>
+      <div class="ig-step"><span class="ig-step__num">(2)</span><p class="ig-step__text">.ig-step__text</p></div>
+      <div class="ig-step"><span class="ig-step__num">(3)</span><p class="ig-step__text">.ig-step__text</p></div>
+    </div>
+  </section>
+  <p class="ig-source">.ig-source</p>
+</main>
+</body>
+</html>

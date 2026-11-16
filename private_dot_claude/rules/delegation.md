@@ -38,13 +38,11 @@ alwaysApply: true
 | 仕様明確な実装 | `implementer` | 実装箇所特定済み・設計判断不要 |
 | 複雑な実装・大規模変更 | `heavy-implementer` | 3ファイル以上・設計判断あり |
 | テスト実行・結果確認 | `test-runner` | テスト実行のみ |
-| コードレビュー | `code-reviewer` | コード変更後・PR作成前 |
+| コードレビュー | `/ponytail-review` → `code-reviewer` | コード変更後・PR作成前 |
 | エラー根本原因調査 | `error-investigator` | スタックトレース・ビルドエラー |
 | セキュリティ審査 | `security-reviewer` | 認証・ユーザー入力・APIエンドポイント |
 | ドキュメント更新 | `doc-updater` | README・codemap更新 |
-| デッドコード除去 | `refactor-cleaner` | 未使用コード・重複整理 |
-| 仕様・ベストプラクティス調査 | `spec-researcher` | 新ライブラリ導入・設定変更前 |
-| Web検索 | `web-researcher` | 最新情報・外部ドキュメント参照 |
+| Web検索・仕様/ベストプラクティス調査 | `web-researcher` | 最新情報・外部ドキュメント参照・新ライブラリ導入/設定変更前 |
 
 ## 複数タスクの圧縮
 
@@ -62,9 +60,9 @@ alwaysApply: true
 
 ## 即時起動条件（ユーザー指示不要）
 
-- コード変更直後 → `code-reviewer`
+- コード変更直後 → `/ponytail-review` → 採否判断・修正 → `code-reviewer`（未実行だと hook が止める）
 - セキュリティ関連コード → `security-reviewer`
-- 新規ライブラリ・フレームワーク導入 → `spec-researcher`
+- 新規ライブラリ・フレームワーク導入 → `web-researcher`（API仕様は context7）
 - ドキュメント更新が必要 → `doc-updater`
 
 ## 並列実行

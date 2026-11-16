@@ -225,14 +225,23 @@ effort_str=" │ 💪 ${effort}"
 # Working directory and git branch
 cwd_raw=$(echo "$input" | jq -r '.cwd // ""' 2>/dev/null)
 [ -z "$cwd_raw" ] && cwd_raw="$PWD"
-# Show only current dir + one parent level (e.g. parent/current)
-cwd_base=$(basename "$cwd_raw")
-cwd_parent=$(basename "$(dirname "$cwd_raw")")
-if [ "$cwd_parent" = "/" ] || [ "$cwd_parent" = "$cwd_base" ]; then
-  cwd_display="$cwd_base"
-else
-  cwd_display="$cwd_parent/$cwd_base"
-fi
+# starship [directory] 相当: HOME→~ / 直近3階層はフル / それより上は1文字（fish_style_pwd_dir_length=1）
+format_dir() {
+  local p=$1 home=$2 keep=3 root="" out="" seg i n
+  case "$p" in "$home"|"$home"/*) p="~${p#"$home"}" ;; esac
+  [ "${p:0:1}" = "/" ] && { root="/"; p=${p#/}; }
+  IFS=/ read -ra segs <<< "$p"
+  n=${#segs[@]}
+  for ((i=0; i<n; i++)); do
+    seg=${segs[i]}
+    if [ $((n - i)) -gt "$keep" ]; then
+      if [ "${seg:0:1}" = "." ]; then seg=${seg:0:2}; else seg=${seg:0:1}; fi
+    fi
+    out+="${out:+/}$seg"
+  done
+  echo "${root}${out}"
+}
+cwd_display=$(format_dir "$cwd_raw" "$HOME")
 git_branch=$(git -C "$cwd_raw" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "—")
 
 # Output

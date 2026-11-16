@@ -5,7 +5,6 @@ description: |
   「テストを書いて」「テストファーストで」「TDD」「red-green」「テストどこに書く」
   「結合テストを追加」と言われた時に即座に起動。
   seam（テスト境界）の事前合意と、実装詳細に結合しないテストを強制する。
-context: inject
 allowed-tools: Read, Grep, Glob, Bash
 ---
 

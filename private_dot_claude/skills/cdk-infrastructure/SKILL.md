@@ -6,6 +6,7 @@ description: |
   スタック間参照を変更する時に即座に起動。
   Logical IDドリフト防止・cdk synth検証・overrideLogicalId管理を強制する。
 context: fork
+background: false
 allowed-tools: Bash, Read
 bash-restrictions: "cdk synth, cdk diff の読み取り専用コマンド。cdk deploy, cdk destroy は事前に必ず cdk diff で差分確認・ユーザー承認を経る。"
 ---

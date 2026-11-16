@@ -5,7 +5,6 @@ description: |
   「エラーが出る」「動かない」「落ちる」「直らない」「遅くなった」「原因を調べて」
   「debug」「diagnose」と言われた時に即座に起動。
   推測での原因断定を禁止し、赤くなるフィードバックループの構築を最優先させる。
-context: inject
 allowed-tools: Read, Grep, Glob, Bash
 ---
 

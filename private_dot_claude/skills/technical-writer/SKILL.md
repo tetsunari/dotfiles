@@ -1,7 +1,6 @@
 ---
 name: technical-writer
 description: 技術記事・ドキュメントを書く時には必ずこのスキルを使う。Zenn/Qiita記事、GitHub README、API仕様書、チュートリアル作成を依頼された時に即座に起動。企画→構成案→執筆→推敲→ファイル生成まで対話形式でリード。
-context: fork
 allowed-tools: Read, Write
 ---
 
@@ -231,6 +230,7 @@ MIT
 7. ユーザー: レビュー・修正依頼
 
 8. Claude: 推敲チェックリスト実行
+   - 続けて japanese-natural-writing の「他スキルからの仕上げ呼出し」で本文を自然化
 
 9. Claude: 最終ファイル生成
    - 指定フォーマットで出力

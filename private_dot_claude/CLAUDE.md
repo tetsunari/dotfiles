@@ -52,10 +52,9 @@
 |-------|---------|------|
 | `ai-agent-principles` | AIエージェント/LLMアプリの設計・実装時 | Production AIエージェント8原則（旧 `rules/ai-agent-principles.md`） |
 
-### herdr は両側に同期する（2026-09-09 に方針変更）
+### herdr は両側に同期する
 
-以前は「Windows 版 claude では `herdr` バイナリが無く `HERDR_ENV` も渡らない」ため
-WSL 側のみに置いていたが、両方を解消したので**同期対象**に変更した。
+Windows 版 claude でも以下の2点で `herdr` が動くため、**同期対象**とする。
 
 | 対処 | 実体 |
 |---|---|
@@ -63,12 +62,12 @@ WSL 側のみに置いていたが、両方を解消したので**同期対象**
 | ペイン文脈 | `~/.zshenv`（WSL側）の `WSLENV` に `HERDR_ENV:HERDR_WORKSPACE_ID:HERDR_TAB_ID:HERDR_PANE_ID` を追加し、`win-claude` 起動時に引き継ぐ |
 
 shim は WSL 側 CLI をそのまま呼ぶだけなので、スキル本文は無改造で両側に使える
-（`agent-browser` のような二重保守は不要）。`~/.zshenv` の PATH 行が壊れると
+（二重保守は不要）。`~/.zshenv` の PATH 行が壊れると
 shim も動かなくなる点は `rules/wsl-operations.md` と同じ。
 
-`agent-browser` も同じ shim 方式で**同期対象に統一した**（2026-09-09）。
+`agent-browser` も同じ shim 方式で**同期対象**とする。
 `C:\Users\setup_user\.local\bin\agent-browser` が
-`wsl.exe -d Ubuntu -- /home/matsushita_te/.local/share/mise/shims/agent-browser` へ転送し、
+`wsl.exe -d Ubuntu -- <WSL 側のホーム>/.local/share/mise/shims/agent-browser` へ転送し、
 引数中の Windows 形式パス（`//wsl.localhost/...` / `C:/...` / `/c/...`）を WSL パスへ変換する。
 mise の shim は PATH 非依存で解決できるため `zsh -ic` は不要（起動が約1.4秒速い）。
 

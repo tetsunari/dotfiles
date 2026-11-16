@@ -5,7 +5,7 @@ description: |
   「サイトを開いて」「フォーム入力」「クリック」「スクリーンショット」「ページから抽出」
   「Webアプリをテスト」「ログインして」「Electronアプリを操作」と言われた時に即座に起動。
   内蔵のWeb系ツールより agent-browser CLI を優先する。Web検索・調査目的では使わない。
-context: inject
+model: sonnet
 allowed-tools: Read, Bash(agent-browser:*), Bash(npx agent-browser:*)
 ---
 
@@ -32,9 +32,10 @@ command -v agent-browser && agent-browser --version
 
 ## Windows 側（Git Bash）から使う場合
 
-CLI 実体は WSL(Ubuntu) 側にしか無いが、Windows PATH に置いた shim
+Git Bash で打つ `agent-browser` は Windows PATH に置いた shim
 （`~/.local/bin/agent-browser`）が `wsl.exe -d Ubuntu -- <mise shim の絶対パス>` へ
-転送する。**コマンドの書き方は WSL 側と同じでよい**（`wsl.exe` で包む必要は無い）。
+転送し、WSL 側の CLI が動く（Windows にも npm 版があるが GPU 用。
+下の「WebGL・3D」節の手順で直接呼ぶ）。**コマンドの書き方は WSL 側と同じでよい**（`wsl.exe` で包む必要は無い）。
 
 - 引数の Windows 形式パス（`//wsl.localhost/...` / `C:/...` / `/c/...`）は
   shim が WSL パスへ変換する。出力先はどちらの表記で渡してもよい
@@ -42,6 +43,32 @@ CLI 実体は WSL(Ubuntu) 側にしか無いが、Windows PATH に置いた shim
   `//wsl.localhost/Ubuntu/<WSLパス>` を使う
 - 操作されるのは **WSLg 上の Chrome for Testing**。Windows にインストールされた
   Chrome のプロファイル・ログイン状態は使われない
+
+## WebGL・3D の確かめは Windows の Chrome（GPU）で
+
+WSL の agent-browser の Chrome は CPU で描く（SwiftShader）。重い 3D は約 2 fps で、歩く・運転する確かめが進まない。WSL からは Windows に入れた agent-browser で Windows の Chrome を使う（GPU。3D エディタの画面で約 37〜48 fps。2026-11-04 実測）。
+
+```bash
+CMD=/mnt/c/Windows/System32/cmd.exe   # PATH に無いことがあるので絶対パスで
+WINAPPDATA=$(wslpath "$($CMD /c 'echo %APPDATA%' 2>/dev/null | tr -d '\r')")
+WINHOME=$(wslpath "$($CMD /c 'echo %USERPROFILE%' 2>/dev/null | tr -d '\r')")   # %USERNAME% はプロフィールのフォルダ名と違うことがある
+AB=$WINAPPDATA/npm/node_modules/agent-browser/bin/agent-browser-win32-x64.exe
+cd "$WINHOME"   # Windows の実行ファイルは /mnt/c の下から呼ぶ
+"$AB" --session <名前> --headed --executable-path 'C:\Program Files\Google\Chrome\Application\chrome.exe' open <URL>
+```
+
+- 前提: Windows に Node と `npm install -g agent-browser` 済み（postinstall は動かさなくても、`agent-browser-win32-x64.exe` を直に呼べば動く）。描き手は `WEBGL_debug_renderer_info` の `UNMASKED_RENDERER_WEBGL` で確かめる（GPU なら GPU の名前、CPU なら `SwiftShader`）
+- PowerShell で `agent-browser` と打つと、PATH で先に見つかる Git Bash 用の shim（`~/.local/bin/agent-browser`。拡張子なし）を掴み「どのアプリで開きますか」が出る。`$PROFILE` の `Set-Alias agent-browser "$env:APPDATA\npm\agent-browser.cmd"` で回避している（alias は PATH より先に解決される。2026-11-04）
+- WSL の開発サーバー（localhost）を Windows の Chrome から開けるのは、`.wslconfig` の `networkingMode=mirrored` のため
+- スクリーンショットは Windows のパス（`%TEMP%` の下。WSL からは `$WINHOME/AppData/Local/Temp`）に保存し、そこから写す
+- `open` が `Invalid response: EOF` を返しても開いていることがある。`get url` で確かめる
+- 「Daemon failed to start」（PC のスリープのあとに出た）: `"$AB" session list` で自分のセッションだけ `close` してから起動し直す
+- **WSL の中で GPU を使わせない**（`GALLIUM_DRIVER=d3d12` で Chrome を起こす・重い WebGL を描かせる）。2026-11-03 に 2 回、PC ごと落ちた
+- `Daemon failed to start` で起きたときは、代わりに Windows の Chrome を `--remote-debugging-port=<空きポート> --user-data-dir=<一時フォルダ>` で手で起動し、`"$AB" --cdp <ポート>` でつなげる（2026-11-04 に 9555 でつながった。会社のセキュリティ上も問題ない〈利用者の確認〉。9222 は 2026-11-03 に断られた）。使い終わったら、その Chrome を閉じ、一時フォルダを消す。
+- 「Daemon failed to start」が、自分のセッションを `close` しても直らないときは、先に Windows 側の IPv4 の loopback を確かめる: `powershell.exe -NoProfile -Command '$l=[Net.Sockets.TcpListener]::new([Net.IPAddress]::Loopback,0);$l.Start();$p=$l.LocalEndpoint.Port;try{[Net.Sockets.TcpClient]::new().Connect("127.0.0.1",$p);"OK"}catch{"NG"}finally{$l.Stop()}'`。NG のときは、agent-browser も、手で起動した Chrome への `--cdp` も、127.0.0.1 に繋ぐものが全部 WSAEACCES で止まる（::1 は通る。除外ポート帯は無関係）。2026-11-09 は何もしないうちに戻った（原因は確かめていない。ESET か WSL の mirrored ネットワークを疑っている）。戻らなければ Windows を再起動する
+- 「Daemon failed to start」が続く間は、呼ぶたびに新しい daemon が起き、繋がらないまま残る（2026-11-09 は 1 時間で 28 個。ほかの作業のものも同じ時間に増えていた）。`close` は届かないので、後始末は `taskkill` になる。止めてよいのは自分のものと決まった daemon だけ: `%USERPROFILE%\.agent-browser\<セッション名>.pid` の pid と、自分が呼んだ時刻に起きた daemon（`Get-CimInstance Win32_Process -Filter "Name like 'agent-browser%'"` の `CreationDate`）。見分けられないものは止めない。daemon を止めると、その daemon が開いた Chrome も閉じる（エディタを開いたままなら、自動保存の心配はそこで消える）
+- Windows がロック画面になると、Chrome のページが隠れた扱い（`document.visibilityState` が `hidden`）になり、描画（requestAnimationFrame）が止まってテストプレイが進まない。手で起動した Chrome は、ロックを解いても `hidden` のまま戻らなかった。そのときは Chrome を閉じて、上の正規の呼び方で起こし直す（2026-11-04、これで戻った）。確かめの前に `visibilityState` が `visible` で、描画（requestAnimationFrame）が進むことを見る。
+- 確かめを作業役に頼むときは、PC をロックしない（画面を消さない）ように利用者に伝えておく。
 
 ## 起点
 
@@ -103,6 +130,18 @@ CLI 側の認証機構（vault / stdin 入力）を使う。手順は
 - ログイン（アカウントロックのリスクがあるため）
 - ユーザーが指定していないドメインへの遷移
 
+### 画面は文字で先に読む（コンテキスト節約）
+
+スクリーンショットを `Read` すると 1枚あたり約1,150トークンがコンテキストに残り、
+以降の全ターンで再送される。2026-10 の実測では過去ログ 94 セッションに
+2,476枚・推定約285万トークンが入っていた（最大 1 セッション 188枚・約25万）。
+
+- 要素・座標・文言・状態を知りたいときは `snapshot` か `eval` で**文字として**読む
+- canvas 等で snapshot に出ない状態は、`eval` で JS 側の値を取る
+- `screenshot` は**見た目そのものを確認する時だけ**。撮るなら対象要素だけ
+  （`screenshot <selector>`）・`--if-changed`。オプションの詳細は core を参照
+- 撮った画像を確認目的で毎手 `Read` しない。判断に使う 1 枚だけ読む
+
 ### 調査目的では使わない（`rules/trinity-development.md`）
 
 外部 Web 情報の収集経路は context7 と agy の2つのみ。
@@ -111,8 +150,8 @@ Web 検索の代替ではない。調べ物で起動しない。
 
 ### 完了条件（`rules/verification-loop.md`）
 
-「操作した」で終わらせない。スクリーンショットまたはスナップショットで
-**期待した状態になったことを確認**してから完了と報告する。
+「操作した」で終わらせない。スナップショット・`eval`（見た目が論点なら
+スクリーンショット）で**期待した状態になったことを確認**してから完了と報告する。
 確認できなかった場合は「未検証」と明記する。
 
 ## 出典

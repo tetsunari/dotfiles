@@ -18,7 +18,14 @@
 |---|---|---|
 | `ponytail-review/SKILL.md` | `skills/` | `40df33b58fc6ef889b93585733feb9566b76e9586efa7f376785c1e995197ac0` |
 | `ponytail-audit/SKILL.md` | `skills/` | `5560b8e383dbe2ddfddc873a1e2bf2e586e23e0cd7d995537482b2315331f6d1` |
-| `ponytail-debt/SKILL.md` | `skills/` | `c84fba75f0ca12bfe83f9a78ea02fd125c5dd3f1fbb18124105a489937f284e6` |
+| `ponytail-debt/SKILL.md` | `skills/` | `c82bb352bab21e081e71b70430af451b91750760fa776a4a807c8cfa52d4c85f`（v5.2.0 `2961b52` に更新） |
+
+### 2026-10-13 部分更新（v5.2.0 `2961b52`）
+
+- `ponytail-debt` のみ上流版へ差し替え。`git grep --no-index --exclude-standard` で .gitignore 配下を除外、`/* */` コメントと新マーカー `shortcut:` に対応（旧 `ponytail:` も拾う）。審査: 非ASCII文字・HTMLコメントゼロ、実行コマンドは読み取りのみ
+- `ponytail-review` / `ponytail-audit` は v4.9.0 のまま据え置き。v5（`01cbf81`）でバグ・セキュリティ・性能まで見る総合レビューに作り替えられ、`code-reviewer` と役割が重なるため
+- `rules/ponytail.md` に v5 ラダーの要点4行（呼び出し元まで直し切る・エラー処理の引き継ぎ・エッジケース優先・独自部品優先）を追記。マーカーは `ponytail:` のまま（debt が両方拾うため）
+- 次回の差分基準 SHA: debt は `2961b52`、review/audit は `356918eb`
 
 配置先は Windows 側 `C:\Users\setup_user\.claude\` と WSL 側 `~/.claude/` の両方。
 

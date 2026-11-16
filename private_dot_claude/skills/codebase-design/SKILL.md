@@ -5,7 +5,6 @@ description: |
   「どこで分ける」「インターフェース設計」「責務が混ざってる」「テストしにくい」
   「モジュール分割」「seam」と言われた時に即座に起動。
   deep module（小さいインターフェース＋厚い実装）の語彙と原則を提供する。
-context: inject
 allowed-tools: Read, Grep, Glob
 ---
 

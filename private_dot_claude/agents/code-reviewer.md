@@ -1,6 +1,6 @@
 ---
 name: code-reviewer
-description: Expert code review for quality and security. Use PROACTIVELY after code changes. MUST BE USED for all PRs.
+description: Expert code review for quality and security. Use PROACTIVELY after code changes. MUST BE USED for all PRs. Run /ponytail-review first (a hook blocks this agent until it has run).
 model: sonnet
 effort: medium
 tools: Read, Grep, Glob, Bash
@@ -45,6 +45,15 @@ context: fork
 🔵 **SUGGESTION** - ベストプラクティス
 
 必ず具体的な修正コード例を提示。
+
+### 指摘の書き方
+
+修正するのはエージェントであり、軽微な指摘も律儀に直してコミットとレビューが1往復増える。ノイズを出さないことを優先する。
+
+- 報告の冒頭は件数から書く（例: `CRITICAL 1 / WARNING 2 / SUGGESTION 1 / 既存 1`）。直すものが無ければ「指摘なし」と明記し、指摘を水増ししない
+- 各指摘に根拠の `ファイル:行番号` を付ける。名前からの推測（「〜という名前なので〜のはず」）は根拠にしない。呼び出し元・定義を読んで確認できたものだけ指摘する
+- 差分が持ち込んだ問題でなく、変更前から存在する問題は `既存` として分けて書く
+- SUGGESTION は重要度の高い順に最大3件。スタイルだけの指摘（命名の好み・書式・コメントの言い回し）は出さない
 
 ## 本番環境対応グレーディング
 

@@ -1,0 +1,15 @@
+/*
+ * 全お題で共通の決まり。見た目（色・形・線・影・文字の段階）はここに置かない。
+ * 見た目を置くと、それが全お題の既定になり、どの一枚絵も同じ顔になるため。
+ */
+:root {
+  --ig-canvas-w: 1920px;
+  --ig-canvas-h: 1080px;
+  --ig-margin: 40px;
+  --ig-margin-bottom: 24px;
+  --ig-gap: 16px;
+  --ig-pad-min: 16px;
+  --ig-text-min: 18px;
+  /* 環境に日本語フォントが IPAexGothic しか無いため */
+  --ig-font: "IPAexGothic", "IPAGothic", sans-serif;
+}

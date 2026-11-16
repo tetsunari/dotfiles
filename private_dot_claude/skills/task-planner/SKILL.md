@@ -2,6 +2,7 @@
 name: task-planner
 description: 新機能実装・リファクタリング・バグ修正・技術的負債解消など、実装計画を立てる時は必ずこのスキルを使う。曖昧な要望をファイル単位の具体的なToDoリストに分解。タスク間依存関係整理、既存コード調査、マークダウンチェックリスト形式で出力。
 context: fork
+background: false
 allowed-tools: Read, Glob, Bash
 ---
 
@@ -68,4 +69,4 @@ TaskCreateツールで各タスクを登録し、TaskUpdateで依存関係（add
 ## Integration
 
 - **kaizen** skill: 段階的改善の視点
-- **subagent-drive-development** skill: タスク並列実行
+- **superpowers:subagent-driven-development** skill: タスク並列実行

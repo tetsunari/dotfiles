@@ -1,7 +1,6 @@
 ---
 name: information-design
 description: スライド・レポート・ダッシュボード・提案書の情報設計をレビュー・改善。わかりやすく・比較しやすく・誤解なく伝えるための設計原則を適用。「情報設計してレビューして」「このPPT/資料を見て」「グラフ選定を見直して」で起動。
-context: inject
 allowed-tools: Read
 ---
 

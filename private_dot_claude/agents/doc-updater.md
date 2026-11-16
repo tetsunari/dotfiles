@@ -1,6 +1,6 @@
 ---
 name: doc-updater
-description: Documentation and codemap specialist. Use PROACTIVELY for updating codemaps and documentation. Runs /update-codemaps and /update-docs, generates docs/CODEMAPS/*, updates READMEs and guides.
+description: Documentation and codemap specialist. Use PROACTIVELY for updating codemaps and documentation. Generates docs/CODEMAPS/*, updates READMEs and guides.
 tools: Read, Write, Edit, Bash, Grep, Glob
 model: opus
 effort: low
@@ -18,6 +18,7 @@ Read the relevant skill before starting, depending on the task:
 |------|-------|
 | Writing procedures/READMEs/operational guides | `~/.claude/skills/document-writing/SKILL.md` |
 | Writing technical articles (Zenn/Qiita), API specs, tutorials | `~/.claude/skills/technical-writer/SKILL.md` |
+| Finishing Japanese prose (after writing, before reporting) | `~/.claude/skills/japanese-natural-writing/SKILL.md` — follow「他スキルからの仕上げ呼出し」. Skip codemaps and code-derived content; apply only to Japanese prose |
 
 ## Core Responsibilities
 

@@ -1,26 +1,23 @@
 [wsl2]
 # 32GBの約62%で、Dockerコンテナに十分なリソースを提供
-memory=18GB
+memory=28GB
 
 # プロセッサ設定 - 物理コア数に応じて調整
 # 通常は物理コア数の75-100%を推奨
-processors=10
+processors=18
 
 # スワップ設定 - メモリが潤沢なので控えめに設定
 swap=0
 #swapFile=%USERPROFILE%\\AppData\\Local\\Temp\\wsl-swap.vhdx
 
 # ネットワークモード
-# networkingMode=mirrored
-networkingMode=nat
+networkingMode=mirrored
 
 # VPN DNS問題を解決
-dnsTunneling=false
 
-firewall=true
+firewall=false
 
 # Windowsプロキシ設定を自動継承
-autoProxy=false
 
 # ローカルホスト転送 - Dockerポート転送で重要
 # Setting is ignored when networkingMode=mirrored
@@ -41,3 +38,7 @@ hostAddressLoopback=true
 
 # 一部読み取れないデータがあっても、無視して理解できるIPアドレスだけを抽出して繋ぐ
 bestEffortDnsParsing=true
+
+# ディスク（ext4.vhdx）の自動縮小
+# Linux側でファイルを削除した際、Windows側のVHDXサイズも自動で縮小を試みる
+sparseVhd=true
