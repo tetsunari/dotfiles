@@ -78,10 +78,10 @@ if is_mac then
 end
 vim.keymap.set({ 'n', 'x' }, 'so', ':source<cr>', { silent = true, desc = "Source crrent script" })
 
--- Linux/WSL2ではInsertモードの<C-v>をシステムクリップボードの貼り付けに使う
+-- Linux/WSL2ではInsert・コマンドライン（/検索含む）の<C-v>をシステムクリップボードの貼り付けに使う
 -- macOSでは端末標準のCommand+Vを使い、<C-v>はVim本来の入力操作を維持する
 if is_linux then
-  vim.keymap.set('i', '<C-v>', '<C-r><C-o>+', { desc = 'Paste from system clipboard' })
+  vim.keymap.set({ 'i', 'c' }, '<C-v>', '<C-r><C-o>+', { desc = 'Paste from system clipboard' })
 end
 
 vim.keymap.set('i', '<c-a>', is_mac and not vim.g.vscode and '<Home>' or '<ESC>^i')
