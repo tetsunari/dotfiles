@@ -9,23 +9,32 @@ STATE_FIXTURE=$(mktemp -d)
 trap 'rm -rf "$FIXTURE_DIR" "$STATE_FIXTURE"' EXIT
 
 # レア語(zzzunique)を見出しに持つセクションと、無関係セクションを用意する。
-# スコアは log(N/df) ベースなので、判定にはある程度のセクション数が要る。
+# 実物の教訓と同じく、見出しの語はルール本文にも書く（見出しにだけ1回出る語は閾値に届かない）。
+# スコアは IDF ベースなので、判定にはある程度のセクション数が要る。
 {
   echo "# テスト用フィクスチャ"
   echo
   echo "### zzzunique zzzalpha zzzbeta zzzgamma な設定を変更するときの注意（テスト用）"
   echo "**count:** 1"
-  echo "**ルール:** zzzunique のテスト用ルール本文"
+  echo "**ルール:** zzzunique zzzalpha zzzbeta zzzgamma のテスト用ルール本文"
   echo "**適用:** テスト用"
+  echo "**背景:** zzzsecret 注入しない経緯の文"
+  echo "**関連:** [[注入しないリンク]]"
+  echo
+  echo "### 本文だけに語がある見出し（テスト用）"
+  echo "**ルール:** 見出しに無い語は本文に何度出ても採らない zzzbodyonly zzzbodytwo"
+  echo
+  echo "### cdk.context.json のキャッシュ（テスト用）"
+  echo "**ルール:** cdk.context.json は自動更新されない"
   echo
 } > "$FIXTURE_DIR/target.md"
 
 {
   echo "### zzzcodebuild の buildspec と zzzmod-x.py を直すときの注意（テスト用）"
-  echo "**ルール:** 英字の境界判定用"
+  echo "**ルール:** zzzcodebuild の buildspec と zzzmod-x.py の英字の境界判定用"
   echo
   echo "### 蠍座星雲を観る手順（テスト用）"
-  echo "**ルール:** 漢字 2gram 判定用"
+  echo "**ルール:** 蠍座星雲 の漢字の部分一致判定用"
   echo
 } > "$FIXTURE_DIR/boundary.md"
 
@@ -72,7 +81,8 @@ for i in $(seq 1 60); do
   {
     echo "### 無関係なルール$i（テスト用）"
     echo "**count:** 1"
-    echo "**ルール:** 無関係な本文$i"
+    # 実物の教訓と同程度の長さにする。短いと BM25 の長さ補正で対象側が不利になり閾値際で揺れる
+    echo "**ルール:** 無関係な本文$i $(printf 'ここは埋め草の文です。%.0s' {1..20})"
     echo "**適用:** テスト用"
     echo
   } >> "$FIXTURE_DIR/noise.md"
@@ -141,7 +151,44 @@ echo "--- 英字は単語の境目で一致させる ---"
 run_case "英字は語の一部には一致しない" "zzzcode が終わった" "index"
 run_case "英字は語全体なら一致する（末尾の句点は無視）" "zzzcodebuild." "body"
 run_case "英字はファイル名の一部にも語の境目で一致する" "zzzmod-x を直す" "body"
-run_case "漢字は 2 文字切りで複合語を拾う" "星雲観測" "body"
+run_case "漢字は教訓側の語の一部としても拾う" "星雲" "body"
+run_case "漢字の複合語は 2 文字に分けた部分一致だけでは注入しない" "星雲観測" "index"
+run_case "前に . が付く英字はファイル名の一部とみなし一致しない" "context を見る" "index"
+run_case "ファイル名全体なら一致する" "cdk.context.json を見る" "body"
+run_case "見出しに当たらない教訓は本文に珍しい語が複数当たっても採らない" "zzzbodyonly zzzbodytwo" "index"
+
+echo "--- 注入する本文 ---"
+CTX=$(jq -nc '{prompt:"zzzunique の設定"}' | INJECT_LESSONS_DIR="$FIXTURE_DIR" INJECT_STATE_DIR="$STATE_FIXTURE" "$HOOK" \
+  | jq -r '.hookSpecificOutput.additionalContext // empty')
+if [[ "$CTX" == *"**ルール:**"* && "$CTX" == *"**適用:**"* && "$CTX" != *"zzzsecret"* && "$CTX" != *"**count:**"* && "$CTX" != *"注入しないリンク"* ]]; then
+  echo "PASS: ルールと適用だけを注入し、背景・count・関連は外す"; PASS=$((PASS+1))
+else
+  echo "FAIL: 注入本文の絞り込みが効いていない"; FAIL=$((FAIL+1))
+fi
+run_case "背景にしか無い語では注入しない" "zzzsecret" "index"
+
+echo "--- 同じ会話での重複除外 ---"
+# hook が実際に transcript へ残す形（attachment / hook_additional_context）を模す
+injected_line() { jq -nc --arg c "$1" '{type:"attachment",attachment:{type:"hook_additional_context",hookEvent:"UserPromptSubmit",content:[$c]}}'; }
+FIRST=$(jq -nc '{prompt:"zzzunique の設定"}' | INJECT_LESSONS_DIR="$FIXTURE_DIR" INJECT_STATE_DIR="$STATE_FIXTURE" "$HOOK" \
+  | jq -r '.hookSpecificOutput.additionalContext')
+INDEX=$(jq -nc '{prompt:"やる"}' | INJECT_LESSONS_DIR="$FIXTURE_DIR" INJECT_STATE_DIR="$STATE_FIXTURE" "$HOOK" \
+  | jq -r '.hookSpecificOutput.additionalContext')
+DONE_TRANSCRIPT="$STATE_FIXTURE/done.jsonl"
+{ user_prompt "zzzunique の設定"; injected_line "$FIRST"; injected_line "$INDEX"; assistant_text "了解"; } > "$DONE_TRANSCRIPT"
+run_case "注入済みの教訓は同じ会話で再注入しない" "zzzunique の設定をもう一度" "none" "$DONE_TRANSCRIPT"
+run_case "索引も同じ会話では1回だけ" "やる" "none" "$DONE_TRANSCRIPT"
+run_case "注入済みでない教訓は注入する" "zzzcodebuild を直す" "body" "$DONE_TRANSCRIPT"
+DONE_THEN_TALK_TRANSCRIPT="$STATE_FIXTURE/done-then-talk.jsonl"
+{ command cat "$DONE_TRANSCRIPT"; assistant_text "zzzcodebuild の buildspec と zzzmod-x を見た"; } > "$DONE_THEN_TALK_TRANSCRIPT"
+run_case "入力で当たった教訓が注入済みなら、直前の発言から別の教訓を拾わない" "zzzunique の設定をもう一度" "none" "$DONE_THEN_TALK_TRANSCRIPT"
+COMPACTED_TRANSCRIPT="$STATE_FIXTURE/compacted.jsonl"
+{ command cat "$DONE_TRANSCRIPT"; jq -nc '{type:"system",subtype:"compact_boundary",content:"Conversation compacted"}'; assistant_text "compact_boundary という語を含む発言"; } > "$COMPACTED_TRANSCRIPT"
+run_case "会話の圧縮より前の注入は数えず、再注入する" "zzzunique の設定をもう一度" "body" "$COMPACTED_TRANSCRIPT"
+run_case "会話の圧縮のあとは索引も再び出す" "やる" "index" "$COMPACTED_TRANSCRIPT"
+OTHER_HOOK_TRANSCRIPT="$STATE_FIXTURE/other-hook.jsonl"
+{ injected_line $'別の hook の出力\n## target.md\n### zzzunique zzzalpha zzzbeta zzzgamma な設定を変更するときの注意（テスト用）'; } > "$OTHER_HOOK_TRANSCRIPT"
+run_case "ほかの hook の出力は注入済みに数えない" "zzzunique の設定" "body" "$OTHER_HOOK_TRANSCRIPT"
 
 echo "--- サイズ上限 ---"
 BIG=$(printf 'zzzunique %.0s' $(seq 1 500))
@@ -149,8 +196,8 @@ run_case "長大プロンプトでも本文注入は成立する" "$BIG" "body"
 SIZE=$(printf '%s' "{\"prompt\":$(printf '%s' "zzzunique の設定" | jq -Rs .)}" \
   | INJECT_LESSONS_DIR="$FIXTURE_DIR" INJECT_STATE_DIR="$STATE_FIXTURE" "$HOOK" \
   | jq -r '.hookSpecificOutput.additionalContext' | wc -c)
-if (( SIZE <= 6500 )); then
-  echo "PASS: 注入サイズが上限内 (${SIZE}B <= 6500B)"; PASS=$((PASS+1))
+if (( SIZE <= 4000 )); then
+  echo "PASS: 注入サイズが上限内 (${SIZE}B <= 4000B)"; PASS=$((PASS+1))
 else
   echo "FAIL: 注入サイズが上限超過 (${SIZE}B)"; FAIL=$((FAIL+1))
 fi
