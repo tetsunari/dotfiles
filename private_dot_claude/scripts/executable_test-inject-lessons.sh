@@ -24,6 +24,9 @@ trap 'rm -rf "$FIXTURE_DIR" "$STATE_FIXTURE"' EXIT
   echo "### 本文だけに語がある見出し（テスト用）"
   echo "**ルール:** 見出しに無い語は本文に何度出ても採らない zzzbodyonly zzzbodytwo"
   echo
+  echo "### 作成した資料の置き場（テスト用）"
+  echo "**ルール:** 作成した資料は決まった場所に置く"
+  echo
   echo "### cdk.context.json のキャッシュ（テスト用）"
   echo "**ルール:** cdk.context.json は自動更新されない"
   echo
@@ -155,6 +158,7 @@ run_case "漢字は教訓側の語の一部としても拾う" "星雲" "body"
 run_case "漢字の複合語は 2 文字に分けた部分一致だけでは注入しない" "星雲観測" "index"
 run_case "前に . が付く英字はファイル名の一部とみなし一致しない" "context を見る" "index"
 run_case "ファイル名全体なら一致する" "cdk.context.json を見る" "body"
+run_case "ありふれた語（作成）が見出しに当たっても注入しない" "作成したい" "index"
 run_case "見出しに当たらない教訓は本文に珍しい語が複数当たっても採らない" "zzzbodyonly zzzbodytwo" "index"
 
 echo "--- 注入する本文 ---"

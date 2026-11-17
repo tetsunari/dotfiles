@@ -19,6 +19,10 @@ import traceback
 from datetime import datetime
 from pathlib import Path
 
+# Windows 版 Claude は教訓を UNC 越し（//wsl.localhost/...）に読むため、手元に写しを作って使う。
+# UNC でないパスはそのまま返すので、WSL では何もしない
+from lessons_cache import resolve_lessons_dir
+
 # ディレクトリは環境変数で差し替え可能にする(test-inject-lessons.sh が fixture を渡す)
 LESSONS_DIR = Path(os.environ.get("INJECT_LESSONS_DIR") or Path.home() / ".config/claude/lessons")
 STATE_DIR = Path(os.environ.get("INJECT_STATE_DIR") or Path.home() / ".claude/state")
@@ -39,8 +43,15 @@ HEADING_WEIGHT = 2.0
 # 値は inject-lessons-eval.py で決めた（311件で 6.0 相当）。上げると誤注入は減るが見落としが増える
 MIN_SCORE_FACTOR = 1.125
 SCORE_RATIO = 0.85  # 1位のスコアに対するこの比率未満は足切り
-# 相槌や略語の2文字英字は、教訓の本文に偶然出る（"ok" が negative check の本文に当たる等）
-STOP_WORDS = frozenset({"ok", "ng", "pc"})
+# 入力によく出るが、教訓の見出しに当たっても関係を示さない語。相槌の2文字英字（"ok" が
+# negative check の本文に当たる等）と、日本語のありふれた語（「作成」「セッション」が見出しに
+# 当たって無関係な教訓が入った）。教訓の中の出現頻度だけでは固有名（herdr 等）と区別できない。
+# 実入力の誤注入から選んだ（inject-lessons-eval.py で再現率を下げず誤注入が減ることを確認）
+STOP_WORDS = frozenset({
+    "ok", "ng", "pc",
+    "作成", "報告", "作業", "不要", "経由", "確認", "対応", "設定", "状況", "必要", "問題",
+    "修正", "追加", "変更", "実行", "使用", "利用", "適用済", "セッション", "通知", "テスト", "日本語",
+})
 # スコアリングは O(語数 × セクション数)。ログやコードを貼り付けた長大プロンプトで
 # 語が1000超になると数百msかかるため上限を設ける。文字数の多い語ほど具体的で
 # 弁別力が高いので、長い順に採用する。
@@ -74,7 +85,6 @@ LABEL_RE = re.compile(r"^\*\*([^*]+?)[:：]?\*\*")
 
 # 英数字列 / カタカナ2文字以上 / 漢字2文字以上。ひらがなは助詞ノイズのため対象外
 TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z0-9_.\-]+|[ァ-ヶー]{2,}|[一-鿿々]{2,}")
-KANJI_RE = re.compile(r"^[一-鿿々]{2,}$")  # 英字だけ小文字化するための判定
 ASCII_RE = re.compile(r"^[a-z0-9_.\-]+$")
 
 
@@ -92,13 +102,10 @@ def log_error(exc):
 def tokenize(text):
     words = set()
     for match in TOKEN_RE.findall(text):
-        if KANJI_RE.match(match):
-            words.add(match)
-        else:
-            # 文末の "completed." の句点などを語に含めると一致しなくなる
-            word = match.lower().rstrip(".-")
-            if len(word) >= 2 and word not in STOP_WORDS:
-                words.add(word)
+        # 文末の "completed." の句点などを語に含めると一致しなくなる
+        word = match.lower().rstrip(".-")
+        if len(word) >= 2 and word not in STOP_WORDS:
+            words.add(word)
     if len(words) > MAX_TOKENS:
         words = set(sorted(words, key=len, reverse=True)[:MAX_TOKENS])
     return words
@@ -122,7 +129,7 @@ def shown_text(body):
 
 def load_sections():
     sections = []
-    for path in sorted(LESSONS_DIR.glob("*.md")):
+    for path in sorted(resolve_lessons_dir(LESSONS_DIR).glob("*.md")):
         text = path.read_text(encoding="utf-8", errors="replace")
         for chunk in re.split(r"(?m)^### ", text)[1:]:
             heading, _, body = chunk.partition("\n")

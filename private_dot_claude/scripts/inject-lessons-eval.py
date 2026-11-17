@@ -16,6 +16,9 @@ DEFAULT_EVAL = SCRIPT_DIR / "inject-lessons-eval.jsonl"
 
 
 def load_hook():
+    # hook が同じディレクトリの lessons_cache を import する。-I で起動するとスクリプトの
+    # ディレクトリが import 先に入らないため足す
+    sys.path.insert(0, str(SCRIPT_DIR))
     spec = importlib.util.spec_from_file_location("inject_lessons", SCRIPT_DIR / "inject-lessons.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
