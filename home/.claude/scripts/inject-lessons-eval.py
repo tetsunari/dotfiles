@@ -11,7 +11,8 @@ import json
 import sys
 from pathlib import Path
 
-SCRIPT_DIR = Path(__file__).resolve().parent
+# resolve() しない。symlink で置いたとき、評価セット（端末だけにあり git に入れない）をホーム側で探すため
+SCRIPT_DIR = Path(__file__).parent
 DEFAULT_EVAL = SCRIPT_DIR / "inject-lessons-eval.jsonl"
 
 

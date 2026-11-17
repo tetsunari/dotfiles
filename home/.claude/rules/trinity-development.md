@@ -97,7 +97,8 @@ alwaysApply: true
    - `--dangerously-skip-permissions` は常時禁止（Least Agency原則違反）
    - 信頼度の低い操作・未知のプロジェクトでは `--sandbox` を明示指定
    - モデルは軽量検索=Flash（デフォルト）、複雑な設計判断=`--model "Gemini 3.1 Pro (High)"`を都度指定
-   - `trustedWorkspaces` はホーム全体ではなくプロジェクト単位に絞る（settings.json側で管理）
+   - `trustedWorkspaces` はホーム全体ではなくプロジェクト単位に絞る（`~/.gemini/antigravity-cli/settings.json` で管理）
+   - agy の設定は `~/.gemini/antigravity-cli/settings.json`。`~/.gemini/settings.json` は使わなくなった Gemini CLI のもので、agy の設定ではない（agy が他ツールの MCP 設定を取り込むときに読むだけ。2026-11-17 確認。Gemini CLI から agy へ移行済み）
 
 9. **Codex 呼び出し時の規約**（実測: codex-cli 0.152.1）:
    - 非対話実行は `codex exec`、コード差分のレビューは `codex review`
