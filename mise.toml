@@ -1,0 +1,32 @@
+[settings]
+dotfiles.root = "."
+
+# home/ の下を、同じパスでホームに置く
+[dotfile_groups.home]
+root = "home"
+target = "~"
+mode = "symlink-each"
+manifest = "git"
+exclude = [
+  "**/*.tera",                     # テンプレート（#11 で個別のエントリにする）
+  ".claude/settings.json",         # 公開分と端末だけの業務分を重ねて作る（#11）
+  ".config/nvim/lazy-lock.json",   # 以下は chezmoi でも置いていなかったもの
+  ".codex/config.toml",
+  ".codex/log/**",
+  ".codex/version.json",
+  "**/.keep",
+]
+
+# 本人だけが読み書きできる権限で置くもの（symlink には権限を付けられないので copy）
+[dotfile_groups.home.entries]
+"~/.claude/scripts/README.md" = { mode = "copy", permissions = "0600" }
+"~/.claude/scripts/SCHEDULING_GUIDE.md" = { mode = "copy", permissions = "0600" }
+"~/.claude/skills/aws-lambda-typescript/examples/api-gateway-generic.ts" = { mode = "copy", permissions = "0600" }
+"~/.claude/skills/aws-lambda-typescript/examples/error-handling-strategy.ts" = { mode = "copy", permissions = "0600" }
+"~/.claude/skills/aws-lambda-typescript/examples/layered-architecture.ts" = { mode = "copy", permissions = "0600" }
+# 端末ごとに社内レジストリの行を足すので、無いときだけ置く
+"~/.npmrc" = { mode = "copy", create_if_missing = true, permissions = "0600" }
+
+[dotfiles]
+"~/.claude" = { permissions = "0700", depends = ["home"] }
+"~/.config" = { permissions = "0700", depends = ["home"] }
