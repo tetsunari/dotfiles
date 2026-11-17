@@ -19,5 +19,7 @@ README.md
 .codex/log
 .codex/log/*
 .codex/version.json
+# 業務情報を ~/.claude/settings.private.json に分けたため、合成を mise で組むまで管理外（#11）
+.claude/settings.json
 
 docs/
