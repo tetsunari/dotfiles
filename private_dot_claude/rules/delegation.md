@@ -46,7 +46,6 @@ alwaysApply: true
 | OpenAPI スペック（YAML） | `~/.claude/skills/openapi-conventions/SKILL.md` |
 | TypeScript / JS / React 全般 | `~/.claude/skills/coding/SKILL.md` |
 | アーキテクチャ設計判断 | `~/.claude/skills/software-architecture/SKILL.md` |
-| 技術記事（Zenn / Qiita）・API 仕様書・チュートリアル | `~/.claude/skills/technical-writer/SKILL.md` |
 
 ## コードレビュー
 
@@ -57,6 +56,8 @@ alwaysApply: true
 - **並行性**: 競合状態・デッドロック・非冪等な処理・リトライ時の二重実行
 - **プライバシー**: 個人情報・機密情報の不必要な保持・ログ出力・外部送信
 - **ドメイン前提**: 業務ルール・不変条件・運用フロー上の暗黙の前提が崩れるケース
+- **同じ値の重複計算**: 同じ数字を複数の画面・API で出しているなら、計算処理が1か所にまとまっているか（2026-11-17 追記）
+- **リファクタの確認方法**: 「直す前と後で出力が一致する」だけで確かめていないか。元からのずれも一致してしまうため通り抜ける（2026-11-17 追記）
 
 指摘の書き方：
 

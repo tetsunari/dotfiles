@@ -122,6 +122,7 @@ git -C "$ROOT" check-ignore -q .claude/explainer/x && echo ok   # ok が出な�
 - 1 段落は 1〜2 文。1 節に例は 1 つ
 - 出力の引用は直前に `<!-- output: <check名> -->`、コードの抜粋は `<!-- source: <path> -->`。verify-doc が実物と照合する
 - 末尾に理解度チェック（3〜5 問、答えは `<details>`）
+- 書き終えたら `japanese-tech-writing` スキルの規範で推敲する（日本語の資料・返答のとき）
 
 ### 6. 図
 
