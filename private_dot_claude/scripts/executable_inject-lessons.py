@@ -163,8 +163,9 @@ class Scorer:
     def __init__(self, sections):
         self.sections = sections
         self.total = len(sections)
-        avg_heading = sum(len(s["heading_key"]) for s in sections) / self.total
-        avg_body = sum(len(s["body_key"]) for s in sections) / self.total
+        # 本文が全部空でも 0 で割らない
+        avg_heading = sum(len(s["heading_key"]) for s in sections) / self.total or 1
+        avg_body = sum(len(s["body_key"]) for s in sections) / self.total or 1
         self.norms = [(HEADING_WEIGHT / (1 - BM25_B + BM25_B * len(s["heading_key"]) / avg_heading),
                        1 / (1 - BM25_B + BM25_B * len(s["body_key"]) / avg_body)) for s in sections]
         # 直前の発言から拾う語の大半は教訓に出てこない。全体で一度だけ探して弾く
@@ -330,6 +331,8 @@ def read_recent_assistant_text(transcript_path, current_prompt):
             continue  # tail 読みで先頭行は途中から始まる
         if not isinstance(entry, dict):
             continue
+        if entry.get("type") == "system" and entry.get("subtype") == "compact_boundary":
+            break  # 圧縮より前の発言は今の話題とは限らない
         prompt_text = user_prompt_text(entry)
         if prompt_text is not None:
             # 今回の入力が hook より先に transcript へ書かれるかは未確認のため、どちらでも動くようにする
@@ -432,8 +435,9 @@ def build_context(prompt, transcript_path=None):
     picked = pick(candidates, already)
     if picked:
         return render(picked)
-    if candidates or index_shown:
+    if index_shown or (candidates and all(section_key(s["file"], s["heading"]) in already for s in candidates)):
         return ""  # 関連する教訓はすべて会話に入っている／索引は既に出した
+    # 当たった教訓が大きすぎて入らないときは、索引で Read 先を示す
     return render_index(sections)
 
 

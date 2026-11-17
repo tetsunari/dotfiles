@@ -193,6 +193,9 @@ run_case "会話の圧縮のあとは索引も再び出す" "やる" "index" "$C
 OTHER_HOOK_TRANSCRIPT="$STATE_FIXTURE/other-hook.jsonl"
 { injected_line $'別の hook の出力\n## target.md\n### zzzunique zzzalpha zzzbeta zzzgamma な設定を変更するときの注意（テスト用）'; } > "$OTHER_HOOK_TRANSCRIPT"
 run_case "ほかの hook の出力は注入済みに数えない" "zzzunique の設定" "body" "$OTHER_HOOK_TRANSCRIPT"
+PRE_COMPACT_TALK_TRANSCRIPT="$STATE_FIXTURE/pre-compact-talk.jsonl"
+{ assistant_text "$STRONG"; jq -nc '{type:"system",subtype:"compact_boundary"}'; assistant_text "了解"; } > "$PRE_COMPACT_TALK_TRANSCRIPT"
+run_case "会話の圧縮より前の発言は材料にしない" "続けて" "index" "$PRE_COMPACT_TALK_TRANSCRIPT"
 
 echo "--- サイズ上限 ---"
 BIG=$(printf 'zzzunique %.0s' $(seq 1 500))
@@ -205,6 +208,30 @@ if (( SIZE <= 4000 )); then
 else
   echo "FAIL: 注入サイズが上限超過 (${SIZE}B)"; FAIL=$((FAIL+1))
 fi
+
+# 当たった教訓が1件で上限を超えるときは、何も出さずに終わらず索引で Read 先を示す
+HUGE_DIR=$(mktemp -d)
+{ echo "### zzzhuge な設定の注意（テスト用）"; printf '**ルール:** zzzhuge %s\n' "$(printf 'あ%.0s' $(seq 1 1500))"; } > "$HUGE_DIR/huge.md"
+OUT=$(jq -nc '{prompt:"zzzhuge を直す"}' | INJECT_LESSONS_DIR="$HUGE_DIR" INJECT_STATE_DIR="$STATE_FIXTURE" "$HOOK" \
+  | jq -r '.hookSpecificOutput.additionalContext // empty')
+if [[ "$OUT" == 【学習済みルール索引* ]]; then
+  echo "PASS: 上限を超える教訓だけが当たったときは索引を出す"; PASS=$((PASS+1))
+else
+  echo "FAIL: 上限を超える教訓だけが当たったときに索引が出ない"; FAIL=$((FAIL+1))
+fi
+rm -rf "$HUGE_DIR"
+
+echo "--- 本文が全部空の教訓 ---"
+EMPTY_DIR=$(mktemp -d); EMPTY_STATE=$(mktemp -d)
+printf '### zzzempty 見出しだけ\n### zzzempty2 見出しだけ\n' > "$EMPTY_DIR/empty.md"
+OUT=$(jq -nc '{prompt:"やる"}' | INJECT_LESSONS_DIR="$EMPTY_DIR" INJECT_STATE_DIR="$EMPTY_STATE" "$HOOK" \
+  | jq -r '.hookSpecificOutput.additionalContext // empty')
+if [[ "$OUT" == 【学習済みルール索引* && ! -e "$EMPTY_STATE/inject-lessons.log" ]]; then
+  echo "PASS: 本文が全部空でも落ちずに索引を出す"; PASS=$((PASS+1))
+else
+  echo "FAIL: 本文が全部空の教訓で索引が出ない、またはエラーを記録した"; FAIL=$((FAIL+1))
+fi
+rm -rf "$EMPTY_DIR" "$EMPTY_STATE"
 
 echo "--- remember-nudge の pending 回収 ---"
 printf '%s' "テスト用の判定結果" > "$STATE_FIXTURE/remember-nudge.pending"
@@ -251,6 +278,13 @@ for bad in 'garbage' '' '{"prompt":null}' '{}'; do
     echo "FAIL: 異常入力で非0終了 [${bad:-空}]"; FAIL=$((FAIL+1))
   fi
 done
+
+# hook は例外を握って exit 0 で黙るため、「何も出さない」ケースが落ちて通っていないかをログで見る
+if [[ ! -e "$STATE_FIXTURE/inject-lessons.log" ]]; then
+  echo "PASS: どのケースでも hook は例外を出していない"; PASS=$((PASS+1))
+else
+  echo "FAIL: hook が例外を記録した"; sed -n '1,20p' "$STATE_FIXTURE/inject-lessons.log"; FAIL=$((FAIL+1))
+fi
 
 echo
 echo "PASS=$PASS FAIL=$FAIL"
