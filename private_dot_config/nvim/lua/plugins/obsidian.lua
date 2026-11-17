@@ -1,9 +1,7 @@
--- Vaultを利用していないためObsidian連携を無効化する
-return {}
-
---[[
 return {
   "epwalsh/obsidian.nvim",
+  -- Vault は WSL2 にだけあるため、macOS では読み込まない
+  enabled = vim.fn.has('wsl') == 1,
   version = "*",  -- recommended, use latest release instead of latest commit
   lazy = true,
   ft = "markdown",
@@ -68,4 +66,3 @@ return {
     vim.api.nvim_create_user_command("ObsidianReview", create_note("レビュー", "レビュー"), { nargs = "?" })
   end,
 }
-]]

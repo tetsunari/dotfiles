@@ -11,7 +11,7 @@ onboarding = false
 # switch_ascii_input_source_in_prefix = true
 
 [ui.toast]
-delivery = "terminal"
+delivery = "off"
 delay_seconds = 15
 
 [ui]
