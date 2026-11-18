@@ -128,9 +128,11 @@ cd ~/dotfiles && git pull && mise bootstrap --yes
 
 ## 道具の入れ分け（brew と mise）
 
+macOS と WSL で同じ分け方にする。brew を土台にし、版を固定したいものだけ mise に置く。
+
 | 入れるもの | 使う道具 | 書く場所 |
 |---|---|---|
-| アプリ、ふだん使いの CLI、ライブラリ、常駐サービス | brew | WSL: `home/Brewfile_wsl`、macOS: `mise.toml` の `[bootstrap.packages]` |
+| アプリ、ふだん使いの CLI、ライブラリ、常駐サービス | brew | WSL: `home/Brewfile_wsl`、macOS: 未定（#14） |
 | 言語ランタイム、プロジェクトごとに版を固定したい道具、npm でしか入らない道具 | mise | `home/.config/mise/config.toml.tera` |
 
 同じツールを両方に重複して記述しない。
