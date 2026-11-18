@@ -1,0 +1,52 @@
+[tools]
+{% if os() == "macos" -%}
+aws-cli = "latest"
+gcloud = "latest"
+go = "latest"
+kubectl = "latest"
+node = "latest"
+"npm:@github/copilot" = "latest"
+
+{% else -%}
+aws-cli = "latest"
+gcloud = "latest"
+
+pnpm = "latest"
+
+node = "latest"
+
+bun = "latest"
+
+go = "latest"
+
+ecspresso = "latest"
+
+kubectl = "latest"
+kind = "latest"
+
+helm = "latest"
+
+kustomize = "latest"
+
+hadolint = "latest"
+
+eksctl = "latest"
+
+gh = "latest"
+
+uv = "latest"
+
+# npm
+"npm:@usebruno/cli" = "latest"
+"npm:cdk-nag" = "latest"
+"npm:agent-browser" = "latest"
+"npm:wrangler" = "latest"
+
+[tasks.brew-bundle]
+description = "brewのインストール一覧を`Brewfile_wsl`に書き出す(vscodeの設定は無視)"
+run = "cd && brew bundle dump --force --no-vscode --file Brewfile_wsl"
+
+{% endif -%}
+[tasks.cdk-out-clear]
+description = "cdk.outの不要ファイルを削除"
+run = 'npx cdk-agc'
