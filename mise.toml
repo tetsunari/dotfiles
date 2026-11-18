@@ -28,6 +28,16 @@ exclude = [
 # 端末ごとに社内レジストリの行を足すので、無いときだけ置く
 "~/.npmrc" = { mode = "copy", create_if_missing = true, permissions = "0600" }
 
+# Linux（WSL）だけで使うもの。macOS では置かない
+"~/Brewfile_wsl" = { variants = [{ os = "linux" }] }
+"~/.bashrc" = { variants = [{ os = "linux" }] }
+"~/.wslconfig" = { variants = [{ os = "linux" }] }
+"~/.config/sway" = { variants = [{ os = "linux" }] }
+"~/.config/systemd" = { variants = [{ os = "linux" }] }
+"~/.config/wayvnc" = { variants = [{ os = "linux" }] }
+"~/.config/NvChad" = { variants = [{ os = "linux" }] }
+"~/setup-ahk" = { variants = [{ os = "linux" }] }
+
 [dotfiles]
 "~/.claude" = { permissions = "0700", depends = ["home"] }
 "~/.config" = { permissions = "0700", depends = ["home"] }
