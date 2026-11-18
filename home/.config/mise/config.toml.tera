@@ -1,7 +1,6 @@
 [tools]
 {% if os() == "macos" -%}
 aws-cli = "latest"
-chezmoi = "latest"
 gcloud = "latest"
 go = "latest"
 kubectl = "latest"
@@ -17,8 +16,6 @@ pnpm = "latest"
 node = "latest"
 
 bun = "latest"
-
-chezmoi = "latest"
 
 go = "latest"
 

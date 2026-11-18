@@ -1,8 +1,8 @@
 -- =============================================================================
 -- WezTerm Configuration Entry Point
 -- モジュール分割版（macOS / Windows(WSL2) 共通）
--- macOS: chezmoiで ~/.config/wezterm/ に展開
--- Windows: run_onchange_after_04_linux で %USERPROFILE%\.wezterm.lua と .config\wezterm\ にコピー
+-- macOS: mise の [dotfiles] で ~/.config/wezterm/ に symlink を置く
+-- Windows: mise bootstrap の post-dotfiles hook で %USERPROFILE%\.wezterm.lua と .config\wezterm\ にコピー
 -- =============================================================================
 local wezterm = require("wezterm")
 
