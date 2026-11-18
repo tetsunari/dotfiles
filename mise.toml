@@ -84,6 +84,7 @@ exclude = [
 "apt:docker-buildx-plugin" = { os = "linux" }
 "apt:docker-compose-plugin" = { os = "linux" }
 "brew-cask:docker-desktop" = { os = "macos" }
+"brew-cask:antigravity-cli" = { os = "macos" }
 
 [bootstrap.apt.sources.docker]
 uris = "https://download.docker.com/linux/ubuntu"
@@ -127,7 +128,6 @@ fi
 # --no-upgrade が無いと、入っているものまで新しい版に上げる
 brew bundle install --no-upgrade --file "$HOME/Brewfile_wsl"
 fc-cache -f
-herdr integration install claude
 
 # sudo なしで docker を使う
 user="$(id -un)"

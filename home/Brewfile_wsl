@@ -30,16 +30,10 @@ brew "fd"
 brew "ffmpeg"
 # Command-line fuzzy finder written in Go
 brew "fzf"
-# Interact with Google Gemini AI models from the command-line
-brew "gemini-cli"
 # Syntax-highlighting pager for git and diff output
 brew "git-delta"
 # ASN.1 structure parser library
 brew "libtasn1"
-# Open source programming language to build simple/reliable/efficient software
-brew "go"
-# Smarter Dockerfile linter to validate best practices
-brew "hadolint"
 # Agent multiplexer that lives in your terminal
 brew "herdr"
 # Tools and libraries to manipulate images in select formats
@@ -93,9 +87,9 @@ brew "zlib"
 # Shell extension to navigate your filesystem faster
 brew "zoxide"
 # Terminal-based AI coding assistant
-cask "claude-code"
+cask "claude-code@latest"
+# Terminal interface for Antigravity agents
+cask "antigravity-cli"
 # OpenAI's coding agent that runs in your terminal
 cask "codex"
 cask "font-symbols-only-nerd-font"
-go "cmd/go"
-go "cmd/gofmt"
