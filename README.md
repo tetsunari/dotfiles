@@ -50,6 +50,11 @@ sudo 権限を持つ一般ユーザーとして、Windows Terminal などのタ�
 
    - 処理中にパスワードの入力が2回求められる。1回目は apt 実行時の sudo 認証、2回目はログインシェルを zsh に変更する chsh の認証。
    - 出力をパイプ（`| tee` など）に渡さない。端末（TTY）ではないと判定され、sudo がパスワードを要求できずに停止してしまう。ログを記録したい場合は `script -qec "mise bootstrap --yes --force-dotfiles" bootstrap.log` を使用する。
+   - WSL のみ: 終わったら、手順 2 で入れた mise を消す。bootstrap が Brewfile_wsl から brew 版の mise を入れるため、残すと mise が2つになる。以降の更新は `brew upgrade` で行う。
+
+     ```sh
+     rm ~/.local/bin/mise
+     ```
 
 6. Windows の PowerShell で WSL を再起動する（systemd と docker グループを効かせるため）
 

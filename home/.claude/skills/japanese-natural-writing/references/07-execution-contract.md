@@ -2,7 +2,7 @@
 
 ## 利用環境の確認
 
-`agy` は WSL 側（`~/.local/bin/agy`）にのみ存在する。Windows 版 claude.exe（Git Bash）には無く、shim も無い。確認は `agy --version`・`agy models` で行い、`gemini-3.8-flash-high` が一覧にあることを確かめる（2026-09-24 に agy 1.2.9 で確認済み）。
+`agy` は WSL 側（brew の cask `antigravity-cli`。`/home/linuxbrew/.linuxbrew/bin/agy`）にのみ存在する。Windows 版 claude.exe（Git Bash）には無く、shim も無い。確認は `agy --version`・`agy models` で行い、`gemini-3.8-flash-high` が一覧にあることを確かめる（2026-09-24 に agy 1.2.9 で確認済み）。
 
 指定値は `--model gemini-3.8-flash-high --effort high`。モデルや引数が利用できない場合はその旨を報告し、別モデル・別経路へ黙って切り替えない。
 
