@@ -1,4 +1,3 @@
-# chezmoi:template:left-delimiter="[[" right-delimiter="]]"
 gui:
   nerdFontsVersion: "3"
   showFileIcons: true
@@ -15,8 +14,8 @@ promptToReturnFromSubprocess: false
 git:
   diffRenderers:
     - colorArg: always
-      command: [[ if eq .chezmoi.os "darwin" ]]/opt/homebrew/bin/delta[[ else ]]/home/linuxbrew/.linuxbrew/bin/delta[[ end ]] --dark --paging=never -s
-  branchLogCmd: git log --graph --color=always --date=format:'%Y-%m-%d %H:%M' --pretty=format:'%C(#a0a0a0 reverse)%h%Creset %C(cyan)%ad%Creset %C(#dd4814)%ae%Creset %C(yellow reverse)%d%Creset %n%C(white bold)%s%Creset%n' {{branchName}} --
+      command: {% if os() == "macos" %}/opt/homebrew/bin/delta{% else %}/home/linuxbrew/.linuxbrew/bin/delta{% endif %} --dark --paging=never -s
+  branchLogCmd: git log --graph --color=always --date=format:'%Y-%m-%d %H:%M' --pretty=format:'%C(#a0a0a0 reverse)%h%Creset %C(cyan)%ad%Creset %C(#dd4814)%ae%Creset %C(yellow reverse)%d%Creset %n%C(white bold)%s%Creset%n' {% raw %}{{branchName}}{% endraw %} --
   allBranchesLogCmds:
     - git log --graph --color=always --date=format:'%Y-%m-%d %H:%M' --pretty=format:'%C(#a0a0a0 reverse)%h%Creset %C(cyan)%ad%Creset %C(#dd4814)%ae%Creset %C(yellow reverse)%d%Creset %n%C(white bold)%s%Creset%n' --
   log:
@@ -25,10 +24,10 @@ customCommands:
   - key: 'F'
     context: 'files'
     description: 'Show detailed file history (with renames)'
-    command: 'git log --follow --patch --stat --find-renames {{.SelectedFile.Name}} | less'
+    command: 'git log --follow --patch --stat --find-renames {% raw %}{{.SelectedFile.Name}}{% endraw %} | less'
     output: terminal
   - key: '<c-f>'
     context: 'files'
     description: 'Show file history commits only'
-    command: 'git log --follow --pretty=format:"%C(yellow)%h%Creset %C(blue)%ad%Creset %C(green)%an%Creset %s" --date=short {{.SelectedFile.Name}} | less'
+    command: 'git log --follow --pretty=format:"%C(yellow)%h%Creset %C(blue)%ad%Creset %C(green)%an%Creset %s" --date=short {% raw %}{{.SelectedFile.Name}}{% endraw %} | less'
     output: terminal

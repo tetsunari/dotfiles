@@ -1,5 +1,5 @@
 [tools]
-{{ if eq .chezmoi.os "darwin" -}}
+{% if os() == "macos" -%}
 aws-cli = "latest"
 chezmoi = "latest"
 gcloud = "latest"
@@ -8,7 +8,7 @@ kubectl = "latest"
 node = "latest"
 "npm:@github/copilot" = "latest"
 
-{{ else -}}
+{% else -%}
 aws-cli = "latest"
 gcloud = "latest"
 
@@ -49,7 +49,7 @@ uv = "latest"
 description = "brewのインストール一覧を`Brewfile_wsl`に書き出す(vscodeの設定は無視)"
 run = "cd && brew bundle dump --force --no-vscode --file Brewfile_wsl"
 
-{{ end -}}
+{% endif -%}
 [tasks.cdk-out-clear]
 description = "cdk.outの不要ファイルを削除"
 run = 'npx cdk-agc'

@@ -8,8 +8,9 @@ target = "~"
 mode = "symlink-each"
 manifest = "git"
 exclude = [
-  "**/*.tera",                     # テンプレート（#11 で個別のエントリにする）
-  ".claude/settings.json",         # 公開分と端末だけの業務分を重ねて作る（#11）
+  "**/*.tera",                     # テンプレート（下の [dotfiles] で描画して置く）
+  ".claude/settings.json",         # 端末のファイルにキーだけ書き込む（下の [dotfiles]）
+  ".gemini/antigravity-cli/settings.json",
   ".config/nvim/lazy-lock.json",   # 以下は chezmoi でも置いていなかったもの
   ".codex/config.toml",
   ".codex/log/**",
@@ -30,3 +31,18 @@ exclude = [
 [dotfiles]
 "~/.claude" = { permissions = "0700", depends = ["home"] }
 "~/.config" = { permissions = "0700", depends = ["home"] }
+
+# OS で中身を分けるもの
+"~/.config/zsh/.zshrc" = { source = "home/.config/zsh/.zshrc.tera", mode = "template" }
+"~/.config/zsh/alias.zsh" = { source = "home/.config/zsh/alias.zsh.tera", mode = "template" }
+"~/.config/zsh/function.zsh" = { source = "home/.config/zsh/function.zsh.tera", mode = "template" }
+"~/.config/mise/config.toml" = { source = "home/.config/mise/config.toml.tera", mode = "template" }
+"~/.config/lazygit/config.yml" = { source = "home/.config/lazygit/config.yml.tera", mode = "template" }
+"~/.zshrc" = { source = "~/.config/zsh/.zshrc", mode = "symlink", depends = ["~/.config/zsh/.zshrc"] }
+
+# リポジトリにあるキーだけを書き込む。端末だけの値（業務の設定など）はそのまま残る
+"~/.claude/settings.json/shared" = { source = "home/.claude/settings.json", merge = true, permissions = "0600" }
+"~/.gemini/antigravity-cli/settings.json/shared" = { source = "home/.gemini/antigravity-cli/settings.json", merge = true, permissions = "0600" }
+# merge の permissions は新しく作るときだけ効くので、既にあるファイルもここで 600 にする
+"~/.claude/settings.json" = { permissions = "0600" }
+"~/.gemini/antigravity-cli/settings.json" = { permissions = "0600" }

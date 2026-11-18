@@ -1,0 +1,22 @@
+{
+  "colorScheme": "tokyo night",
+  "editor": "vim",
+  "model": "Gemini 4 Hydrogen (Medium)",
+  "permissions": {
+    "allow": [
+      "read_url(*)",
+      "command(agent-browser)",
+      "command(npm run dev)",
+      "command(git status)",
+      "command(git add)",
+      "command(git diff)",
+      "command(git log)"
+    ],
+    "deny": [
+      "command(rm -rf)",
+      "read_file(**/.env*)",
+      "write_file(~/.ssh)"
+    ]
+  },
+  "runningLightSpeed": "fast"
+}

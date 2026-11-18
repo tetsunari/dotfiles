@@ -1,13 +1,13 @@
 # Common PATH
-{{ if eq .chezmoi.os "linux" }}
+{% if os() == "linux" %}
 export PATH=$PATH:$HOME/.local/bin
 
 # Homebrew (Linux)
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-{{ end }}
-{{- if eq .chezmoi.os "darwin" }}
+{% endif %}
+{%- if os() == "macos" %}
 export MAS_NO_AUTO_INDEX=1
-{{ end }}
+{% endif %}
 # Common shell enhancements
 eval "$(sheldon source)"
 
@@ -48,6 +48,3 @@ eval "$(sheldon source)"
 # jdk
 #export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 #export PATH="JAVA_HOME:$PATH"
-
-# Added by Antigravity CLI installer
-# export PATH="/home/matsushita_te/.local/bin:$PATH"

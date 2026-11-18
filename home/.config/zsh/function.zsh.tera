@@ -1,4 +1,4 @@
-{{- if eq .chezmoi.os "darwin" -}}
+{%- if os() == "macos" -%}
 # homebrew
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
@@ -11,7 +11,7 @@ PATH=~/.console-ninja/.bin:$PATH
 eval "$(direnv hook zsh)"
 
 export RIPGREP_CONFIG_PATH="$HOME/.config/.ripgreprc"
-{{- else -}}
+{%- else -%}
 # export VOLTA_HOME="$HOME/.volta"
 # export PATH="$VOLTA_HOME/bin:$PATH"
 # export NVIM_HOME="/opt/nvim"
@@ -38,7 +38,7 @@ export PATH=$PATH:"$(wslpath "$(/mnt/c/WINDOWS/system32/cmd.exe /c 'echo %USERPR
 export HOMEBREW_DEVELOP=1
 ## curl path
 export HOMEBREW_CURL_PATH="/home/linuxbrew/.linuxbrew/bin/curl"
-{{- end }}
+{%- endif %}
 
 # fzfの設定
 export FZF_DEFSULT_OPST="
@@ -80,7 +80,7 @@ precmd() {
   print -Pn "\e]7;file://${HOST}${PWD}\a"
 }
 preexec() { print -Pn "\e]0;$1\a" }
-{{- if eq .chezmoi.os "linux" }}
+{%- if os() == "linux" %}
 
 # herdr 実行中を WezTerm へ通知（OSC 1337 SetUserVar IN_HERDR）
 # WSLドメイン越しでは WezTerm がフォアグラウンドプロセス名を取れないため、
@@ -104,4 +104,4 @@ fi
 
 # Claude
 export CLAUDE_CODE_SUBAGENT_MODEL="claude-opus-4-6"
-{{- end }}
+{%- endif %}
