@@ -56,3 +56,88 @@ exclude = [
 # merge の permissions は新しく作るときだけ効くので、既にあるファイルもここで 600 にする
 "~/.claude/settings.json" = { permissions = "0600" }
 "~/.gemini/antigravity-cli/settings.json" = { permissions = "0600" }
+
+# 新しい PC の初期設定（mise bootstrap）。hook と [tasks.bootstrap] は毎回走るので、
+# 済んでいれば何もしない書き方にする
+[bootstrap.packages]
+"apt:build-essential" = { os = "linux" }
+"apt:procps" = { os = "linux" }
+"apt:curl" = { os = "linux" }
+"apt:file" = { os = "linux" }
+"apt:git" = { os = "linux" }
+"apt:fcitx5" = { os = "linux" }
+"apt:fcitx5-mozc" = { os = "linux" }
+"apt:fcitx5-frontend-gtk3" = { os = "linux" }
+"apt:fcitx5-frontend-gtk4" = { os = "linux" }
+"apt:fcitx5-config-qt" = { os = "linux" }
+"apt:language-pack-ja" = { os = "linux" }
+"apt:fonts-ipafont" = { os = "linux" }
+"apt:fonts-ipaexfont" = { os = "linux" }
+"apt:bind9-dnsutils" = { os = "linux" }
+"apt:libpulse0" = { os = "linux" }
+"apt:telnet" = { os = "linux" }
+"apt:zsh" = { os = "linux" }
+"apt:sway" = { os = "linux" }
+"apt:docker-ce" = { os = "linux" }
+"apt:docker-ce-cli" = { os = "linux" }
+"apt:containerd.io" = { os = "linux" }
+"apt:docker-buildx-plugin" = { os = "linux" }
+"apt:docker-compose-plugin" = { os = "linux" }
+"brew-cask:docker-desktop" = { os = "macos" }
+
+[bootstrap.apt.sources.docker]
+uris = "https://download.docker.com/linux/ubuntu"
+components = "stable"
+key = "https://download.docker.com/linux/ubuntu/gpg"
+fingerprint = "9DC8 5822 9FC7 DD38 854A E2D8 8D81 803C 0EBF CD88"
+
+[bootstrap.user]
+login_shell = "zsh"
+
+# WSL のとき、WezTerm と .wslconfig を Windows 側のホームに写す
+[bootstrap.hooks.post-dotfiles]
+run = '''
+set -eu
+[ -n "${WSL_DISTRO_NAME:-}" ] || exit 0
+win_home="${WINDOWS_HOME_DIR:-$(wslpath "$(/mnt/c/WINDOWS/system32/cmd.exe /c 'SET /P x=%USERPROFILE%<NUL' 2>/dev/null)")}"
+cp -L "$HOME/.config/wezterm/wezterm.lua" "$win_home/.wezterm.lua"
+mkdir -p "$win_home/.config/wezterm"
+cp -RL "$HOME/.config/wezterm/." "$win_home/.config/wezterm/"
+cp -L "$HOME/.wslconfig" "$win_home/.wslconfig"
+'''
+
+[tasks.bootstrap]
+description = "mise bootstrap の最後に走る Linux の初期設定"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+[ "$(uname -s)" = Linux ] || exit 0
+
+brew=/home/linuxbrew/.linuxbrew/bin/brew
+if [ ! -x "$brew" ]; then
+  NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+# task は zsh の設定を読まないので、ここで brew の PATH を通す
+eval "$("$brew" shellenv)"
+# postgresql@18 は入れた直後に en_US.UTF-8 で initdb する。無いと brew bundle ごと失敗する
+# -q だと grep が先に抜け、pipefail の下で locale -a の SIGPIPE が失敗扱いになる
+if ! locale -a | grep -ix 'en_US.utf8' >/dev/null; then
+  sudo locale-gen en_US.UTF-8
+fi
+# --no-upgrade が無いと、入っているものまで新しい版に上げる
+brew bundle install --no-upgrade --file "$HOME/Brewfile_wsl"
+fc-cache -f
+herdr integration install claude
+
+# sudo なしで docker を使う
+user="$(id -un)"
+if ! id -nG "$user" | grep -qw docker; then
+  sudo usermod -aG docker "$user"
+  echo "docker グループに入れた。反映には再ログインが要る"
+fi
+
+if [ -n "${WSL_DISTRO_NAME:-}" ] && ! grep -q "systemd=true" /etc/wsl.conf 2>/dev/null; then
+  printf '[boot]\nsystemd=true\n' | sudo tee -a /etc/wsl.conf >/dev/null
+  echo "WSL の systemd を有効にした。反映には Windows 側で wsl --shutdown が要る"
+fi
+'''

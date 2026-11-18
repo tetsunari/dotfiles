@@ -40,6 +40,8 @@ brew "libtasn1"
 brew "go"
 # Smarter Dockerfile linter to validate best practices
 brew "hadolint"
+# Agent multiplexer that lives in your terminal
+brew "herdr"
 # Tools and libraries to manipulate images in select formats
 brew "imagemagick"
 # Lightweight and flexible command-line JSON processor
