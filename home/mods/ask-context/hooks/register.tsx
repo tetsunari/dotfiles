@@ -242,11 +242,12 @@ async function askInDialog<Q extends Question>(
 }
 
 export const register: Register = on => {
-  // mod が自分から開くペインは、端末が 144 桁未満だと出ない。本人がコマンドで一度開いたペインは
-  // 以後 110 桁から出る（本人が手で閉じるまで、セッションをまたいで有効）。狭い端末で使う人は
-  // /ask-context を1回打つ。そのため mod が開いたペインは、本人の手ではなく mod が閉じる
+  // mod が自分から開くペインは、端末が 144 桁未満だと出ない。本人が一度開いた id は、以後
+  // 110 桁から出る（本人が手で閉じるまで、セッションをまたいで有効）。狭い端末で使う人は
+  // /ask-context を1回打つ。本人が閉じると元に戻るので、閉じるボタンは置かず、次の質問に
+  // 答えたときに mod が閉じる
   on('session.start', async ($, e, next) => {
-    await $.command.register({ name: 'ask-context', description: '質問のサイドバーを開く（狭い端末でも出せるようにする）' })
+    await $.command.register({ name: 'ask-context', description: '質問のサイドバーを1回開いて、狭い端末でも出せるようにする' })
 
     return next(e)
   })
@@ -256,7 +257,7 @@ export const register: Register = on => {
 
     return {
       text: opened.isPlaced
-        ? 'サイドバーを開いた。これで 110 桁以上の端末なら、質問がサイドバーに出る。「閉じる」で閉じる（Esc やペインの × で閉じると元に戻る）'
+        ? 'サイドバーを開いた。これで 110 桁以上の端末なら、質問がサイドバーに出る。サイドバーは次の質問に答えたときに閉じる（自分で閉じると元に戻る）'
         : `サイドバーを開けなかった: ${opened.reason}`,
     }
   })
@@ -294,7 +295,7 @@ export const register: Register = on => {
       }
       const opened = await $.ui
         .open({ id: PANE, title: '質問', focus: true, holdToasts: true })
-        .catch(() => ({ isPlaced: false as const }))
+        .catch((err: unknown) => ({ isPlaced: false as const, reason: `開けなかった（${String(err)}）` }))
       if (opened.isPlaced) {
         // 標準の質問画面なら PermissionRequest フックで鳴る通知が、サイドバーでは鳴らないので自分で鳴らす
         void $.ui.notify('質問に答えてください', { title: 'Claude Code' }).catch(() => undefined)
@@ -305,8 +306,9 @@ export const register: Register = on => {
         })
         try {
           await sleepUntil($, () => settled.has(id), next.signal)
-        } catch {
+        } catch (err) {
           // sleep が使えないと答えを待てないので、標準の質問画面に切り替える
+          $.ui.toast(`サイドバーで答えを待てないので、標準の質問画面に切り替える: ${String(err)}`)
         }
         const done = settled.get(id)
         settled.delete(id)
@@ -317,6 +319,8 @@ export const register: Register = on => {
       } else {
         // 狭い端末では開いたペインが幅の広がりを待って残るので、出る前に閉じる
         await release()
+        // 理由は Claude Code の文（端末の幅など）。出ない理由が分からないと直せないので見せる
+        $.ui.toast(`サイドバーを出せないので、標準の質問画面で聞く: ${opened.reason}`)
       }
     }
 
@@ -351,14 +355,7 @@ export const register: Register = on => {
     const state = await read($, askingAtom)
     const question = state?.questions[state.index]
     if (state === null || question === undefined)
-      return (
-        <Box flexDirection="column">
-          <Text dimColor>出ている質問はありません</Text>
-          <Button key="close" onPress={() => void $.ui.close({ id: PANE }).catch(() => undefined)}>
-            閉じる
-          </Button>
-        </Box>
-      )
+      return <Text dimColor>出ている質問はありません。次の質問に答えると閉じる</Text>
 
     const { id, index } = state
     // 次の質問の先頭の選択肢へカーソルを移す。移せなくても答えには関わらないので、失敗は捨てる

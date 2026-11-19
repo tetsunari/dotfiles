@@ -268,7 +268,7 @@ test('サイドバーを開いたら通知を鳴らし、Esc で閉じるペイ�
   await ui.unmount()
 })
 
-test('/ask-context でサイドバーを開ける', async ($, on) => {
+test('/ask-context でサイドバーを1回開ける', async ($, on) => {
   const openedIds: string[] = []
   on('ui.open', (_, e) => (openedIds.push(e.id), { value: { isPlaced: true as const } }))
 
@@ -281,4 +281,12 @@ test('/ask-context でサイドバーを開ける', async ($, on) => {
 
   expect(openedIds).toEqual(['ask-context'])
   expect(ran.text).toContain('サイドバーを開いた')
+})
+
+test('質問が無い間のサイドバーには閉じるボタンを置かない（本人が閉じると狭い端末で出なくなるため）', async $ => {
+  const ui = await $.ui.mount(PANE)
+
+  expect(await ui.findAll({ type: 'Button' })).toEqual([])
+  expect((await ui.find({ type: 'Text' }))?.text).toContain('出ている質問はありません')
+  await ui.unmount()
 })
