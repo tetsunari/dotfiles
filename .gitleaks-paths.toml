@@ -1,0 +1,13 @@
+# 鍵・トークンは gitleaks の既定のルールで見る（.gitleaks.toml という名前だと既定のルールの代わりに
+# 読まれてしまうので、別の名前にしている）。ここには、公開リポジトリに入れない
+# ユーザー名入りのパスだけを書く。既定のルールを [extend] で取り込むと、既定の除外設定で
+# /home/... が検出されなくなるため、.githooks/pre-commit で既定のルールとは別に走らせる
+
+[[rules]]
+id = "home-directory-path"
+description = "ユーザー名の入ったホームディレクトリの絶対パス。~ か $HOME で書く"
+regex = '''/(?:home|Users)/[A-Za-z0-9_][A-Za-z0-9_.-]*'''
+
+[[rules.allowlists]]
+description = "ユーザー名ではないもの: Homebrew on Linux の場所、ripgrep の説明にある例"
+regexes = ['''/home/linuxbrew''', '''/Users/alice''']

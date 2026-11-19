@@ -99,8 +99,10 @@ macOS 向けの手順は、まだ実機での動作確認を行っていない�
    > [!CAUTION]
    > 社名、社内ホスト名、`/home/<ユーザー名>` などの絶対パス、各種トークン（認証情報）は push しない。
 
+   鍵・トークンと、`/home/<ユーザー名>`・`/Users/<ユーザー名>` は、commit のときに gitleaks が見つけて止める（`.githooks/pre-commit`、独自ルールは `.gitleaks-paths.toml`）。`mise bootstrap` がこのフックを有効にする。社名・社内ホスト名は gitleaks では見つからないので、目で確かめる。
+
    ```sh
-   git add -A && git diff --cached | grep -nE '/home/|/Users/|token'
+   git add -A && git diff --cached
    ```
 
 5. コミットして push する
@@ -111,14 +113,24 @@ macOS 向けの手順は、まだ実機での動作確認を行っていない�
 
 | 編集したいもの | 編集する場所 | 反映 |
 |---|---|---|
-| symlink で置いたファイル（`~/.claude/rules` など） | ホーム側をそのまま | 不要 |
+| copy で置いたファイル（`~/.claude/rules`・`~/mods` など） | ホーム側をそのまま編集し、`mise dot add --changed` でリポジトリへ戻す | 不要 |
 | テンプレート（`.zshrc`・`alias.zsh`・`function.zsh`・mise の `config.toml`・lazygit の `config.yml`） | `~/dotfiles/home/` の下の `*.tera` | `mise dot apply` |
 | `settings.json`（Claude Code・agy） | `~/dotfiles/home/` の下の `settings.json` | `mise dot apply` |
 | 新しいファイル | `~/dotfiles/home/` の下の同じパスに置き、`git add` | `mise dot apply` |
 
+ホーム側のファイルは symlink ではなく copy で置く（Claude Code は mod のファイルが symlink だと読まないため）。ホーム側で編集したファイルは、`mise dot add --changed` を実行するまでリポジトリに入らない。その前に `mise dot apply` すると、編集した分がリポジトリの内容で上書きされて消える。
+
 テンプレートや `settings.json` は、ホームディレクトリ側で編集してもリポジトリには反映されない。`settings.json` はリポジトリにあるキーだけを書き込むので、PC だけの値はホーム側に残せる。
 
 ### ほかの PC の変更を取り込む
+
+ホーム側で編集してまだリポジトリへ戻していないファイルは、`mise bootstrap` で上書きされて消える。先に戻してから取り込む。
+
+```sh
+cd ~/dotfiles && mise dot add --changed && git status
+```
+
+戻したファイルがあれば commit してから pull する。
 
 ```sh
 cd ~/dotfiles && git pull && mise bootstrap --yes
@@ -129,7 +141,7 @@ cd ~/dotfiles && git pull && mise bootstrap --yes
 - `mise dot` は必ず `~/dotfiles` ディレクトリ内で実行する。他の場所で実行すると設定が読み込まれず、展開したファイルがすべて `orphaned`（孤立状態）と表示されてしまう。
 
 > [!CAUTION]
-> `~/dotfiles` 以外の場所で `mise dot apply --prune` を実行すると、展開したシンボリックリンクがすべて削除されてしまう。
+> `~/dotfiles` 以外の場所で `mise dot apply --prune` を実行すると、展開したファイルがすべて削除されてしまう。
 
 ## 道具の入れ分け（brew と mise）
 
@@ -150,11 +162,11 @@ macOS と WSL で同じ分け方にする。brew を土台にし、版を固定�
 herdr integration status
 ```
 
-`claude` が `current` でなければ、再インストールしてコミットする。herdr はシンボリックリンクのリンク先にあるリポジトリ内のファイルを直接書き換える。なお、`settings.json` に追加された重複する hook は `mise dot apply` を実行すれば削除される。
+`claude` が `current` でなければ、再インストールしてコミットする。herdr はホーム側のファイルを書き換えるので、`mise dot add --changed` でリポジトリへ戻す。なお、`settings.json` に追加された重複する hook は `mise dot apply` を実行すれば削除される。
 
 ```sh
 herdr integration install claude
-cd ~/dotfiles && mise dot apply && git diff
+cd ~/dotfiles && mise dot add --changed && mise dot apply && git diff
 ```
 
 ## 手で入れるもの

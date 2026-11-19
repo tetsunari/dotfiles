@@ -1,0 +1,11 @@
+#!/bin/sh
+# 公開リポジトリに、鍵・トークン（gitleaks の既定のルール）と、ユーザー名の入ったパス
+# （.gitleaks-paths.toml）を入れない。2つを1つの設定にまとめると /home/... を見逃すので分けて走らせる
+set -e
+if ! command -v gitleaks >/dev/null 2>&1; then
+  echo "gitleaks が無いので commit を止めた。brew install gitleaks で入れる" >&2
+  exit 1
+fi
+root="$(git rev-parse --show-toplevel)"
+gitleaks git --pre-commit --staged --redact --no-banner "$root"
+gitleaks git --pre-commit --staged --redact --no-banner --config "$root/.gitleaks-paths.toml" "$root"

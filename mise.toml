@@ -1,11 +1,13 @@
 [settings]
 dotfiles.root = "."
 
-# home/ の下を、同じパスでホームに置く
+# home/ の下を、同じパスでホームに写す。Claude Code は mod のファイルが symlink だと
+# 読まないため、symlink ではなく copy で置く。ホーム側で直したファイルは
+# `mise dot add --changed` で home/ に戻す（戻す前に apply すると直した分が消える）
 [dotfile_groups.home]
 root = "home"
 target = "~"
-mode = "symlink-each"
+mode = "copy"
 manifest = "git"
 exclude = [
   "**/*.tera",                     # テンプレート（下の [dotfiles] で描画して置く）
@@ -112,6 +114,8 @@ description = "mise bootstrap の最後に走る Linux の初期設定"
 run = '''
 #!/usr/bin/env bash
 set -euo pipefail
+# commit の前に gitleaks で鍵・ユーザー名入りのパスを止める（.githooks/pre-commit）。macOS でも要るので Linux の判定より前に置く
+git -C "$MISE_CONFIG_ROOT" config core.hooksPath .githooks
 [ "$(uname -s)" = Linux ] || exit 0
 
 brew=/home/linuxbrew/.linuxbrew/bin/brew

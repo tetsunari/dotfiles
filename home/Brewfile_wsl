@@ -32,6 +32,8 @@ brew "ffmpeg"
 brew "fzf"
 # Syntax-highlighting pager for git and diff output
 brew "git-delta"
+# Audit git repos for secrets
+brew "gitleaks"
 # ASN.1 structure parser library
 brew "libtasn1"
 # Agent multiplexer that lives in your terminal
