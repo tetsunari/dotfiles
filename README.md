@@ -175,6 +175,8 @@ cd ~/dotfiles && mise dot add --changed && mise dot apply && git diff
 
 - UDEV Gothic 35NF: https://github.com/yuru7/udev-gothic
 - Firge35Nerd Console: https://github.com/yuru7/Firge
+- maplefont: https://github.com/subframe7536/maple-font
+- IBM Plex Sans JP: https://fonts.google.com/specimen/IBM+Plex+Sans+JP
 
 ### WSL2: sudo で Homebrew のコマンドを使う
 
