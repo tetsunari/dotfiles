@@ -101,6 +101,26 @@ const withPreviews = <Q extends Question>(questions: readonly Q[], text: string)
   })
 }
 
+// Windows 版 claude.exe では PATH に sleep が無く、起動できない（ENOENT。実測）。
+// そのときは Git for Windows の sleep.exe を使う。起動できた方を覚えておく
+const SLEEP_COMMANDS = ['sleep', 'C:\\Program Files\\Git\\usr\\bin\\sleep.exe']
+let sleepCommand: string | undefined
+
+async function sleepOnce($: EngineInterface): Promise<{ readonly exitCode: number }> {
+  let failure: unknown
+  for (const command of sleepCommand === undefined ? SLEEP_COMMANDS : [sleepCommand]) {
+    try {
+      const slept = await $.process.run([command, POLL_SECONDS], { timeoutMs: 5000 })
+      sleepCommand = command
+
+      return slept
+    } catch (err) {
+      failure = err
+    }
+  }
+  throw failure
+}
+
 // フック自身の持ち時間は 10 秒だが、$ 呼び出しの最中は時計が止まる。$.clock の待ちは
 // 例外で時計が進み、$.process.run は途中で止められないため、公式サンプル blast-radius と
 // 同じく短い sleep を繰り返して待つ
@@ -113,7 +133,7 @@ async function sleepUntil(
   maxPolls = Number.POSITIVE_INFINITY,
 ): Promise<void> {
   for (let polls = 0; !(await isDone()) && polls < maxPolls && !signal.aborted; polls += 1) {
-    const slept = await $.process.run(['sleep', POLL_SECONDS], { timeoutMs: 5000 })
+    const slept = await sleepOnce($)
     // 失敗で即座に返る sleep を数え続けると、上限の回数が一瞬で尽きて待たずに諦めてしまう
     if (slept.exitCode !== 0) throw new Error('sleep が失敗で終わった')
   }
@@ -222,6 +242,25 @@ async function askInDialog<Q extends Question>(
 }
 
 export const register: Register = on => {
+  // mod が自分から開くペインは、端末が 144 桁未満だと出ない。本人がコマンドで一度開いたペインは
+  // 以後 110 桁から出る（本人が手で閉じるまで、セッションをまたいで有効）。狭い端末で使う人は
+  // /ask-context を1回打つ。そのため mod が開いたペインは、本人の手ではなく mod が閉じる
+  on('session.start', async ($, e, next) => {
+    await $.command.register({ name: 'ask-context', description: '質問のサイドバーを開く（狭い端末でも出せるようにする）' })
+
+    return next(e)
+  })
+
+  on('command.run', { command: 'ask-context' }, async $ => {
+    const opened = await $.ui.open({ id: PANE, title: '質問' })
+
+    return {
+      text: opened.isPlaced
+        ? 'サイドバーを開いた。これで 110 桁以上の端末なら、質問がサイドバーに出る。「閉じる」で閉じる（Esc やペインの × で閉じると元に戻る）'
+        : `サイドバーを開けなかった: ${opened.reason}`,
+    }
+  })
+
   // 標準の質問画面が出ている間はキー入力をその画面が持ち、いまどの選択肢にカーソルがあるかも
   // mod に知らせない。そこで質問ごとサイドバーに出し、カーソルのある選択肢の解説を下に出す。
   // サイドバーを出せない（端末が狭い・別の質問が出ている）ときは、標準の質問画面の
@@ -254,9 +293,11 @@ export const register: Register = on => {
         await $.ui.close({ id: PANE }).catch(() => undefined)
       }
       const opened = await $.ui
-        .open({ id: PANE, title: '質問', focus: true, closeOnEscape: true, holdToasts: true })
+        .open({ id: PANE, title: '質問', focus: true, holdToasts: true })
         .catch(() => ({ isPlaced: false as const }))
       if (opened.isPlaced) {
+        // 標準の質問画面なら PermissionRequest フックで鳴る通知が、サイドバーでは鳴らないので自分で鳴らす
+        void $.ui.notify('質問に答えてください', { title: 'Claude Code' }).catch(() => undefined)
         void explain().then(text => {
           const blocks = text === null ? null : blocksFor(text, e.questions.length)
 
@@ -309,7 +350,15 @@ export const register: Register = on => {
     const { Box, Text, Button, Input } = $.ui.resolve(e)
     const state = await read($, askingAtom)
     const question = state?.questions[state.index]
-    if (state === null || question === undefined) return <Text dimColor>出ている質問はありません</Text>
+    if (state === null || question === undefined)
+      return (
+        <Box flexDirection="column">
+          <Text dimColor>出ている質問はありません</Text>
+          <Button key="close" onPress={() => void $.ui.close({ id: PANE }).catch(() => undefined)}>
+            閉じる
+          </Button>
+        </Box>
+      )
 
     const { id, index } = state
     // 次の質問の先頭の選択肢へカーソルを移す。移せなくても答えには関わらないので、失敗は捨てる
@@ -318,6 +367,8 @@ export const register: Register = on => {
       await updateAsking($, id, current => (current.index === index ? answered(current, text) : current))
       if (index + 1 < state.questions.length) moveFocus(optionKey(index + 1, 0))
     }
+    const dismiss = (): Promise<unknown> =>
+      updateAsking($, id, current => ({ ...current, outcome: current.outcome ?? 'dismissed' }))
     const back = async (): Promise<void> => {
       await updateAsking($, id, current => ({ ...current, index: Math.max(0, current.index - 1), focusedOption: undefined }))
       moveFocus(optionKey(index - 1, 0))
@@ -373,6 +424,9 @@ export const register: Register = on => {
             if (text.trim() !== '') void answer(text.trim())
           }}
         />
+        <Button key="dismiss" onPress={() => void dismiss()}>
+          答えずに閉じる
+        </Button>
         {index > 0 && (
           <Button key="back" onPress={() => void back()}>
             前の質問
@@ -383,7 +437,7 @@ export const register: Register = on => {
         <Text>{plain(explanation)}</Text>
         <Text dimColor>
           {e.props.isFocused
-            ? '数字キーで選ぶ / Tab・矢印で移動 / PageUp・PageDown でスクロール / Esc で閉じる'
+            ? '数字キーで選ぶ / Tab・矢印で移動 / PageUp・PageDown でスクロール / 「答えずに閉じる」で閉じる'
             : 'ctrl+x tab かクリックでここを操作できる'}
         </Text>
       </Box>

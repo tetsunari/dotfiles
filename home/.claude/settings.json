@@ -82,6 +82,17 @@
         ]
       }
     ],
+    "Notification": [
+      {
+        "matcher": "plugin_notification",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/scripts/notify.sh 'Claude Code' '❗ ユーザーの指示が必要です'"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [

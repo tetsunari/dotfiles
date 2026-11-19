@@ -47,12 +47,33 @@ find_claude_tty() {
     return 1
 }
 
+# herdr の中では文言を WezTerm に渡せないので、文言とどの workspace / tab / pane かをファイルに書き、
+# ベルを受けた WezTerm に読ませる（~/.config/wezterm/modules/notification.lua）。
+# 1行目は書いた時刻（古いファイルを使わないため）。取れなかった名前は空のまま書く
+HERDR_NOTIFY_FILE=/tmp/claude-herdr-notify.txt
+write_herdr_notify() {
+    command -v herdr >/dev/null 2>&1 && command -v jq >/dev/null 2>&1 || return 0
+    local workspace tab pane
+    workspace=$(herdr workspace get "${HERDR_WORKSPACE_ID:-}" 2>/dev/null | jq -r '.result.workspace.label // empty')
+    tab=$(herdr tab get "${HERDR_TAB_ID:-}" 2>/dev/null | jq -r '.result.tab.label // empty')
+    pane=$(herdr pane get "${HERDR_PANE_ID:-}" 2>/dev/null | jq -r '.result.pane.terminal_title_stripped // empty')
+    printf '%s\n%s\n%s / tab %s / %s\n' "$(date +%s)" "$MESSAGE" "$workspace" "$tab" "$pane" > "$HERDR_NOTIFY_FILE.tmp" \
+        && mv "$HERDR_NOTIFY_FILE.tmp" "$HERDR_NOTIFY_FILE"
+}
+
 notify_wsl() {
     local target_tty
     target_tty=$(find_claude_tty)
 
     if [[ -n "$target_tty" && -w "$target_tty" ]]; then
-        printf '\a' > "$target_tty" 2>/dev/null
+        if [[ "${HERDR_ENV:-}" == "1" ]]; then
+            # herdr は文言入りの通知をベルに変えて渡すので、文言はファイルで渡してベルだけ送る
+            write_herdr_notify
+            printf '\a' > "$target_tty" 2>/dev/null
+        else
+            # WezTerm に直接届くので、文言ごと送る（OSC 777）
+            printf '\e]777;notify;%s;%s\e\\' "$TITLE" "$MESSAGE" > "$target_tty" 2>/dev/null
+        fi
     fi
 }
 

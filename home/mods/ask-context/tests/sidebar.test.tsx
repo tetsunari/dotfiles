@@ -203,3 +203,82 @@ test('サイドバーを開けなかった質問は標準の画面に出し、�
   expect(dialogs).toBe(1)
   await ui.unmount()
 })
+
+test('PATH に sleep が無い Windows でも、Git for Windows の sleep.exe で待ってサイドバーで答えられる', async ($, on) => {
+  let markOpened = (): void => undefined
+  const opened = new Promise<void>(resolve => (markOpened = resolve))
+  const started: string[] = []
+  on('ui.open', () => (markOpened(), { value: { isPlaced: true as const } }))
+  on('ui.close', () => ({ value: undefined }))
+  on('model.fork', () => ({ value: { isAnswered: true as const, text: explained('罰金'), usage: USAGE } }))
+  // Windows 版 claude.exe で実測した動き: sleep は起動できず、フルパスの sleep.exe は動く
+  on('process.run', (_, e) => {
+    started.push(e.argv[0] ?? '')
+    if (e.argv[0] === 'sleep') return { deny: "ENOENT: Command 'sleep' not found" }
+
+    return new Promise(resolve => setTimeout(() => resolve({ value: SLEPT }), 10))
+  })
+  on('tool.call', () => ({ result: {} }))
+
+  const ran = $.tool.call({ tool: 'AskUserQuestion', questions: [asking('罰金')] })
+  await opened
+  const ui = await $.ui.mount(PANE)
+  await ui.press({ key: 'opt:0:1' })
+
+  expect(((await ran).result as { answers: unknown }).answers).toEqual({ '罰金 はどうする？': 'しない' })
+  // 起動できなかった sleep は最初の1回だけ試し、あとは sleep.exe を使い続ける
+  expect(started.filter(command => command === 'sleep').length).toBe(1)
+  await ui.unmount()
+})
+
+test('「答えずに閉じる」を押すと、答えなしとして Claude に返す', async ($, on) => {
+  const { seen, opened } = wideTerminal(on, explained('罰金'))
+
+  const ran = $.tool.call({ tool: 'AskUserQuestion', questions: [asking('罰金')] })
+  await opened
+  const ui = await $.ui.mount(PANE)
+  await ui.press({ key: 'dismiss' })
+
+  expect((await ran).deny).toBe('ユーザーは質問に答えずに閉じた')
+  expect(seen.dialogs).toBe(0)
+  await ui.unmount()
+})
+
+test('サイドバーを開いたら通知を鳴らし、Esc で閉じるペインにはしない', async ($, on) => {
+  const notified: string[] = []
+  const openedWith: { closeOnEscape?: true }[] = []
+  let markOpened = (): void => undefined
+  const opened = new Promise<void>(resolve => (markOpened = resolve))
+  on('ui.open', (_, e) => (openedWith.push(e), markOpened(), { value: { isPlaced: true as const } }))
+  on('ui.close', () => ({ value: undefined }))
+  on('ui.notify', (_, e) => (notified.push(e.text), { value: { isSent: true as const, channel: 'terminal_bell' as const } }))
+  on('model.fork', () => ({ value: { isAnswered: true as const, text: explained('罰金'), usage: USAGE } }))
+  on('process.run', () => new Promise(resolve => setTimeout(() => resolve({ value: SLEPT }), 10)))
+  on('tool.call', () => ({ result: {} }))
+
+  const ran = $.tool.call({ tool: 'AskUserQuestion', questions: [asking('罰金')] })
+  await opened
+  const ui = await $.ui.mount(PANE)
+  await ui.press({ key: 'opt:0:0' })
+  await ran
+
+  expect(notified).toEqual(['質問に答えてください'])
+  // 本人が Esc で閉じると「本人が開いたペイン」の扱いが消え、狭い端末で出なくなるため
+  expect(openedWith[0]?.closeOnEscape).toBeUndefined()
+  await ui.unmount()
+})
+
+test('/ask-context でサイドバーを開ける', async ($, on) => {
+  const openedIds: string[] = []
+  on('ui.open', (_, e) => (openedIds.push(e.id), { value: { isPlaced: true as const } }))
+
+  const ran = await $.command.run({
+    command: 'ask-context',
+    args: '',
+    origin: { kind: 'composer' },
+    presentation: { isFullscreen: false, columns: 124 },
+  })
+
+  expect(openedIds).toEqual(['ask-context'])
+  expect(ran.text).toContain('サイドバーを開いた')
+})

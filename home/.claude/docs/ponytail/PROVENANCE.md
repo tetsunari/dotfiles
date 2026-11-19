@@ -27,7 +27,7 @@
 - `rules/ponytail.md` に v5 ラダーの要点4行（呼び出し元まで直し切る・エラー処理の引き継ぎ・エッジケース優先・独自部品優先）を追記。マーカーは `ponytail:` のまま（debt が両方拾うため）
 - 次回の差分基準 SHA: debt は `2961b52`、review/audit は `356918eb`
 
-配置先は Windows 側 `C:\Users\setup_user\.claude\` と WSL 側 `~/.claude/` の両方。
+配置先は Windows 側 `%USERPROFILE%\.claude\` と WSL 側 `~/.claude/` の両方。
 
 ## ラダーは rules へ移した（スキル本体は不採用）
 

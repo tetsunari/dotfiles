@@ -6,7 +6,8 @@
 [[rules]]
 id = "home-directory-path"
 description = "ユーザー名の入ったホームディレクトリの絶対パス。~ か $HOME で書く"
-regex = '''/(?:home|Users)/[A-Za-z0-9_][A-Za-z0-9_.-]*'''
+# Windows の書き方（C:\Users\<名前>）も拾うため、区切りは / と \ の両方
+regex = '''[/\\](?:home|Users)[/\\][A-Za-z0-9_][A-Za-z0-9_.-]*'''
 
 [[rules.allowlists]]
 description = "ユーザー名ではないもの: Homebrew on Linux の場所、ripgrep の説明にある例"

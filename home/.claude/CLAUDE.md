@@ -59,7 +59,7 @@ Windows 版 claude でも以下の2点で `herdr` が動くため、**同期対�
 
 | 対処 | 実体 |
 |---|---|
-| バイナリ | `C:\Users\setup_user\.local\bin\herdr`（Git Bash 用 shim）。引数を `wsl.exe -d Ubuntu -- /home/linuxbrew/.linuxbrew/bin/herdr` へ転送する。WSL 側でシェルを起動しないためクォートが崩れない。`--cwd` の UNC パスのみ WSL パスへ変換 |
+| バイナリ | `%USERPROFILE%\.local\bin\herdr`（Git Bash 用 shim）。引数を `wsl.exe -d Ubuntu -- /home/linuxbrew/.linuxbrew/bin/herdr` へ転送する。WSL 側でシェルを起動しないためクォートが崩れない。`--cwd` の UNC パスのみ WSL パスへ変換 |
 | ペイン文脈 | `~/.zshenv`（WSL側）の `WSLENV` に `HERDR_ENV:HERDR_WORKSPACE_ID:HERDR_TAB_ID:HERDR_PANE_ID` を追加し、`win-claude` 起動時に引き継ぐ |
 
 shim は WSL 側 CLI をそのまま呼ぶだけなので、スキル本文は無改造で両側に使える
@@ -67,7 +67,7 @@ shim は WSL 側 CLI をそのまま呼ぶだけなので、スキル本文は�
 shim も動かなくなる点は `rules/wsl-operations.md` と同じ。
 
 `agent-browser` も同じ shim 方式で**同期対象**とする。
-`C:\Users\setup_user\.local\bin\agent-browser` が
+`%USERPROFILE%\.local\bin\agent-browser` が
 `wsl.exe -d Ubuntu -- <WSL 側のホーム>/.local/share/mise/shims/agent-browser` へ転送し、
 引数中の Windows 形式パス（`//wsl.localhost/...` / `C:/...` / `/c/...`）を WSL パスへ変換する。
 mise の shim は PATH 非依存で解決できるため `zsh -ic` は不要（起動が約1.4秒速い）。

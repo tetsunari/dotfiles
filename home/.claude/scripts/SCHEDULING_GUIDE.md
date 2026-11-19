@@ -113,7 +113,7 @@ Cron ジョブはユーザーシェルを実行しないため、フルパスを
 
 ```crontab
 # 推奨: フルパスを指定
-0 0 ? * SUN /home/matsushita_te/.claude/scripts/run-quiz-generator.sh
+0 0 ? * SUN /home/<ユーザー名>/.claude/scripts/run-quiz-generator.sh
 
 # 非推奨: 相対パスや環境変数依存
 0 0 ? * SUN run-quiz-generator.sh
@@ -189,7 +189,7 @@ Windows キー + R → "taskschd.msc" → Enter
    ```
 3. **引数を追加:**
    ```
-   /home/matsushita_te/.claude/scripts/run-quiz-generator.sh
+   /home/<ユーザー名>/.claude/scripts/run-quiz-generator.sh
    ```
 4. **開始位置（オプション）:**
    ```
