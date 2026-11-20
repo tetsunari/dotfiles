@@ -73,3 +73,21 @@ shim も動かなくなる点は `rules/wsl-operations.md` と同じ。
 mise の shim は PATH 非依存で解決できるため `zsh -ic` は不要（起動が約1.4秒速い）。
 
 **現在、両側で個別保守が必要なファイルは無い。**
+
+---
+
+## Codex の共通指示（`~/.codex/AGENTS.md`）
+
+Codex は `~/.claude/rules` を読まない（AGENTS.md に別ファイルを読み込む仕組みが無い）。
+レビュー役に要る部分だけを `~/.codex/AGENTS.md` に本文で書いてある。
+次の rules を直したら、`~/.codex/AGENTS.md` の対応する節も直す。
+
+| rules | `~/.codex/AGENTS.md` の節 |
+|---|---|
+| `trinity-development.md` の Codex の役割 | 役割 |
+| `delegation.md` の「コードレビュー」 | 指摘の書き方・見る観点 |
+| `core-principles.md`・`ponytail.md` | 見る観点 |
+| `writing.md` | 文章 |
+| `agent-security.md` の個人情報・`trinity-development.md` の機密情報保護 | 機密 |
+
+Windows 版 codex へは `scripts/sync-to-windows.sh` が一緒に送る。
