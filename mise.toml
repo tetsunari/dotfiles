@@ -124,16 +124,14 @@ else
   if [ ! -x "$brew" ]; then
     NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   fi
-fi
-# task は zsh の設定を読まないので、ここで brew の PATH を通す
-eval "$("$brew" shellenv)"
-if [ "$(uname -s)" = Linux ]; then
   # postgresql@18 は入れた直後に en_US.UTF-8 で initdb する。無いと brew bundle ごと失敗する
   # -q だと grep が先に抜け、pipefail の下で locale -a の SIGPIPE が失敗扱いになる
   if ! locale -a | grep -ix 'en_US.utf8' >/dev/null; then
     sudo locale-gen en_US.UTF-8
   fi
 fi
+# task は zsh の設定を読まないので、ここで brew の PATH を通す
+eval "$("$brew" shellenv)"
 # --no-upgrade が無いと、入っているものまで新しい版に上げる
 brew bundle install --no-upgrade --file "$HOME/Brewfile"
 [ "$(uname -s)" = Linux ] || exit 0

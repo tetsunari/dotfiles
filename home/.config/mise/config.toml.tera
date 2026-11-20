@@ -5,7 +5,7 @@ disable_backends = ["asdf"]
 # minimum_release_age は未設定（mise 既定で全ツールが公開から 24h 待つ）。
 # npm は作者のアカウントが奪われると乗っ取った版がすぐ出るため、npm のツールだけ 7 日待つ
 [tools]
-{% if os() == "macos" -%}
+# macOS・WSL 共通
 aws-cli = "latest"
 gcloud = "latest"
 gh = "latest"
@@ -14,33 +14,17 @@ hadolint = "latest"
 kind = "latest"
 kubectl = "latest"
 node = "latest"
+{% if os() == "macos" -%}
 "npm:@github/copilot" = { version = "latest", minimum_release_age = "7d" }
 
 {% else -%}
-aws-cli = "latest"
 ecspresso = "latest"
 eksctl = "latest"
-
-gcloud = "latest"
 terraform = "latest"
-
 pnpm = "latest"
-
-node = "latest"
-
 bun = "latest"
-
-go = "latest"
-
-kubectl = "latest"
-kind = "latest"
 helm = "latest"
 kustomize = "latest"
-
-hadolint = "latest"
-
-gh = "latest"
-
 uv = "latest"
 
 # npm

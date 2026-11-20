@@ -53,7 +53,7 @@ sudo 権限を持つ一般ユーザーとして、Windows Terminal などのタ�
    - 終わったら、手順 2 で入れた mise を消す。bootstrap が Brewfile から brew 版の mise を入れるため、残すと mise が2つになる。以降の更新は `brew upgrade` で行う。
 
      ```sh
-     rm ~/.local/bin/mise
+     rm -f ~/.local/bin/mise
      ```
 
 6. Windows の PowerShell で WSL を再起動する（systemd と docker グループを効かせるため）
@@ -163,7 +163,7 @@ brew bundle cleanup --file ~/Brewfile
 ```
 
 > [!CAUTION]
-> `mise bootstrap packages prune` は実行しない。brew は mise.toml ではなく Brewfile で管理しているので、brew で入れたものがすべて削除対象になる。
+> `mise bootstrap packages prune` は実行しない。brew は mise.toml ではなく Brewfile で管理しているので、brew で入れたものがすべて削除対象になる（2026-11-21 に macOS で `--dry-run` を実行し、109 件が対象になることを確認）。
 
 ## herdr を上げたとき
 
