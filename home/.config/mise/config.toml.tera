@@ -1,3 +1,9 @@
+[settings]
+# asdf プラグインは入れるたびに第三者のシェルスクリプトが走るので使わない
+disable_backends = ["asdf"]
+
+# minimum_release_age は未設定（mise 既定で全ツールが公開から 24h 待つ）。
+# npm は作者のアカウントが奪われると乗っ取った版がすぐ出るため、npm のツールだけ 7 日待つ
 [tools]
 {% if os() == "macos" -%}
 aws-cli = "latest"
@@ -5,7 +11,7 @@ gcloud = "latest"
 go = "latest"
 kubectl = "latest"
 node = "latest"
-"npm:@github/copilot" = "latest"
+"npm:@github/copilot" = { version = "latest", minimum_release_age = "7d" }
 
 {% else -%}
 aws-cli = "latest"
@@ -37,10 +43,10 @@ gh = "latest"
 uv = "latest"
 
 # npm
-"npm:@usebruno/cli" = "latest"
-"npm:cdk-nag" = "latest"
-"npm:agent-browser" = "latest"
-"npm:wrangler" = "latest"
+"npm:@usebruno/cli" = { version = "latest", minimum_release_age = "7d" }
+"npm:cdk-nag" = { version = "latest", minimum_release_age = "7d" }
+"npm:agent-browser" = { version = "latest", minimum_release_age = "7d" }
+"npm:wrangler" = { version = "latest", minimum_release_age = "7d" }
 
 [tasks.brew-bundle]
 description = "brewのインストール一覧を`Brewfile_wsl`に書き出す(vscodeの設定は無視)"
