@@ -49,8 +49,8 @@ sudo 権限を持つ一般ユーザーとして、Windows Terminal などのタ�
    ```
 
    - 処理中にパスワードの入力が2回求められる。1回目は apt 実行時の sudo 認証、2回目はログインシェルを zsh に変更する chsh の認証。
-   - 出力をパイプ（`| tee` など）に渡さない。端末（TTY）ではないと判定され、sudo がパスワードを要求できずに停止してしまう。ログを記録したい場合は `script -qec "mise bootstrap --yes --force-dotfiles" bootstrap.log` を使用する。
-   - WSL のみ: 終わったら、手順 2 で入れた mise を消す。bootstrap が Brewfile_wsl から brew 版の mise を入れるため、残すと mise が2つになる。以降の更新は `brew upgrade` で行う。
+   - 出力をパイプ（`| tee` など）に渡さない。端末（TTY）ではないと判定され、sudo がパスワードを要求できずに停止してしまう。Claude Code の `!` で実行した場合も同じく停止する。ログを記録したい場合は `script -qec "mise bootstrap --yes --force-dotfiles" bootstrap.log` を使用する。
+   - 終わったら、手順 2 で入れた mise を消す。bootstrap が brew 版の mise を入れるため（WSL は Brewfile_wsl、macOS は mise.toml）、残すと mise が2つになる。以降の更新は `brew upgrade` で行う。
 
      ```sh
      rm ~/.local/bin/mise
@@ -70,7 +70,7 @@ sudo 権限を持つ一般ユーザーとして、Windows Terminal などのタ�
 
 ### macOS
 
-macOS 向けの手順は、まだ実機での動作確認を行っていない（#14）。
+既存の Mac を chezmoi から移行する形でのみ動作確認した（2026-11-20）。まっさらな Mac での確認はしていない。
 
 1. Xcode Command Line Tools を入れる
 
@@ -149,10 +149,15 @@ macOS と WSL で同じ分け方にする。brew を土台にし、版を固定�
 
 | 入れるもの | 使う道具 | 書く場所 |
 |---|---|---|
-| アプリ、ふだん使いの CLI、ライブラリ、常駐サービス | brew | WSL: `home/Brewfile_wsl`、macOS: 未定（#14） |
+| アプリ、ふだん使いの CLI、ライブラリ、常駐サービス | brew | WSL: `home/Brewfile_wsl`、macOS: `mise.toml` の `[bootstrap.packages]`（`os = "macos"` を付ける） |
 | 言語ランタイム、プロジェクトごとに版を固定したい道具、npm でしか入らない道具 | mise | `home/.config/mise/config.toml.tera` |
 
 同じツールを両方に重複して記述しない。
+
+迷ったときの目安: CI やチームの設定で版を指定される道具（kind、hadolint、terraform、kubectl など）は mise、版が違っても困らない道具（bat、eza、ripgrep など）は brew。
+
+> [!CAUTION]
+> `mise bootstrap packages prune` は、brew が依存として入れたもの（例: bat と eza が使う `openssl@3`）まで削除対象に挙げることがある（2026-11-21 に確認）。実行する前に `--dry-run` で対象を確かめる。
 
 ## herdr を上げたとき
 

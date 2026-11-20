@@ -87,10 +87,64 @@ exclude = [
 "apt:containerd.io" = { os = "linux" }
 "apt:docker-buildx-plugin" = { os = "linux" }
 "apt:docker-compose-plugin" = { os = "linux" }
-"brew-cask:docker-desktop" = { os = "macos" }
-"brew-cask:antigravity-cli" = { os = "macos" }
-# commit 前の .githooks/pre-commit で使う（WSL は Brewfile_wsl で入れる）
+# macOS の brew はここに書く（WSL は home/Brewfile_wsl）。版を揃えたい開発ツールは
+# home/.config/mise/config.toml.tera に書き、ここと重複させない
+# commit 前の .githooks/pre-commit で使う
 "brew:gitleaks" = { os = "macos" }
+"brew:bat" = { os = "macos" }
+"brew:eza" = { os = "macos" }
+"brew:fd" = { os = "macos" }
+"brew:ffmpeg" = { os = "macos" }
+"brew:fzf" = { os = "macos" }
+"brew:git" = { os = "macos" }
+"brew:git-delta" = { os = "macos" }
+"brew:herdr" = { os = "macos" }
+"brew:imagemagick" = { os = "macos" }
+"brew:jq" = { os = "macos" }
+"brew:lazygit" = { os = "macos" }
+"brew:mas" = { os = "macos" }
+"brew:mise" = { os = "macos" }
+"brew:neovim" = { os = "macos" }
+"brew:openvpn" = { os = "macos" }
+"brew:poppler" = { os = "macos" }
+"brew:resvg" = { os = "macos" }
+"brew:ripgrep" = { os = "macos" }
+"brew:sevenzip" = { os = "macos" }
+"brew:sheldon" = { os = "macos" }
+"brew:starship" = { os = "macos" }
+"brew:tree-sitter-cli" = { os = "macos" }
+"brew:wireguard-tools" = { os = "macos" }
+"brew:yazi" = { os = "macos" }
+"brew:zoxide" = { os = "macos" }
+"brew-cask:alt-tab" = { os = "macos" }
+"brew-cask:antigravity-cli" = { os = "macos" }
+"brew-cask:blender" = { os = "macos" }
+"brew-cask:brave-browser" = { os = "macos" }
+"brew-cask:chatgpt" = { os = "macos" }
+"brew-cask:claude-code@latest" = { os = "macos" }
+"brew-cask:cloudflare-warp" = { os = "macos" }
+"brew-cask:codex" = { os = "macos" }
+"brew-cask:cursor" = { os = "macos" }
+"brew-cask:docker-desktop" = { os = "macos" }
+"brew-cask:font-hack-nerd-font" = { os = "macos" }
+"brew-cask:font-maple-mono-nl-nf-cn" = { os = "macos" }
+"brew-cask:font-monaspace" = { os = "macos" }
+"brew-cask:font-symbols-only-nerd-font" = { os = "macos" }
+"brew-cask:google-chrome" = { os = "macos" }
+"brew-cask:google-gemini" = { os = "macos" }
+"brew-cask:karabiner-elements" = { os = "macos" }
+"brew-cask:keyboardcleantool" = { os = "macos" }
+"brew-cask:multipass" = { os = "macos" }
+"brew-cask:notion" = { os = "macos" }
+"brew-cask:postman" = { os = "macos" }
+"brew-cask:raycast" = { os = "macos" }
+"brew-cask:sequel-ace" = { os = "macos" }
+"brew-cask:slack" = { os = "macos" }
+"brew-cask:visual-studio-code" = { os = "macos" }
+"brew-cask:wezterm@nightly" = { os = "macos" }
+"brew-cask:windows-app" = { os = "macos" }
+"brew-cask:wireshark-app" = { os = "macos" }
+"brew-cask:zed" = { os = "macos" }
 
 [bootstrap.apt.sources.docker]
 uris = "https://download.docker.com/linux/ubuntu"

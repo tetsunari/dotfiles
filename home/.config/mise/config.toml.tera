@@ -8,7 +8,10 @@ disable_backends = ["asdf"]
 {% if os() == "macos" -%}
 aws-cli = "latest"
 gcloud = "latest"
+gh = "latest"
 go = "latest"
+hadolint = "latest"
+kind = "latest"
 kubectl = "latest"
 node = "latest"
 "npm:@github/copilot" = { version = "latest", minimum_release_age = "7d" }
