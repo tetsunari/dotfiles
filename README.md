@@ -113,7 +113,7 @@ macOS 向けの手順は、まだ実機での動作確認を行っていない�
 
 | 編集したいもの | 編集する場所 | 反映 |
 |---|---|---|
-| copy で置いたファイル（`~/.claude/rules`・`~/mods` など） | ホーム側をそのまま編集し、`mise dot add --changed` でリポジトリへ戻す | 不要 |
+| copy で置いたファイル（`~/.claude/rules`・`~/.claude/mods` など） | ホーム側をそのまま編集し、`mise dot add --changed` でリポジトリへ戻す | 不要 |
 | テンプレート（`.zshrc`・`alias.zsh`・`function.zsh`・mise の `config.toml`・lazygit の `config.yml`） | `~/dotfiles/home/` の下の `*.tera` | `mise dot apply` |
 | `settings.json`（Claude Code・agy） | `~/dotfiles/home/` の下の `settings.json` | `mise dot apply` |
 | 新しいファイル | `~/dotfiles/home/` の下の同じパスに置き、`git add` | `mise dot apply` |
