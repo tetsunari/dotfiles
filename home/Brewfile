@@ -1,0 +1,93 @@
+# macOS と WSL（Homebrew on Linux）で brew で入れるもの。mise bootstrap が
+# `brew bundle install --no-upgrade` で入れる。手で編集する（brew bundle dump で上書きしない）
+# 版を揃えたい開発ツールは home/.config/mise/config.toml.tera に書き、ここと重複させない
+
+# --- 共通 ---
+brew "bat"
+brew "eza"
+brew "fd"
+brew "ffmpeg"
+brew "fzf"
+brew "git-delta"
+brew "gitleaks" # commit 前の .githooks/pre-commit で使う
+brew "herdr"
+brew "imagemagick"
+brew "jq"
+brew "lazygit"
+brew "mise"
+brew "neovim"
+brew "poppler"
+brew "resvg"
+brew "ripgrep"
+brew "sevenzip"
+brew "sheldon"
+brew "starship"
+brew "tree-sitter-cli"
+brew "yazi"
+brew "zoxide"
+
+cask "antigravity-cli"
+cask "claude-code@latest"
+cask "codex"
+cask "font-symbols-only-nerd-font"
+
+# --- macOS だけ ---
+if OS.mac?
+  brew "git"
+  brew "mas"
+  brew "openvpn"
+  brew "wireguard-tools"
+
+  cask "alt-tab"
+  cask "blender"
+  cask "brave-browser"
+  cask "chatgpt"
+  cask "cloudflare-warp"
+  cask "cursor"
+  cask "docker-desktop"
+  cask "font-hack-nerd-font"
+  cask "font-maple-mono-nl-nf-cn"
+  cask "font-monaspace"
+  cask "google-chrome"
+  cask "google-gemini"
+  cask "karabiner-elements"
+  cask "keyboardcleantool"
+  cask "multipass"
+  cask "notion"
+  cask "postman"
+  cask "raycast"
+  cask "sequel-ace"
+  cask "slack"
+  cask "visual-studio-code"
+  cask "wezterm@nightly"
+  cask "windows-app"
+  cask "wireshark-app"
+  cask "zed"
+end
+
+# --- WSL（Linux）だけ ---
+if OS.linux?
+  brew "bzip2"
+  brew "libffi"
+  brew "libidn2"
+  brew "libtasn1"
+  brew "libunistring"
+  brew "ncurses"
+  brew "nmap"
+  brew "openssl@3"
+  brew "postgresql@18", link: true
+  brew "python@3.14"
+  brew "readline"
+  brew "scrcpy"
+  brew "socat"
+  brew "sqlite"
+  brew "tcpdump"
+  brew "tree"
+  brew "tree-sitter"
+  brew "unzip"
+  brew "wget"
+  brew "xclip"
+  brew "xz"
+  brew "zip"
+  brew "zlib"
+end
