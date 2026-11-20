@@ -157,7 +157,7 @@ macOS と WSL で同じ分け方にする。brew を土台にし、版を固定�
 迷ったときの目安: CI やチームの設定で版を指定される道具（kind、hadolint、terraform、kubectl など）は mise、版が違っても困らない道具（bat、eza、ripgrep など）は brew。
 
 > [!CAUTION]
-> `mise bootstrap packages prune` は、brew が依存として入れたもの（例: bat と eza が使う `openssl@3`）まで削除対象に挙げることがある（2026-11-21 に確認）。実行する前に `--dry-run` で対象を確かめる。
+> `mise bootstrap packages prune` は、brew 以外で入れたもの（rbenv の Ruby など）が brew のライブラリを使っているかまでは見ない。実行する前に `--dry-run` で対象を確かめる。
 
 ## herdr を上げたとき
 
