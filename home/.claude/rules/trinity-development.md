@@ -54,9 +54,13 @@ alwaysApply: true
 
 2. **多角的検証**: Geminiの単一意見に依存せず、質問を変えて複数の観点を取得
 
-3. **外部情報の経路は2つのみ**: Claude Code内蔵WebSearchは使用禁止
+3. **外部情報の経路は3つ**: Claude Code内蔵WebSearchは使用禁止
    - **context7**: ライブラリ/フレームワークのAPI仕様・コード例（バージョン固有の一次情報）
-   - **agy (Gemini)**: それ以外のWeb情報全般（動向調査・比較検討・設計判断・URL参照）
+   - **WebFetch**: 次のドメインのURLを読むときだけ使う（2026-11-20 ユーザー判断）
+     - ユーザーが指示の中で渡したURLのドメイン（ユーザー自身が読むよう頼んだため）
+     - 公式ドキュメント・一次ソース（例: github.com、docs.anthropic.com、code.claude.com、developer.mozilla.org、docs.aws.amazon.com、各製品の公式 docs）
+     - URL にトークン・署名・個人情報を含むクエリが付いている場合は使わない
+   - **agy (Gemini)**: それ以外のWeb情報全般（動向調査・比較検討・設計判断・上記以外の見覚えのないドメインのURL参照）
    - 判断基準: 「公式ドキュメントに書いてある事実」→ context7 ／「調べて考える必要がある」→ agy
    - バージョン差異が論点なら必ず context7 を使う（agyはバージョンを取り違えることがある）
    - 迷ったら context7 を先に試す（高速・機密送信リスクが小さい）
@@ -79,7 +83,7 @@ alwaysApply: true
 
 5. **情報収集プロトコル**:
    - ライブラリのAPI仕様確認は context7 を優先、それ以外のWeb情報は Gemini に依頼
-   - URLアクセスが必要な場合は Gemini を経由（context7はドキュメント検索専用）
+   - URLアクセスは、ユーザーが渡したURL・公式ドキュメントなら WebFetch、見覚えのないドメインなら Gemini を経由（context7はドキュメント検索専用）
    - 最新技術動向の確認は必ずGeminiで実施
    - 最新のベストプラクティス: いつ何時でも必ず最新のベストプラクティスに従う
 
