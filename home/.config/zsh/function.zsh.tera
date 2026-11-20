@@ -99,7 +99,8 @@ if [[ -z $HERDR_ENV ]]; then
   add-zsh-hook preexec _herdr_user_var_preexec
   add-zsh-hook precmd _herdr_user_var_precmd
 fi
-
-# Claude
-export CLAUDE_CODE_SUBAGENT_MODEL="claude-opus-4-6"
 {%- endif %}
+
+# mise dot
+export EDITOR=nvim
+export VISUAL=nvim

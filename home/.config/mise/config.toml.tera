@@ -15,7 +15,11 @@ node = "latest"
 
 {% else -%}
 aws-cli = "latest"
+ecspresso = "latest"
+eksctl = "latest"
+
 gcloud = "latest"
+terraform = "latest"
 
 pnpm = "latest"
 
@@ -25,18 +29,12 @@ bun = "latest"
 
 go = "latest"
 
-ecspresso = "latest"
-
 kubectl = "latest"
 kind = "latest"
-
 helm = "latest"
-
 kustomize = "latest"
 
 hadolint = "latest"
-
-eksctl = "latest"
 
 gh = "latest"
 
