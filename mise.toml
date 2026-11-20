@@ -89,6 +89,8 @@ exclude = [
 "apt:docker-compose-plugin" = { os = "linux" }
 "brew-cask:docker-desktop" = { os = "macos" }
 "brew-cask:antigravity-cli" = { os = "macos" }
+# commit 前の .githooks/pre-commit で使う（WSL は Brewfile_wsl で入れる）
+"brew:gitleaks" = { os = "macos" }
 
 [bootstrap.apt.sources.docker]
 uris = "https://download.docker.com/linux/ubuntu"
