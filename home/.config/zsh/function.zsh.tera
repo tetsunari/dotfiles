@@ -7,9 +7,6 @@ export XDG_CONFIG_HOME="$HOME/.config"
 
 PATH=~/.console-ninja/.bin:$PATH
 
-# direnv
-eval "$(direnv hook zsh)"
-
 export RIPGREP_CONFIG_PATH="$HOME/.config/.ripgreprc"
 {%- else -%}
 # export VOLTA_HOME="$HOME/.volta"
