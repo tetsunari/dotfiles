@@ -25,9 +25,9 @@ agent_panel_sort = "spaces"
 
 host_cursor = "native"
 
-sidebar_width = 25
-sidebar_min_width = 25
-sidebar_max_width = 25
+sidebar_width = 20
+sidebar_min_width = 20
+sidebar_max_width = 20
 
 [ui.sidebar.agents]
 rows = [["state_icon", "workspace", "tab"], ["state_text", "agent"]]
