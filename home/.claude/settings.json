@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "cleanupPeriodDays": 20,
   "wslInheritsWindowsSettings": true,
   "env": {
@@ -8,13 +9,9 @@
     "CLAUDE_CODE_ENABLE_TELEMETRY": "false",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "true",
     "CLAUDE_CODE_SUBAGENT_MODEL": "haiku",
-    "DISABLE_ERROR_REPORTING": "true",
-    "DISABLE_TELEMETRY": "true",
-    "DISABLE_AUTOUPDATER": "true",
     "DISABLE_FEEDBACK_COMMAND": "true",
     "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1",
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
-    "CLAUDE_CODE_THRIFTY_SONIC": "false"
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
   "attribution": {
     "commit": "",
@@ -29,27 +26,26 @@
       "Bash(agy:*)"
     ],
     "deny": [
-      "Read(**/.env)",
-      "Read(**/.env.*)",
+      "Read(**/.env*)",
+      "Edit(**/.env*)",
       "Read(**/secrets/**)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Read(**/google-services.json)",
       "Read(~/.ssh/**)",
       "Read(~/.aws/**)",
-      "Read(**/.pem)",
-      "Read(**/*.key)",
-      "Bash(cat **/.env*)",
-      "Bash(head **/.env*)",
-      "Bash(tail **/.env*)",
+      "Read(~/.netrc)",
+      "Read(~/.npmrc)",
+      "Read(~/.docker/config.json)",
+      "Read(~/.kube/**)",
+      "Read(~/.gnupg/**)",
+      "Read(~/.codex/auth.json)",
       "Bash(grep * **/.env*)",
       "Bash(less **/.env*)",
       "Bash(more **/.env*)",
       "Bash(open **/.env*)",
       "Bash(cat **/secrets*)",
-      "Bash(cat **/*.key)",
-      "Bash(cat **/*.pem)",
-      "Bash(sudo:*)",
-      "Bash(cat **/google-services.json)",
-      "Read(**/.env*)",
-      "Edit(**/.env*)"
+      "Bash(sudo:*)"
     ],
     "defaultMode": "auto"
   },
@@ -199,6 +195,5 @@
   "switchModelsOnFlag": true,
   "autoScrollEnabled": true,
   "wheelScrollAccelerationEnabled": true,
-  "fileCheckpointingEnabled": true,
-  "todoFeatureEnabled": true
+  "fileCheckpointingEnabled": true
 }
