@@ -113,12 +113,12 @@ sudo 権限を持つ一般ユーザーとして、Windows Terminal などのタ�
 
 | 編集したいもの | 編集する場所 | 反映 |
 |---|---|---|
-| copy で置いたファイル（`~/.claude/rules`・`~/.claude/mods` など） | ホーム側をそのまま編集し、`mise dot add --changed` でリポジトリへ戻す | 不要 |
+| copy で置いたファイル（`~/.claude/rules`・`~/.claude/mods` など） | ホーム側をそのまま編集し、`~/dotfiles/home/` の下の同じパスへ `cp` で戻して `git add` | 不要 |
 | テンプレート（`.zshrc`・`alias.zsh`・`function.zsh`・mise の `config.toml`・lazygit の `config.yml`） | `~/dotfiles/home/` の下の `*.tera` | `mise dot apply` |
 | `settings.json`（Claude Code・agy） | `~/dotfiles/home/` の下の `settings.json` | `mise dot apply` |
 | 新しいファイル | `~/dotfiles/home/` の下の同じパスに置き、`git add` | `mise dot apply` |
 
-ホーム側のファイルは symlink ではなく copy で置く（Claude Code は mod のファイルが symlink だと読まないため）。ホーム側で編集したファイルは、`mise dot add --changed` を実行するまでリポジトリに入らない。その前に `mise dot apply` すると、編集した分がリポジトリの内容で上書きされて消える。
+ホーム側のファイルは symlink ではなく copy で置く（Claude Code は mod のファイルが symlink だと読まないため）。ホーム側で編集したファイルは、`~/dotfiles/home/` へ `cp` で戻すまでリポジトリに入らない（`home` グループは `manifest = "git"` のため、`mise dot add` は戻さずにエラーで止まる）。その前に `mise dot apply` すると、編集した分がリポジトリの内容で上書きされて消える。
 
 テンプレートや `settings.json` は、ホームディレクトリ側で編集してもリポジトリには反映されない。`settings.json` はリポジトリにあるキーだけを書き込むので、PC だけの値はホーム側に残せる。
 
@@ -126,8 +126,16 @@ sudo 権限を持つ一般ユーザーとして、Windows Terminal などのタ�
 
 ホーム側で編集してまだリポジトリへ戻していないファイルは、`mise bootstrap` で上書きされて消える。先に戻してから取り込む。
 
+`mise dot diff` で、ホーム側とリポジトリで中身が違うファイルを確かめる。
+
 ```sh
-cd ~/dotfiles && mise dot add --changed && git status
+cd ~/dotfiles && mise dot diff
+```
+
+ホーム側の中身を残すファイルは、`~/dotfiles/home/` の下の同じパスへコピーして `git add` する（例: `~/.claude/rules/init.md`）。
+
+```sh
+cd ~/dotfiles && cp ~/.claude/rules/init.md home/.claude/rules/init.md && git add home/.claude/rules/init.md
 ```
 
 戻したファイルがあれば commit してから pull する。
@@ -173,11 +181,12 @@ brew bundle cleanup --file ~/Brewfile
 herdr integration status
 ```
 
-`claude` が `current` でなければ、再インストールしてコミットする。herdr はホーム側のファイルを書き換えるので、`mise dot add --changed` でリポジトリへ戻す。なお、`settings.json` に追加された重複する hook は `mise dot apply` を実行すれば削除される。
+`claude` が `current` でなければ、再インストールしてコミットする。herdr はホーム側のファイルを書き換えるので、書き換わったファイルを `~/dotfiles/home/` の下の同じパスへ `cp` で戻す。なお、`settings.json` に追加された重複する hook は `mise dot apply` を実行すれば削除される。
 
 ```sh
 herdr integration install claude
-cd ~/dotfiles && mise dot add --changed && mise dot apply && git diff
+cp ~/.claude/hooks/herdr-agent-state.sh ~/dotfiles/home/.claude/hooks/herdr-agent-state.sh
+cd ~/dotfiles && mise dot apply && git diff
 ```
 
 ## 手で入れるもの

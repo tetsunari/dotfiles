@@ -3,7 +3,8 @@ dotfiles.root = "."
 
 # home/ の下を、同じパスでホームに写す。Claude Code は mod のファイルが symlink だと
 # 読まないため、symlink ではなく copy で置く。ホーム側で直したファイルは
-# `mise dot add --changed` で home/ に戻す（戻す前に apply すると直した分が消える）
+# home/ の同じパスへ cp で戻して git add する（manifest = "git" のため mise dot add は使えない。
+# 戻す前に apply すると直した分が消える）
 [dotfile_groups.home]
 root = "home"
 target = "~"
