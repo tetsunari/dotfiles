@@ -235,7 +235,7 @@ input type:keyboard {
 }
 
 # VNCサーバー(wayvnc)を自動起動する
-exec wayvnc 0.0.0.0 5900
+exec wayvnc 127.0.0.1 5900
 
 ### Macbook-like Additional Keybindings
 #
