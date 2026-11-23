@@ -18,6 +18,7 @@ node = "latest"
 "npm:@github/copilot" = { version = "latest", minimum_release_age = "7d" }
 
 {% else -%}
+glab = "latest"
 ecspresso = "latest"
 eksctl = "latest"
 terraform = "latest"
