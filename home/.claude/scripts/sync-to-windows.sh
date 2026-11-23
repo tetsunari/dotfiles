@@ -16,7 +16,7 @@ for arg in "$@"; do
   esac
 done
 
-win_profile=$(cd /mnt/c && /mnt/c/Windows/System32/cmd.exe /c 'echo %USERPROFILE%' 2>/dev/null | tr -d '\r')
+win_profile=$(cd /mnt/c && /mnt/c/Windows/System32/cmd.exe /c 'echo %USERPROFILE%' 2>/dev/null | tr -d '\r' || true)
 if [ -z "$win_profile" ]; then
   echo "Windows のユーザーフォルダを取得できない" >&2
   exit 1
