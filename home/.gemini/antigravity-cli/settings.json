@@ -14,8 +14,8 @@
     ],
     "deny": [
       "command(rm -rf)",
-      "read_file(**/.env*)",
-      "write_file(~/.ssh)"
+      "write_file({{ env.HOME }}/.ssh)",
+      "write_file({{ env.HOME }}/.gemini)"
     ]
   },
   "runningLightSpeed": "fast"

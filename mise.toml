@@ -54,7 +54,9 @@ exclude = [
 
 # リポジトリにあるキーだけを書き込む。端末だけの値（業務の設定など）はそのまま残る
 "~/.claude/settings.json/shared" = { source = "home/.claude/settings.json", merge = true, permissions = "0600" }
-"~/.gemini/antigravity-cli/settings.json/shared" = { source = "home/.gemini/antigravity-cli/settings.json", merge = true, permissions = "0600" }
+# agy は ~ を展開しないので、deny のパスを Tera で絶対パスにする。
+# ~/.gemini の禁止は、agy が自分の設定と hook（.env の読み書きを止める）を書き換えないため
+"~/.gemini/antigravity-cli/settings.json/shared" = { source = "home/.gemini/antigravity-cli/settings.json", merge = true, template = "tera", permissions = "0600" }
 # Codex が書き足す作業フォルダの一覧などは端末に残し、揃えたいキーだけ書き込む
 "~/.codex/config.toml/shared" = { source = "home/.codex/config.toml", merge = true }
 # merge の permissions は新しく作るときだけ効くので、既にあるファイルもここで 600 にする
