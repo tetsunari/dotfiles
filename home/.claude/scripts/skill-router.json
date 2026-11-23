@@ -1,0 +1,151 @@
+{
+  "_comment": "UserPromptSubmit hook (inject-skill-router.py) が参照するスキル発火表。スキルを追加したらこの表に1エントリ足すだけでよい(スクリプトは触らない)。patterns は Python の正規表現で、プロンプト全文に re.search される。英字は大小無視。",
+  "_fields": {
+    "skill": "~/.claude/skills/<skill>/SKILL.md が実在し、settings.json の skillOverrides で off でないこと。どちらか欠けると自動的にスキップされる",
+    "patterns": "いずれか1つでもマッチすれば発火",
+    "reason": "注入文に添える一言。なぜそのスキルなのかをモデルに伝える"
+  },
+  "routes": [
+    {
+      "skill": "diagnosing-bugs",
+      "reason": "推測で原因を断定する前に、赤くなるフィードバックループを作る必要がある",
+      "patterns": [
+        "エラー|例外|落ちる|落ちた|クラッシュ|失敗する|動かな|動作しな|直らな|治らな|再現しな",
+        "バグ|不具合|おかしい|想定と違う|期待と違う",
+        "遅い|遅く|重い|パフォーマンス劣化|性能劣化|タイムアウト",
+        "原因(を|が|は)?(調べ|特定|究明|知りたい|分から)",
+        "(?a)\\bdebug\\b|\\bdiagnose\\b|\\bstack ?trace\\b|\\btraceback\\b|\\bregression\\b"
+      ]
+    },
+    {
+      "skill": "tdd",
+      "reason": "テストを置く seam を先に合意し、red を確認してから実装する",
+      "patterns": [
+        "テスト[^。、\\n]{0,6}(書|追加|作成|足し|足す)",
+        "テストファースト|テスト駆動|レッドグリーン",
+        "(?a)\\btdd\\b|\\bred[- ]?green\\b|\\btest[- ]first\\b",
+        "(単体|ユニット|結合|統合|e2e|E2E)テスト"
+      ]
+    },
+    {
+      "skill": "resolving-merge-conflicts",
+      "reason": "各 hunk の一次情報まで遡って意図を復元してから解消する",
+      "patterns": [
+        "コンフリクト|衝突(を|が|し)|マージでき|マージが",
+        "(?a)\\bconflict\\b|\\bmerge conflict\\b",
+        "rebase(が|で|中)|リベース(が|で|中)"
+      ]
+    },
+    {
+      "skill": "tidying",
+      "reason": "振る舞いを変えない構造的整理として、機能変更と分けてコミットする",
+      "patterns": [
+        "リファクタ|整理して|整理したい|コードが汚|読みにく|きれいにして",
+        "(?a)\\btidy\\b|\\brefactor",
+        "重複(を)?(削除|除去|まとめ)|共通化"
+      ]
+    },
+    {
+      "skill": "code-naming",
+      "reason": "get の乱用を排し、名前だけで意図と処理の重さが伝わる状態にする",
+      "patterns": [
+        "命名|名前(を|は|どう|決め|付け)|なんて名前|リネーム",
+        "(変数|関数|メソッド|クラス|型|ファイル|テーブル|カラム)名",
+        "(?a)\\bnaming\\b|\\brename\\b"
+      ]
+    },
+    {
+      "skill": "codebase-design",
+      "reason": "deep module の語彙で seam の位置とインターフェースの深さを決める",
+      "patterns": [
+        "モジュール(分割|設計|に分)|どこで(分け|切)|責務(が)?(混|分)",
+        "インターフェース設計|テストしにく|テストできな",
+        "(?a)\\bseam\\b|\\bdeep module\\b"
+      ]
+    },
+    {
+      "skill": "explainer",
+      "reason": "読み手のペルソナとの差分だけを、道具で検証した主張と図で1枚HTMLにする",
+      "patterns": [
+        "図解|可視化|わかりやすく説明|理解しやすく|解説ドキュメント|速習資料",
+        "(?a)\\bexplain visually\\b|\\bvisuali[sz]e\\b"
+      ]
+    },
+    {
+      "skill": "codex-plan-review",
+      "reason": "別モデルの独立した視点で計画の欠落を突かせ、指摘は人間がトリアージする",
+      "patterns": [
+        "計画(を)?(レビュー|見て|チェック|叩)|計画の(穴|抜け|漏れ)",
+        "codex.{0,6}(レビュー|に見せ|に投げ|に聞)",
+        "(?a)\\bplan review\\b"
+      ]
+    },
+    {
+      "skill": "codex-pr-review",
+      "reason": "コード差分を別モデルに叩かせ、既存レビューとは異なる視点を得る",
+      "patterns": [
+        "(差分|PR|プルリク).{0,6}(レビュー|見て|チェック)",
+        "(?a)\\bcodex review\\b|\\bpr review\\b"
+      ]
+    },
+    {
+      "skill": "handoff",
+      "reason": "引き継ぎ文書を一時ディレクトリに出し、既存成果物は参照に留める",
+      "patterns": [
+        "引き継ぎ|引継ぎ|ハンドオフ|別セッション|次のセッション",
+        "(?a)\\bhandoff\\b"
+      ]
+    },
+    {
+      "skill": "task-planner",
+      "reason": "曖昧な要望をファイル単位の ToDo に分解し、依存関係を整理する",
+      "patterns": [
+        "実装計画|計画を(立て|作)|段取り|進め方を(考|決)",
+        "タスク(に)?(分解|細分化|洗い出)",
+        "どう(実装|進め)(すれば|たら|る)"
+      ]
+    },
+    {
+      "skill": "evidence-based",
+      "reason": "推測ではなく複数の一次情報で事実を確認してから着手する",
+      "patterns": [
+        "だと思うんだけど|のはず|かもしれない(けど|が)?実装",
+        "仕様(を|の)(確認|調査|分析)|前提(を)?(確認|検証)",
+        "本当に(そう|正しい|合ってる)"
+      ]
+    },
+    {
+      "skill": "security-review",
+      "reason": "認証・入力処理・秘匿情報・API エンドポイントは脆弱性チェックの対象",
+      "patterns": [
+        "認証|認可|ログイン|パスワード|トークン|シークレット|秘密鍵",
+        "脆弱性|セキュリティ|SQL ?インジェクション|XSS|CSRF",
+        "(?a)\\bauth\\b|\\boauth\\b|\\bjwt\\b|\\bsecret\\b|\\bvulnerab"
+      ]
+    },
+    {
+      "skill": "cdk-infrastructure",
+      "reason": "Logical ID ドリフト防止と cdk synth/diff での差分確認が必須",
+      "patterns": [
+        "(?a)\\bcdk\\b|CloudFormation|クラウドフォーメーション",
+        "コンストラクト|スタック間参照|logical ?id"
+      ]
+    },
+    {
+      "skill": "grill-mi",
+      "reason": "決定木の各枝を潰すまでインタビューして合意を作る",
+      "patterns": [
+        "グリル|問い詰め|詰めて|壁打ち|レビューして欲しい設計",
+        "(?a)\\bgrill\\b"
+      ]
+    },
+    {
+      "skill": "close-the-gap",
+      "reason": "曖昧な要件のまま複雑な実装に入ろうとしている",
+      "patterns": [
+        "いい感じに|よしなに|適当に(作|実装)|ざっくり(作|実装)",
+        "要件(が)?(曖昧|不明確|決まってな)"
+      ]
+    }
+  ]
+}

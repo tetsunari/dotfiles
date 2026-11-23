@@ -38,6 +38,7 @@ exclude = [
 "~/.config/systemd" = { variants = [{ os = "linux" }] }
 "~/.config/wayvnc" = { variants = [{ os = "linux" }] }
 "~/.config/NvChad" = { variants = [{ os = "linux" }] }
+"~/.claude/scripts/sync-to-windows.sh" = { variants = [{ os = "linux" }] }
 "~/setup-ahk" = { variants = [{ os = "linux" }] }
 
 [dotfiles]
