@@ -1,0 +1,92 @@
+# Codex の設定のうち、端末をまたいで揃えるキーだけを書く。mise.toml の merge で ~/.codex/config.toml に
+# 書き込み、ここに無いキー（作業フォルダの一覧 [projects]、[hooks.state]、[mcp_servers] など）は端末に残す。
+# フォルダ名に社名・案件名が入るので、それらはここに書かない。通知の鳴らし方（notify）は OS ごとに違うので書かない
+
+model_reasoning_effort = "low"
+hide_agent_reasoning = true
+network_access = true
+model = "gpt-6.1-sol"
+personality = "pragmatic"
+approvals_reviewer = "auto_review"
+web_search = "live"
+service_tier = "default"
+
+[feedback]
+enabled = false
+
+[tui]
+theme = "catppuccin-macchiato"
+status_line = ["model-with-reasoning", "current-dir", "context-used", "model", "project-name", "git-branch", "context-remaining"]
+
+[features]
+memories = true
+js_repl = false
+
+[memories]
+generate_memories = true
+use_memories = true
+
+[plugins."codex-app-tools@openai-bundled"]
+enabled = true
+
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[plugins."visualize@openai-bundled"]
+enabled = true
+
+[plugins."documents@openai-primary-runtime"]
+enabled = true
+
+[plugins."pdf@openai-primary-runtime"]
+enabled = true
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = true
+
+[plugins."template-creator@openai-primary-runtime"]
+enabled = true
+
+[plugins."unified-computer-use@openai-bundled"]
+enabled = true
+
+[desktop]
+appearanceTheme = "dark"
+appearanceDarkCodeThemeId = "ayu"
+usePointerCursors = false
+localeOverride = "ja-JP"
+followUpQueueMode = "queue"
+conversationDetailMode = "STEPS_COMMANDS"
+
+[desktop.appearanceDarkChromeTheme]
+accent = "#e6b450"
+contrast = 60
+ink = "#bfbdb6"
+opaqueWindows = false
+surface = "#10141c"
+
+[desktop.appearanceDarkChromeTheme.semanticColors]
+diffAdded = "#70bf56"
+diffRemoved = "#f26d78"
+skill = "#d0a1ff"
+
+[shell_environment_policy]
+inherit = "core"
+
+[shell_environment_policy.set]
+CLAUDE_CODE_AUTO_CONNECT_IDE = "false"
+CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL = "true"
+CLAUDE_CODE_IDE_SKIP_VALID_CHECK = "true"
+CLAUDE_CODE_ENABLE_TELEMETRY = "false"
+CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "true"
+CLAUDE_CODE_SUBAGENT_MODEL = "haiku"
+DISABLE_ERROR_REPORTING = "true"
+DISABLE_TELEMETRY = "true"
+DISABLE_AUTOUPDATER = "true"
+DISABLE_FEEDBACK_COMMAND = "true"
+CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR = "1"
+CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1"
+CLAUDE_CODE_THRIFTY_SONIC = "false"

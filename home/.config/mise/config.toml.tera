@@ -1,0 +1,39 @@
+[settings]
+# asdf プラグインは入れるたびに第三者のシェルスクリプトが走るので使わない
+disable_backends = ["asdf"]
+
+# minimum_release_age は未設定（mise 既定で全ツールが公開から 24h 待つ）。
+# npm は作者のアカウントが奪われると乗っ取った版がすぐ出るため、npm のツールだけ 7 日待つ
+[tools]
+# macOS・WSL 共通
+aws-cli = "latest"
+gcloud = "latest"
+gh = "latest"
+go = "latest"
+hadolint = "latest"
+kind = "latest"
+kubectl = "latest"
+node = "latest"
+{% if os() == "macos" -%}
+"npm:@github/copilot" = { version = "latest", minimum_release_age = "7d" }
+
+{% else -%}
+ecspresso = "latest"
+eksctl = "latest"
+terraform = "latest"
+pnpm = "latest"
+bun = "latest"
+helm = "latest"
+kustomize = "latest"
+uv = "latest"
+
+# npm
+"npm:@usebruno/cli" = { version = "latest", minimum_release_age = "7d" }
+"npm:cdk-nag" = { version = "latest", minimum_release_age = "7d" }
+"npm:agent-browser" = { version = "latest", minimum_release_age = "7d" }
+"npm:wrangler" = { version = "latest", minimum_release_age = "7d" }
+
+{% endif -%}
+[tasks.cdk-out-clear]
+description = "cdk.outの不要ファイルを削除"
+run = 'npx cdk-agc'

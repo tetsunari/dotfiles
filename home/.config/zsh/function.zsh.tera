@@ -1,0 +1,103 @@
+{%- if os() == "macos" -%}
+# homebrew
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# lazygit
+export XDG_CONFIG_HOME="$HOME/.config"
+
+PATH=~/.console-ninja/.bin:$PATH
+
+export RIPGREP_CONFIG_PATH="$HOME/.config/.ripgreprc"
+{%- else -%}
+# export VOLTA_HOME="$HOME/.volta"
+# export PATH="$VOLTA_HOME/bin:$PATH"
+# export NVIM_HOME="/opt/nvim"
+# export PAHT="$NVIM_NOME:$PATH"
+export PATH="$PATH:/opt/nvim"
+export RIPGREP_CONFIG_PATH="$HOME/.config/.ripgreprc"
+
+# aws cli 補完
+autoload bashcompinit && bashcompinit
+autoload -Uz compinit && compinit
+
+# gcloud
+export CLOUDSDK_PYTHON=python3
+
+# code コマンド
+export PATH=$PATH:"$(wslpath "$(/mnt/c/WINDOWS/system32/cmd.exe /c 'echo %USERPROFILE%' 2>/dev/null | tr -d '\r')")/AppData/Local/Programs/Microsoft VS Code/bin"
+# cursor コマンド
+export PATH=$PATH:"$(wslpath "$(/mnt/c/WINDOWS/system32/cmd.exe /c 'echo %USERPROFILE%' 2>/dev/null | tr -d '\r')")/AppData/Local/Programs/cursor/resources/app/bin"
+# kiro コマンド
+export PATH=$PATH:"$(wslpath "$(/mnt/c/WINDOWS/system32/cmd.exe /c 'echo %USERPROFILE%' 2>/dev/null | tr -d '\r')")/AppData/Local/Programs/kiro/bin"
+# Linux Brew
+export HOMEBREW_DEVELOP=1
+## curl path
+export HOMEBREW_CURL_PATH="/home/linuxbrew/.linuxbrew/bin/curl"
+{%- endif %}
+
+# fzfの設定
+export FZF_DEFSULT_OPST="
+  --reverse
+  --style=full:rounded
+  --height 45%
+  --margin 0.5%
+"
+
+# zoxideの設定
+export _ZO_FZF_OPTS="
+  --reverse
+  --style=full:rounded
+  --height 75%
+  --margin 0,5%
+  --preview 'eza -l --icons --sort modified -r --color=always {2..}'
+  --preview-window=down,50%,wrap
+  --no-sort
+  --exact
+"
+
+# manコマンドの設定
+export MANPAGER=less
+export LESS=-R
+
+export LESS_TERMCAP_mb=$'\e[1;31m'   # 強調 赤
+export LESS_TERMCAP_md=$'\e[1;34m'   # 太字 青
+export LESS_TERMCAP_me=$'\e[0m'      # reset
+
+export LESS_TERMCAP_so=$'\e[7m'      # 反転
+export LESS_TERMCAP_se=$'\e[0m'
+
+export LESS_TERMCAP_us=$'\e[4;32m'   # 下線 緑
+export LESS_TERMCAP_ue=$'\e[0m'
+
+# ターミナルタイトルを現在のコマンドに設定 + 作業ディレクトリを通知
+precmd() {
+  print -Pn "\e]0;%~\a"
+  print -Pn "\e]7;file://${HOST}${PWD}\a"
+}
+preexec() { print -Pn "\e]0;$1\a" }
+{%- if os() == "linux" %}
+
+# herdr 実行中を WezTerm へ通知（OSC 1337 SetUserVar IN_HERDR）
+# WSLドメイン越しでは WezTerm がフォアグラウンドプロセス名を取れないため、
+# keymaps.lua のスクロールキーはこの値で herdr かどうかを判定する。
+# herdr 内のペイン（HERDR_ENV=1）では送らない（内側の値が外へ漏れるのを防ぐ）
+if [[ -z $HERDR_ENV ]]; then
+  _herdr_user_var_preexec() {
+    [[ ${1%% *} == herdr ]] || return
+    printf '\e]1337;SetUserVar=IN_HERDR=MQ==\a'  # "1"
+    _herdr_user_var_set=1
+  }
+  _herdr_user_var_precmd() {
+    (( ${_herdr_user_var_set:-0} )) || return
+    printf '\e]1337;SetUserVar=IN_HERDR=MA==\a'  # "0"
+    _herdr_user_var_set=0
+  }
+  autoload -Uz add-zsh-hook
+  add-zsh-hook preexec _herdr_user_var_preexec
+  add-zsh-hook precmd _herdr_user_var_precmd
+fi
+{%- endif %}
+
+# mise dot
+export EDITOR=nvim
+export VISUAL=nvim
