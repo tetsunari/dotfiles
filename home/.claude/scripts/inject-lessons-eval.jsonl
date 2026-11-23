@@ -1,0 +1,45 @@
+{"prompt": "542に541を取り込むようにrebase", "relevant": ["general.md|rebase 成功は", "git-operations.md|別のブランチの上に積む前と", "git-operations.md|リモートのブランチの上に積むときは"], "acceptable": []}
+{"prompt": "137のDraftはずしていい？", "relevant": ["git-operations.md|GitLab の Draft の MR は衝突", "agent-behavior.md|GitLab MCP の Draft は"], "acceptable": ["git-operations.md|MR を積み重ねるときは"]}
+{"prompt": "147はDraftを外してもいい？ 147がマージされたら、137のDraftを外す旨を何処かに記載してる？", "relevant": ["git-operations.md|GitLab の Draft の MR は衝突", "git-operations.md|MR を積み重ねるときは", "agent-behavior.md|GitLab MCP の Draft は"], "acceptable": ["git-operations.md|別のブランチの上に積む前と"]}
+{"prompt": "Draft外したいのですが、 ponytail-review -> code-review -> security-review -> codex-review　は済んでる？", "relevant": ["git-operations.md|GitLab の Draft の MR は衝突", "agent-behavior.md|GitLab MCP の Draft は"], "acceptable": []}
+{"prompt": "`agent-browser --version`を実行すると、windowsのどのアプリで起動しますかと聞かれます", "relevant": ["wsl-operations.md|Windows 側から WSL 側 CLI を叩くなら", "browser-automation.md|Windows 側から叩く agent-browser"], "acceptable": []}
+{"prompt": "windows側のagent-browserを使うようにしてe2eテスト・スクショ進めて", "relevant": ["browser-automation.md|ブラウザ確認をサブエージェントに委ねる", "browser-automation.md|Windows 側から叩く agent-browser", "browser-automation.md|画面の確認はスクリーンショット"], "acceptable": ["browser-automation.md|agent-browser の実ブラウザは", "browser-automation.md|agent-browser の `close --all`"]}
+{"prompt": "多分今までもCPU経由だったので確認に時間がかかってました。 なんとかして、windows側のchrome(GPUあり）で動作させて、スクショの時間を軽減したいです", "relevant": ["browser-automation.md|agent-browser の実ブラウザは", "browser-automation.md|ソフトウェア描画のブラウザゲームは", "browser-automation.md|Windows 側から叩く agent-browser"], "acceptable": ["browser-automation.md|画面の確認はスクリーンショット"]}
+{"prompt": "subagentsが走ってるが、引き継げる？", "relevant": ["agent-behavior.md|長く回す作業役", "general.md|中断されたサブエージェント"], "acceptable": []}
+{"prompt": "allowBuildsはいれよう", "relevant": ["general.md|pnpm 10.26+"], "acceptable": []}
+{"prompt": "`background: true`のほうがいいskillない？", "relevant": ["claude-code-config.md|fork系スキルは"], "acceptable": []}
+{"prompt": "herdrの通知を直したい", "relevant": ["terminal-integration.md|OSC エスケープシーケンス", "terminal-integration.md|TUI マルチプレクサー"], "acceptable": ["terminal-integration.md|herdr"]}
+{"prompt": "wezterm + herdrでclaude codeの通知を受け取るようにしてます。 sub agentsの通知も受け取るようになってますか？", "relevant": ["terminal-integration.md|OSC エスケープシーケンス", "terminal-integration.md|TUI マルチプレクサー"], "acceptable": ["terminal-integration.md|herdr"]}
+{"prompt": "gemini動いてる？", "relevant": ["agent-behavior.md|web-researcherエージェントがagy完了前に"], "acceptable": ["wsl-operations.md|agy は Windows 側"]}
+{"prompt": "chezmoiにも適用済み？", "relevant": ["git-operations.md|chezmoi の pull 後は"], "acceptable": []}
+{"prompt": "ユーザに確認を取りながらchezmoi applyしていきたい", "relevant": ["git-operations.md|chezmoi の pull 後は"], "acceptable": []}
+{"prompt": "報告ありがとう。裏で動いたままのシェルが 2 つある。両方とも止めて（vitest などの残りのプロセスも含む）、止めたら「止めた」とだけ返して。ほかの作業はしない。", "relevant": ["shell-scripting.md|`pkill -f` は自分自身", "wsl-operations.md|WSL の /tmp は 8.8GB"], "acceptable": ["shell-scripting.md|pnpm を子プロセスで"]}
+{"prompt": "1. おｋ 2. どういうこと？ 3. /tmp じゃダメ？", "relevant": ["wsl-operations.md|WSL の /tmp は再起動で消え", "wsl-operations.md|WSL の /tmp は 8.8GB"], "acceptable": []}
+{"prompt": "windows側のclaudeの通知も修正して @/mnt/c/Users/<win-user>/.claude", "relevant": ["wsl-operations.md|UNC パス経由で Edit/Write", "wsl-operations.md|WSL 側の環境変数を Windows プロセスへ"], "acceptable": ["wsl-operations.md|Windows 版 claude.exe から git commit", "wsl-operations.md|`wslInheritsWindowsSettings"]}
+{"prompt": "inject-lessons.pyで作成される、過去の失敗jsonはAIにとって見やすい？また優しい（usate, context消費が少ない）？", "relevant": ["general.md|hook が persisted-output"], "acceptable": ["wsl-operations.md|Windows の Python は stdout"]}
+{"prompt": "最高品質に最適化したい", "relevant": [], "acceptable": []}
+{"prompt": "`disable-model-invocation: true`どのスキルにつけた？", "relevant": [], "acceptable": ["claude-code-config.md|fork系スキルは"]}
+{"prompt": "pnpm installにトークンがいるの？？", "relevant": [], "acceptable": ["general.md|pnpm 10.26+"]}
+{"prompt": "2. apiのドメインのACMはなぜ東京リージョンでいいの？", "relevant": [], "acceptable": ["aws-naming.md|文書では AWS のリージョン"]}
+{"prompt": "secrets managerはローテーションする必要あると思う？", "relevant": [], "acceptable": []}
+{"prompt": "Aurora DSQLもIAM認証すればインターネットから呼べないのでは？", "relevant": [], "acceptable": []}
+{"prompt": "CDKでdynamodb作るよね？", "relevant": [], "acceptable": []}
+{"prompt": "commitをしてほしいのですが、1回で全てをコミットしないこと。", "relevant": [], "acceptable": []}
+{"prompt": "gitのpre-commit必要？", "relevant": [], "acceptable": []}
+{"prompt": "AI(Clauce Code, Codex)と書いていますが、 `(Claude Code, Codex)`は不要。またcodexについては言及しない", "relevant": [], "acceptable": []}
+{"prompt": "149でコミットとpush", "relevant": [], "acceptable": ["git-operations.md|別のブランチの上に積む前と"]}
+{"prompt": "hooksですがAIだけでいい、`infra/.agents/hooks`, `infra/.agents/skills`じゃない？", "relevant": [], "acceptable": []}
+{"prompt": "wslconfのnetworkmode mirreredなのにwindows側のchromでローカルサーバ繋がらへん", "relevant": [], "acceptable": ["wsl-operations.md|`wslInheritsWindowsSettings"]}
+{"prompt": "`/clear`してCDK作成に進みたいのですが、問題なく進めれる？", "relevant": [], "acceptable": []}
+{"prompt": "@infra/cdk/lib/api/studioApi.ts がAPIが増える度に大きくなる？", "relevant": [], "acceptable": []}
+{"prompt": "日本語が読みづらい・・ 質問者と回答者はエンジニアなので、たとえは不要 /japanese-natural-writing も使って", "relevant": [], "acceptable": []}
+{"prompt": "confluenceにファイル貼り付けるので、ポスターには入れなくていい", "relevant": [], "acceptable": []}
+{"prompt": "続けて", "relevant": [], "acceptable": []}
+{"prompt": "ok", "relevant": [], "acceptable": []}
+{"prompt": "4 -> 1 -> 2 -> 3", "relevant": [], "acceptable": []}
+{"prompt": "どっちがいいだろう", "relevant": [], "acceptable": []}
+{"prompt": "pcスリープにしたからかも", "relevant": [], "acceptable": []}
+{"prompt": "どういう状況？", "relevant": [], "acceptable": []}
+{"prompt": "`同じ会話で注入済みの教訓は入れない。索引も会話ごとに1回だけ` どういうことやろ？ 同じセッションでは注入も索引も行わない？", "relevant": [], "acceptable": []}
+{"prompt": "要判断の対応", "relevant": [], "acceptable": []}
+{"prompt": "windows側にも設定して、pushまで", "relevant": [], "acceptable": []}
