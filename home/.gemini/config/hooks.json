@@ -1,0 +1,16 @@
+{
+  "deny-env-files": {
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3 \"$HOME/.gemini/config/hooks/deny-env-files.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
