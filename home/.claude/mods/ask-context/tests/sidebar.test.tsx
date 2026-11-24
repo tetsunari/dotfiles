@@ -204,6 +204,69 @@ test('サイドバーを開けなかった質問は標準の画面に出し、�
   await ui.unmount()
 })
 
+test('サイドバーを出す途中で mod が失敗しても標準の画面で聞き、次の質問ではまたサイドバーを使う', async ($, on) => {
+  let opens = 0
+  let dialogs = 0
+  let markOpened = (): void => undefined
+  const secondOpened = new Promise<void>(resolve => (markOpened = resolve))
+  on('ui.open', () => {
+    opens += 1
+    // 1回目は壊れた値を返し、サイドバーを開いた直後に mod の処理を例外で止める
+    if (opens === 1) return { value: null as never }
+    markOpened()
+
+    return { value: { isPlaced: true as const } }
+  })
+  on('ui.close', () => ({ value: undefined }))
+  on('ui.status', () => ({ value: undefined }))
+  on('ui.toast', () => ({ value: undefined }))
+  on('model.fork', () => ({ value: { isAnswered: true as const, text: explained('罰金'), usage: USAGE } }))
+  on('process.run', () => new Promise(resolve => setTimeout(() => resolve({ value: SLEPT }), 10)))
+  on('tool.call', (_, e) => {
+    dialogs += 1
+
+    return e.tool === 'AskUserQuestion' ? { result: { questions: e.questions, answers: {} } } : { result: {} }
+  })
+
+  await $.tool.call({ tool: 'AskUserQuestion', questions: [asking('罰金')] })
+  expect(dialogs).toBe(1)
+
+  const ran = $.tool.call({ tool: 'AskUserQuestion', questions: [asking('延長')] })
+  await secondOpened
+  const ui = await $.ui.mount(PANE)
+  await ui.press({ key: 'opt:0:0' })
+
+  expect(((await ran).result as { answers: unknown }).answers).toEqual({ '延長 はどうする？': 'する' })
+  expect(dialogs).toBe(1)
+  await ui.unmount()
+})
+
+test('サイドバーで答えたあとの片付けで mod が失敗しても、その答えが Claude に返り、同じ質問を聞き直さない', async ($, on) => {
+  const { seen, opened } = wideTerminal(on, explained('罰金'))
+  let answered = false
+  // 答えたあと、質問の状態を消す書き込みを1回だけ失敗させる。書き込む値は { shape, value } に包まれて届く
+  on('state.set', (_, e, next) => {
+    if (answered && (e.value as { value?: unknown } | null)?.value === null) {
+      answered = false
+
+      return { deny: '書き込めない' }
+    }
+
+    return next(e)
+  })
+  on('ui.toast', () => ({ value: undefined }))
+
+  const ran = $.tool.call({ tool: 'AskUserQuestion', questions: [asking('罰金')] })
+  await opened
+  const ui = await $.ui.mount(PANE)
+  answered = true
+  await ui.press({ key: 'opt:0:1' })
+
+  expect(((await ran).result as { answers: unknown }).answers).toEqual({ '罰金 はどうする？': 'しない' })
+  expect(seen.dialogs).toBe(0)
+  await ui.unmount()
+})
+
 test('PATH に sleep が無い Windows でも、Git for Windows の sleep.exe で待ってサイドバーで答えられる', async ($, on) => {
   let markOpened = (): void => undefined
   const opened = new Promise<void>(resolve => (markOpened = resolve))

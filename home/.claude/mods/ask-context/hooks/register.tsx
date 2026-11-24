@@ -220,6 +220,21 @@ const toggled = (state: Asking, optionIndex: number): Asking => {
 const updateAsking = async ($: EngineInterface, id: string, fn: (state: Asking) => Asking): Promise<Asking | null> =>
   noteSettled(await update($, askingAtom, state => (state === null || state.id !== id ? state : fn(state))))
 
+// 質問の状態を残すと、以後の質問でサイドバーが出なくなる。閉じる・開くの失敗（別の plugin が
+// 同じ id のペインを持っているとき）でも必ず片付ける
+const release = async ($: EngineInterface, id: string): Promise<void> => {
+  await update($, askingAtom, current => (current?.id === id ? null : current))
+  await $.ui.close({ id: PANE }).catch(() => undefined)
+}
+
+// サイドバーで答え終わった・閉じた質問を、Claude に返す形にする。まだなら undefined
+const resultOf = <Q,>(questions: Q, done: Settled | undefined) =>
+  done?.outcome === 'answered'
+    ? { result: { questions, answers: { ...done.answers } } }
+    : done?.outcome === 'dismissed'
+      ? { deny: 'ユーザーは質問に答えずに閉じた' }
+      : undefined
+
 // 標準の質問画面を出す前に、選択肢ごとのプレビュー欄へ解説を入れる（サイドバーを出せないときの道）
 async function askInDialog<Q extends Question>(
   $: EngineInterface,
@@ -288,12 +303,6 @@ export const register: Register = on => {
     )
     const isOurs = (await read($, askingAtom))?.id === id
     if (isOurs) {
-      // 質問の状態を残すと、以後の質問でサイドバーが出なくなる。閉じる・開くの失敗（別の plugin が
-      // 同じ id のペインを持っているとき）でも必ず片付ける
-      const release = async (): Promise<void> => {
-        await update($, askingAtom, current => (current?.id === id ? null : current))
-        await $.ui.close({ id: PANE }).catch(() => undefined)
-      }
       const opened = await $.ui
         .open({ id: PANE, title: '質問', focus: true, holdToasts: true })
         .catch((err: unknown) => ({ isPlaced: false as const, reason: `開けなかった（${String(err)}）` }))
@@ -311,15 +320,15 @@ export const register: Register = on => {
           // sleep が使えないと答えを待てないので、標準の質問画面に切り替える
           $.ui.toast(`サイドバーで答えを待てないので、標準の質問画面に切り替える: ${String(err)}`)
         }
-        const done = settled.get(id)
+        // 答えは片付けのあとで消す。片付けで失敗しても、.catch が答えを返せるように残しておく
+        await release($, id)
+        const done = resultOf(e.questions, settled.get(id))
         settled.delete(id)
-        await release()
-        if (done?.outcome === 'answered') return { result: { questions: e.questions, answers: { ...done.answers } } }
-        if (done?.outcome === 'dismissed') return { deny: 'ユーザーは質問に答えずに閉じた' }
+        if (done !== undefined) return done
         if (next.signal.aborted) return { deny: '質問は中断された' }
       } else {
         // 狭い端末では開いたペインが幅の広がりを待って残るので、出る前に閉じる
-        await release()
+        await release($, id)
         // 理由は Claude Code の文（端末の幅など）。出ない理由が分からないと直せないので見せる
         $.ui.toast(`サイドバーを出せないので、標準の質問画面で聞く: ${opened.reason}`)
       }
@@ -328,6 +337,19 @@ export const register: Register = on => {
     const questions = await askInDialog($, e, explain, next.signal)
 
     return next(questions === null ? e : { ...e, questions })
+  }).catch(async ($, e, next) => {
+    // 失敗しても質問は止めない。next をまだ呼んでいなければ標準の質問画面で聞き、
+    // 呼んでいれば next(e) はその結果を返すだけで質問を出し直さない
+    if (e.tool !== 'AskUserQuestion' || next.called) return next(e)
+    const id = e.tool_use_id
+    const done = resultOf(e.questions, settled.get(id))
+    settled.delete(id)
+    // 片付けにもう一度失敗しても、サイドバーでの答えは返す
+    if ((await read($, askingAtom))?.id === id) await release($, id).catch(() => undefined)
+    if (done !== undefined) return done
+    $.ui.toast(`サイドバーの質問処理で失敗したので、標準の質問画面で聞く: ${next.error.message ?? next.error.kind}`)
+
+    return next(e)
   })
 
   on('ui.close', async ($, e, next) => {
