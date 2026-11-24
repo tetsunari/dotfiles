@@ -44,11 +44,17 @@ end
 
 wezterm.on("bell", function(window, pane)
   local message, location, herdr_focused = read_herdr_notify()
-  -- herdr で別の workspace・tab・ペインを見ている時は、WezTerm がフォーカス中でも気づけないので通知する
-  local hidden_in_herdr = herdr_focused == "false"
-  -- それ以外は、ウィンドウがフォーカスされていない、かつアクティブペインからのbellの場合のみ通知
   local dominated = window:active_pane():pane_id() == pane:pane_id()
-  if hidden_in_herdr or (dominated and not window:is_focused()) then
+  local should_notify
+  if herdr_focused == "true" or herdr_focused == "false" then
+    -- herdr の中の Claude から: WezTerm で herdr を表示し、herdr でもそのペインを見ている時だけ抑える。
+    -- herdr の別の workspace・tab・ペインや、WezTerm の別タブを見ている時は気づけないので通知する
+    should_notify = not (window:is_focused() and dominated and herdr_focused == "true")
+  else
+    -- それ以外は、ウィンドウがフォーカスされていない、かつアクティブペインからのbellの場合のみ通知
+    should_notify = dominated and not window:is_focused()
+  end
+  if should_notify then
     local now = os.time()
     if now - last_notification_time >= DEBOUNCE_SEC then
       last_notification_time = now

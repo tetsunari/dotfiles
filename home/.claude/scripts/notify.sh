@@ -5,14 +5,27 @@
 # WSL2 : BELを送信 → WezTerm Luaでフォーカス判定して通知
 # =============================================================================
 
-# Stop 時、サブエージェントが実行中なら鳴らさない。権限確認（PermissionRequest）は対象外で、常に鳴らす。
-# 1体戻るたびに親が再開→Stop するため、並列実行で通知が連発する。
-# 最後の1体が戻った後の Stop（一覧から subagent が消えている）で1回だけ鳴る。
-# teammate は待機中も running のまま残り、shell は常駐プロセスがあり得るので判定に含めない。
+# Stop 時に鳴らさない条件は2つ。権限確認（PermissionRequest）は対象外で、常に鳴らす。
 # herdr の中でも鳴らす（herdr の通知は [ui.toast] delivery = "off" で切り、WezTerm 側で出している）。
 # jq の失敗時は従来どおり鳴らす。
-if [[ ! -t 0 ]] && jq -e '.hook_event_name == "Stop" and any(.background_tasks[]?; .type == "subagent" and .status == "running")' >/dev/null 2>&1; then
-    exit 0
+# 1. サブエージェントかバックグラウンドのシェルが実行中: まだ待っているだけで、終わったら再開して
+#    もう一度 Stop する。そちらで1回だけ鳴る。dev サーバーなどの常駐プロセスが残っている間は鳴らない。
+#    teammate は待機中も running のまま残るので判定に含めない。
+# 2. ユーザーが ! で打ったシェルに Claude が返事しただけ: transcript の最後のユーザーの記録が
+#    <bash-input> / <bash-stdout> になる。
+HOOK_INPUT=""
+[[ -t 0 ]] || HOOK_INPUT=$(cat)
+if [[ "$(jq -r '.hook_event_name // empty' <<<"$HOOK_INPUT" 2>/dev/null)" == "Stop" ]]; then
+    if jq -e 'any(.background_tasks[]?; (.type == "subagent" or .type == "shell") and .status == "running")' <<<"$HOOK_INPUT" >/dev/null 2>&1; then
+        exit 0
+    fi
+    transcript=$(jq -r '.transcript_path // empty' <<<"$HOOK_INPUT" 2>/dev/null)
+    if [[ -f "$transcript" ]] && jq -r 'select(.type == "user" and (.isSidechain | not) and (.isMeta | not)) | .message.content
+                 | if type == "string" then . else ([.[]? | select(.type == "text") | .text] | join(" ")) end
+                 | select(length > 0) | startswith("<bash-")' "$transcript" 2>/dev/null \
+        | tail -n 1 | grep -qx true; then
+        exit 0
+    fi
 fi
 
 TITLE="${1:-Claude Code}"
