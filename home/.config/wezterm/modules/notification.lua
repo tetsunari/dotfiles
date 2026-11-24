@@ -34,21 +34,24 @@ local function read_herdr_notify()
   local written = tonumber(file:read("l"))
   local message = file:read("l")
   local location = file:read("l")
+  local herdr_focused = file:read("l")
   file:close()
   if not written or os.time() - written > FRESH_SEC then
     return nil
   end
-  return message, location
+  return message, location, herdr_focused
 end
 
 wezterm.on("bell", function(window, pane)
-  -- ウィンドウがフォーカスされていない、かつアクティブペインからのbellの場合のみ通知
+  local message, location, herdr_focused = read_herdr_notify()
+  -- herdr で別の workspace・tab・ペインを見ている時は、WezTerm がフォーカス中でも気づけないので通知する
+  local hidden_in_herdr = herdr_focused == "false"
+  -- それ以外は、ウィンドウがフォーカスされていない、かつアクティブペインからのbellの場合のみ通知
   local dominated = window:active_pane():pane_id() == pane:pane_id()
-  if dominated and not window:is_focused() then
+  if hidden_in_herdr or (dominated and not window:is_focused()) then
     local now = os.time()
     if now - last_notification_time >= DEBOUNCE_SEC then
       last_notification_time = now
-      local message, location = read_herdr_notify()
       local body = message or DEFAULT_MESSAGE
       if location then
         body = body .. "\n" .. location
