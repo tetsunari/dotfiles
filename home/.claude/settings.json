@@ -7,7 +7,6 @@
     "CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL": "true",
     "CLAUDE_CODE_IDE_SKIP_VALID_CHECK": "true",
     "CLAUDE_CODE_ENABLE_TELEMETRY": "false",
-    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "true",
     "CLAUDE_CODE_SUBAGENT_MODEL": "haiku",
     "DISABLE_FEEDBACK_COMMAND": "true",
     "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1",
@@ -132,6 +131,15 @@
           {
             "type": "command",
             "command": "~/.claude/scripts/ponytail-review-gate.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "^Bash$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/scripts/ja-writing-gate.sh"
           }
         ]
       }
